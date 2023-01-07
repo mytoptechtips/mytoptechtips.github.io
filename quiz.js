@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
             movieIds.push(json.results[j].id);
         }
     }
+    alert(movieIds.length);
     return movieIds;
 }
 
