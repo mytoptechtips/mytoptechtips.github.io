@@ -20,13 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Loop through pages 1 to 10
     for (var i = 1; i <= 10; i++) {
         // Call API and add page parameter
-        var response = await fetch('https://api.themoviedb.org/3/discover/movie?api_key=3f2af1df74075e194bc154e7f3233e60&language=en-US&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate', {
+        var response = await fetch('https://api.themoviedb.org/3/discover/movie?api_key=3f2af1df74075e194bc154e7f3233e60&language=en-US&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate&page='+i, {
             method: 'GET',
             mode: 'cors',
-            cache: 'default',
-            data: {
-                page: i // Set page parameter
-            }
+            cache: 'default'
         });
         var json = await response.json();
         // Save movie IDs to array
