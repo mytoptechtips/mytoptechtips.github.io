@@ -76,14 +76,14 @@ function promptUser(movieDetails, guesses) {
     // Check if user has used all their guesses
     if (guesses >= 5) {
         // Display correct answer
-        document.getElementById('results').innerHTML = 'The correct answer was: ' + movieDetails.title + ' Guess count = '+ guesses;
+        document.getElementById('results').innerHTML += '<br/><br/>The correct answer was: ' + movieDetails.title + ' Guess count = '+ guesses;
     } else {
         // Get user's guess
         var guess = document.getElementById('guess').value;
         // Check if guess is correct
         if (guess.toLowerCase() === movieDetails.title.toLowerCase()) {
             // Display success message
-            document.getElementById('results').innerHTML = 'You guessed correctly! The movie was: ' + movieDetails.title;
+            document.getElementById('results').innerHTML += '<br/><br/><br/>You guessed correctly! The movie was: ' + movieDetails.title;
         } else {
             // Increment guesses
             guesses++;
