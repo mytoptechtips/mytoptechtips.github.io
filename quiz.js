@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+document.getElementById('play-again-button').addEventListener('click', function(event) {
+
+    event.preventDefault(); // Prevent form submission
+    startQuiz();
+});
+
   // Step 1: Call API to get list of movie IDs
 
   async function getMovieIds() {
@@ -35,11 +41,26 @@ document.addEventListener('DOMContentLoaded', function() {
     return movieIds;
 }
 
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formatter = new Intl.DateTimeFormat('en-US', options);
+    const formattedDate = formatter.format(date);
+    return formattedDate;
+}
+
 function startQuiz() {
     // Initialize variables
     var movieIds = [];
     var movieId;
   
+    document.getElementById('letter-hints').style.display="inline-block";
+    document.getElementById('submit-button').style.display="inline-block";
+    document.getElementById('guess').style.display="inline-block";
+    document.getElementById('guess').value="";
+    document.getElementById('results').innerHTML = "";
+    
+    guesses = 0;
  
     getMovieIds().then(function(movieIds) {
         console.log(movieIds);
@@ -69,21 +90,36 @@ function startQuiz() {
         });
     })
 }
+function  showPlayAgain() {
+    document.getElementById('play-again-button').style.display="inline-block";
+    document.getElementById('submit-button').style.display="none";
+    document.getElementById('letter-hints').style.display="none";
+    document.getElementById('guess').style.display="none";
+    document.getElementById('guess-label').style.display="none";
+
+}
+function showCorrectResult(movieDetails) {
+    document.getElementById('results').innerHTML += '<br/><br/><br/>You guessed correctly! The movie was: ' + movieDetails.title;
+    showPlayAgain();
+}
 
 function promptUser(movieDetails, guesses) {
     // Check if user has used all their guesses
     if (guesses >= 5) {
         // Display correct answer
-        document.getElementById('results').innerHTML += '<br/><br/>The correct answer was: ' + movieDetails.title + ' Guess count = '+ guesses;
+        document.getElementById('results').innerHTML += '<br/><br/>The correct answer was: '  + movieDetails.title;   ;
+   
         guesses=0;
+        showPlayAgain();
     } else {
         // Get user's guess
         var guess = document.getElementById('guess').value;
         // Check if guess is correct
         if (guess.toLowerCase() === movieDetails.title.toLowerCase()) {
             // Display success message
-            document.getElementById('results').innerHTML += '<br/><br/><br/>You guessed correctly! The movie was: ' + movieDetails.title;
+                   showCorrectResult(movieDetails);
                    guesses=0;
+                   showPlayAgain();
         } else {
             // Increment guesses
             guesses++;
@@ -96,8 +132,8 @@ function promptUser(movieDetails, guesses) {
                         genreString += movieDetails.genres[i].name + ', ';
                     }
                     genreString = genreString.slice(0, -2); // Remove trailing comma
-                    document.getElementById('results').innerHTML += 'Hint 1: The movie was released on ' + movieDetails.release_date + ' and is a ' + genreString + ' movie.'+ '<br/>';
-                    document.getElementById('results').innerHTML += 'Hint 1: "  + movieDetails.title.replaceAll(/[A-Z,0-9,-]/,"-") + "<br/>";
+                    document.getElementById('results').innerHTML += 'Hint 1: The movie was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' movie.'+ '<br/>';
+                    document.getElementById('letter-hints').innerHTML =   movieDetails.title.replaceAll(/[A-Za-z,0-9,-]/g,"-") + "<br/>";
                     break;
                 case 2:
                     // Display first two cast members
