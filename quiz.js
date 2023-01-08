@@ -97,6 +97,7 @@ function promptUser(movieDetails, guesses) {
                     }
                     genreString = genreString.slice(0, -2); // Remove trailing comma
                     document.getElementById('results').innerHTML += 'Hint 1: The movie was released on ' + movieDetails.release_date + ' and is a ' + genreString + ' movie.'+ '<br/>';
+                    document.getElementById('results').innerHTML += 'Hint 1: "  + movieDetails.title.replaceAll(/[A-Z,0-9,-]/,"-") + "<br/>";
                     break;
                 case 2:
                     // Display first two cast members
