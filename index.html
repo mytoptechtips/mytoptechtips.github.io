@@ -2,25 +2,31 @@
 <head>
     <title>Movie Quiz</title>
     <style>
+        * { font-family:Arial;
+             font-size: 16px;
+        }
 
-  * { font-family:Arial;
-  }
-   h1, label, #results, input {
-    font-size : 20px; margin : 5px
-   }
+        h1, label, #results, input {
+            font-size : 20px; margin : 5px
+        }
+
+        #letter-hints {
+            font-size:32px;
+        }
+     
 
     </style>
 </head>
 <body>
-    <h1>Movie Quiz</h1>
-    <div id="results"></div>
-
+    <h1>Movie Quiz v2</h1>
+        <div id="results"></div>
+        <div id="letter-hints"></div>
         <form id="quiz-form">
-        <label for="guess">Guess the movie title:</label><br>
+        <label id="guess-label" for="guess">Guess the movie title:</label><br>
         <input size=60 type="text" id="guess" name="guess"><br>
         <button type="submit" id="submit-button">Submit</button>
+        <button type="button" id="play-again-button">Play Again</button>
     </form> 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="quiz.js"></script>
 </body>
 </html>
