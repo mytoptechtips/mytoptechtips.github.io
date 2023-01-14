@@ -14,19 +14,89 @@
             font-size:32px;
         }
      
+        .wrong {
+            background-color:red;
+        }
+        .correct {
+            background-color:green;
+        }
+        .neutral {
+            background-color: white;
+        }
+        .punctuation {
+            border:none;
+        }
+
+        .guess-letter:focus {
+    background-color: #f0f0f0;
+    border: 2px solid #4CAF50;
+    text-shadow: 0 0 5px #4CAF50;
+}
+
+    </style>
+    <style>
+        #movie-poster {
+            position:absolute;
+        }
+        #image {
+             width: 640px;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .box {
+            width: 25%;
+            height: 25%;
+            opacity: 1;
+            background-color:white;
+            outline:1px solid silver;
+        }
+
+        .box.visible {
+            opacity: 0.1;
+        }
 
     </style>
 </head>
 <body>
     <h1>Movie Quiz v2</h1>
         <div id="results"></div>
-        <div id="letter-hints"></div>
+      
         <form id="quiz-form">
-        <label id="guess-label" for="guess">Guess the movie title:</label><br>
-        <input size=60 type="text" id="guess" name="guess"><br>
+        <label id="guess-label" for="guess-container">Guess the movie title:</label><br>
+       
+        <div id="guess-container">
+        </div>
         <button type="submit" id="submit-button">Guess</button>
         <button type="button" id="play-again-button">Play Again</button>
     </form> 
+
+
+
+    <div id="movie-poster">
+        <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
+        <div id="overlay">
+            <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+            <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+            <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+            <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+
+            <!-- Add more boxes as needed -->
+        </div>
+    </div>
+
+    <script>
+   
+    </script>
+
     <script src="quiz.js"></script>
 </body>
 </html>
