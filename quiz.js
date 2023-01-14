@@ -153,17 +153,28 @@ function revealPicture() {
 function showCorrectResult(movieDetails) {
     document.getElementById('results').innerHTML += '<br/><br/><br/>You guessed correctly! The movie was: ' + movieDetails.title;
     
-
+    var inputBoxes = document.querySelectorAll(".guess-letter:not(.correct):not(.punctuation) ");
+    for (var i = 0; i < inputBoxes.length; i++) {
+            inputBoxes[i].classList.add("correct");
+    }
+    
     revealPicture();
     showPlayAgain();
 }
 
 function promptUser(movieDetails, guesses) {
     // Check if user has used all their guesses
+    var inputBoxes = document.getElementsByClassName("guess-letter");
     if (guesses >= 5) {
         // Display correct answer
         document.getElementById('results').innerHTML += '<br/><br/>The correct answer was: '  + movieDetails.title;   ;
-   
+        for (var i = 0; i < inputBoxes.length; i++) {
+            inputBoxes[i].value=movieDetails.title[i];
+            if (!inputBoxes[i].classList.contains("punctuation")  ) {
+                inputBoxes[i].classList.remove("wrong");
+                inputBoxes[i].classList.add("correct");
+            }
+        }
         guesses=0;
         revealPicture();
         showPlayAgain();
@@ -172,7 +183,7 @@ function promptUser(movieDetails, guesses) {
         // var guess = document.getElementById('guess').value;
         // Check if guess is correct
         var guess = "";
-        var inputBoxes = document.getElementsByClassName("guess-letter");
+       
         for (var i = 0; i < inputBoxes.length; i++) {
             guess += inputBoxes[i].value;
         }
