@@ -54,15 +54,18 @@ function startQuiz() {
     var movieIds = [];
     var movieId;
   
-    document.getElementById('letter-hints').style.display="inline-block";
+
     document.getElementById('submit-button').style.display="inline-block";
-    document.getElementById('guess').style.display="inline-block";
-    document.getElementById('guess').value="";
+
     document.getElementById('results').innerHTML = "";
-    
+    var boxes = document.querySelectorAll(".box.visible");
+    for (var i = 0; i < boxes.length; i++)  {
+        boxes[i].classList.remove("visible");
+    }
     guesses = 0;
  
-    getMovieIds().then(function(movieIds) {
+    getMovieIds()
+    .then(function(movieIds) {
         console.log(movieIds);
         // Step 2: Choose a random movie ID
         movieId = movieIds[Math.floor(Math.random() * movieIds.length)];
@@ -87,19 +90,71 @@ function startQuiz() {
                 // Step 5: Prompt user to guess movie title
                 promptUser(movieDetails, guesses);
             });
+        }).then (function(data) {
+
+            var imgSrc="https://image.tmdb.org/t/p/original"+movieDetails.backdrop_path;
+            document.getElementById("image").setAttribute("src",imgSrc);
+
+       
+
+
+            var guessContainer = document.getElementById("guess-container");
+            guessContainer.innerHTML = "";
+            for (var i = 0; i < movieDetails.title.length; i++) {
+                var answerChar = movieDetails.title[i];
+                var input = document.createElement("input");
+                input.setAttribute("size", "1");
+                input.setAttribute("maxlength", "1");
+                input.setAttribute("type", "text");
+                input.setAttribute("class", "guess-letter");
+                if (answerChar.match(/[^a-zA-Z0-9]/)) {
+                    input.classList.add("punctuation");
+                    input.value=answerChar;
+                    input.setAttribute("disabled", true)
+                }
+                input.addEventListener("focus", function(event) {
+                    event.target.select();
+                });
+                guessContainer.appendChild(input);
+            }
+            // Add event listeners for input boxes
+            var inputBoxes = document.getElementsByClassName("guess-letter");
+            for (var i = 0; i < inputBoxes.length; i++) {
+                inputBoxes[i].addEventListener("input", function(event) {
+                    var nextBox = event.target.nextElementSibling;
+                    event.target.classList.remove("wrong");
+                    event.target.classList.remove("correct");
+                    event.target.classList.remove("neutral");
+
+                    if (event.target.value.length === 1 && nextBox !== null) {
+                        nextBox.focus();
+                    }
+                });
+            }
+
+
         });
     })
 }
 function  showPlayAgain() {
     document.getElementById('play-again-button').style.display="inline-block";
     document.getElementById('submit-button').style.display="none";
-    document.getElementById('letter-hints').style.display="none";
+  
     document.getElementById('guess').style.display="none";
     document.getElementById('guess-label').style.display="none";
 
 }
+function revealPicture() {
+    var boxes = document.querySelectorAll(".box:not(.visible)");
+    for (var i = 0; i < boxes.length; i++)  {
+        boxes[i].classList.add("visible");
+    }
+}
 function showCorrectResult(movieDetails) {
     document.getElementById('results').innerHTML += '<br/><br/><br/>You guessed correctly! The movie was: ' + movieDetails.title;
+    
+
+    revealPicture();
     showPlayAgain();
 }
 
@@ -110,11 +165,18 @@ function promptUser(movieDetails, guesses) {
         document.getElementById('results').innerHTML += '<br/><br/>The correct answer was: '  + movieDetails.title;   ;
    
         guesses=0;
+        revealPicture();
         showPlayAgain();
     } else {
         // Get user's guess
-        var guess = document.getElementById('guess').value;
+        // var guess = document.getElementById('guess').value;
         // Check if guess is correct
+        var guess = "";
+        var inputBoxes = document.getElementsByClassName("guess-letter");
+        for (var i = 0; i < inputBoxes.length; i++) {
+            guess += inputBoxes[i].value;
+        }
+        
         if (guess.toLowerCase() === movieDetails.title.toLowerCase()) {
             // Display success message
                    showCorrectResult(movieDetails);
@@ -122,6 +184,26 @@ function promptUser(movieDetails, guesses) {
                    showPlayAgain();
         } else {
             // Increment guesses
+            //highlightCorrectCharacters();
+            var boxes = document.querySelectorAll(".box:not(.visible) ");
+            var visibleBox = Math.floor(Math.random() * boxes.length);
+            boxes[visibleBox].classList.add("visible");
+
+
+            if (guesses > 0 ) {
+                for (var i = 0; i < inputBoxes.length; i++) {
+                    if (!inputBoxes[i].classList.contains("punctuation")  ) {
+                    inputBoxes[i].classList.remove("correct");
+                    inputBoxes[i].classList.remove("wrong");
+                    
+                    if (movieDetails.title[i].toLowerCase() == inputBoxes[i].value.toLowerCase() ) {
+                        inputBoxes[i].classList.add("correct");
+                    } else {
+                        inputBoxes[i].classList.add("wrong");
+                    }
+                    }
+                }
+            }
             guesses++;
             // Give hint based on number of guesses
             switch (guesses) {
@@ -133,7 +215,6 @@ function promptUser(movieDetails, guesses) {
                     }
                     genreString = genreString.slice(0, -2); // Remove trailing comma
                     document.getElementById('results').innerHTML += 'Hint 1: The movie was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' movie.'+ '<br/>';
-                    document.getElementById('letter-hints').innerHTML =   movieDetails.title.replaceAll(/[A-Za-z,0-9,-]/g,"-") + "<br/>";
                     break;
                 case 2:
                     // Display first two cast members
