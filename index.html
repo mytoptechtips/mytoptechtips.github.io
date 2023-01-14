@@ -1,16 +1,18 @@
 <html>
 <head>
-    <title>Movie Quiz v3</title>
+    <title>Movie Quiz v3.3</title>
     <style>
         * { font-family:Arial;
-             font-size: 16px;
+             font-size: 1rem;
         }
 
         h1, label, input {
-            font-size : 20px; margin : 5px
+            font-size : 1rem; margin : 5px
         }
 
-
+        p {
+            font-size:20px
+        }
      
         .wrong {
             background-color:red;
@@ -38,7 +40,7 @@
     </style>
     <style>
         #movie-poster {
-            position:absolute;
+            position:relative;
         }
         #image {
              width: 640px;
@@ -48,7 +50,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 640px;
             height: 100%;
             display: flex;
             flex-wrap: wrap;
@@ -70,7 +72,7 @@
 </head>
 <body>
     <h1>Movie Quiz v2</h1>
-        <div id="movie-poster">
+     <div id="movie-poster">
         <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
         <div id="overlay">
             <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
