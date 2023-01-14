@@ -214,28 +214,28 @@ function promptUser(movieDetails, guesses) {
                         genreString += movieDetails.genres[i].name + ', ';
                     }
                     genreString = genreString.slice(0, -2); // Remove trailing comma
-                    document.getElementById('results').innerHTML += 'Hint 1: The movie was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' movie.'+ '<br/>';
+                    document.getElementById('results').innerHTML += '<p>Hint 1: The movie was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' movie.'+ '</p>';
                     break;
                 case 2:
                     // Display first two cast members
-                    document.getElementById('results').innerHTML += 'Hint 2: The movie stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'+'<br/>';
+                    document.getElementById('results').innerHTML += '<p>Hint 2: The movie stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'+'</p>';
                     break;
                 case 3:
                     // Display movie tagline
-                    document.getElementById('results').innerHTML += 'Hint 3: The movie\'s tagline is: ' + movieDetails.tagline+ '<br/>';
+                    document.getElementById('results').innerHTML += '<p>Hint 3: The movie\'s tagline is: ' + movieDetails.tagline+ '</p>';
                     break;
                 case 4:
                     // Display movie director
                     for (var i = 0; i < movieDetails.credits.crew.length; i++) {
                         if (movieDetails.credits.crew[i].job === 'Director') {
-                            document.getElementById('results').innerHTML += 'Hint 4: The movie was directed by ' + movieDetails.credits.crew[i].name + '.' +'<br/>';
+                            document.getElementById('results').innerHTML += '<p>Hint 4: The movie was directed by ' + movieDetails.credits.crew[i].name + '.' +'</p>';
                             break;
                         }
                     }
                     break;
                 case 5:
                     // Get the first two character names
-                    document.getElementById('results').innerHTML += 'Hint 5: Two characters in the film are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.'+'<br/>';
+                    document.getElementById('results').innerHTML += '<p>Hint 5: Two characters in the film are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.'+'</p>';
                     break;
             }
             // Prompt user again
