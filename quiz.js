@@ -1,5 +1,13 @@
 var guesses = 0;
 var movieDetails;
+var category="movie";
+var categoryLabel="movie"
+
+if (document.location.search == "?tv") {
+    category="tv";
+    categoryLabel="TV show";
+}
+document.getElementById("categoryLabel").innerText = categoryLabel;
 document.addEventListener('DOMContentLoaded', function() {
 
     // Set up event listener for submit button
@@ -26,7 +34,7 @@ document.getElementById('play-again-button').addEventListener('click', function(
     // Loop through pages 1 to 10
     for (var i = 1; i <= 10; i++) {
         // Call API and add page parameter
-        var response = await fetch('https://api.themoviedb.org/3/discover/movie?api_key=3f2af1df74075e194bc154e7f3233e60&language=en-US&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate&page='+i, {
+        var response = await fetch('https://api.themoviedb.org/3/discover/'+category+'?api_key=3f2af1df74075e194bc154e7f3233e60&language=en-US&with_original_language=en&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate&page='+i, {
             method: 'GET',
             mode: 'cors',
             cache: 'default'
@@ -100,7 +108,7 @@ function startQuiz() {
         // Step 2: Choose a random movie ID
         movieId = movieIds[Math.floor(Math.random() * movieIds.length)];
         // Step 3: Call API to get movie details
-        fetch('https://api.themoviedb.org/3/movie/' + movieId + '?api_key=3f2af1df74075e194bc154e7f3233e60', {
+        fetch('https://api.themoviedb.org/3/'+category+'/' + movieId + '?api_key=3f2af1df74075e194bc154e7f3233e60', {
             method: 'GET',
             mode: 'cors',
             cache: 'default'
@@ -108,8 +116,11 @@ function startQuiz() {
             return response.json();
         }).then(function(response) {
             movieDetails = response;
+            movieDetails.title = movieDetails.title || movieDetails.name;
+            movieDetails.release_date = movieDetails.release_date || movieDetails.first_air_date;
+
             // Step 4: Call API to get movie credits
-            fetch('https://api.themoviedb.org/3/movie/' + movieId + '/credits?api_key=3f2af1df74075e194bc154e7f3233e60', {
+            fetch('https://api.themoviedb.org/3/'+category+'/' + movieId + '/credits?api_key=3f2af1df74075e194bc154e7f3233e60', {
                 method: 'GET',
                 mode: 'cors',
                 cache: 'default'
@@ -287,28 +298,39 @@ function promptUser(movieDetails, guesses) {
                         genreString += movieDetails.genres[i].name + ', ';
                     }
                     genreString = genreString.slice(0, -2); // Remove trailing comma
-                    document.getElementById('results').innerHTML += '<p> 1: The movie was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' movie.'+ '</p>';
+                    document.getElementById('results').innerHTML += '<p> 1: The '+categoryLabel+' was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' '+category+'.'+ '</p>';
                     break;
                 case 2:
                     // Display first two cast members
-                    document.getElementById('results').innerHTML += '<p> 2: The movie stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'+'</p>';
+                    document.getElementById('results').innerHTML += '<p> 2: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'+'</p>';
                     break;
                 case 3:
                     // Display movie tagline
-                    document.getElementById('results').innerHTML += '<p> 3: The movie\'s tagline is: ' + movieDetails.tagline+ '</p>';
+                    if (movieDetails.tagline ) {
+
+                    
+                      document.getElementById('results').innerHTML += '<p> 3: The '+categoryLabel +'\'s tagline is: ' + movieDetails.tagline+ '</p>';
+                    } else {
+                        document.getElementById('results').innerHTML += '<p> 3: The '+categoryLabel +'\'s overview starts: ' + movieDetails.overview.substr(0,100)+ '...</p>';
+                    }
                     break;
                 case 4:
                     // Display movie director
+                    if (category == "movie") {
+                        
                     for (var i = 0; i < movieDetails.credits.crew.length; i++) {
                         if (movieDetails.credits.crew[i].job === 'Director') {
-                            document.getElementById('results').innerHTML += '<p> 4: The movie was directed by ' + movieDetails.credits.crew[i].name + '.' +'</p>';
+                            document.getElementById('results').innerHTML += '<p> 4: The '+categoryLabel +' was directed by ' + movieDetails.credits.crew[i].name + '.' +'</p>';
                             break;
                         }
                     }
+                } else {
+                    document.getElementById('results').innerHTML += '<p> 4: There were a total of '+ movieDetails.number_of_episodes + ' episodes  across '+ movieDetails.number_of_seasons + ' seasons.</p>'
+                }
                     break;
                 case 5:
                     // Get the first two character names
-                    document.getElementById('results').innerHTML += '<p> 5: Two characters in the film are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.'+'</p>';
+                    document.getElementById('results').innerHTML += '<p> 5: Two characters in the '+categoryLabel +' are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.'+'</p>';
                     break;
             }
             // Prompt user again
