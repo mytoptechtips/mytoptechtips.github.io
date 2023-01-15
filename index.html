@@ -1,17 +1,27 @@
 <html>
 <head>
-    <title>Movie Quiz v3.4</title>
+    <title>Movie Quiz v3.5</title>
     <style>
+        body {
+            padding-left:30px;
+            padding-right:30px;
+        }
         * { font-family:Arial;
              font-size: 1rem;
         }
 
         h1, label, input {
-            font-size : 1rem; margin : 5px
+            font-size : 1.5rem; margin : 5px
         }
-
+        input {
+            text-transform: uppercase;
+            margin-bottom:5px; margin-left:3px;margin-right:3px;
+        }
         p {
-            font-size:20px
+         
+    font-size: 28px;
+    line-height: 30px;
+
         }
      
         .wrong {
@@ -22,12 +32,26 @@
             background-color:green;
             color:white;
         }
+        #results .correct {
+            padding:20px;
+        }
+        #results .incorrect {
+            padding:20px;
+            background-color : blue;
+            color:white;
+        }
+        
         .neutral {
             background-color: white;
             color:black;
         }
         .punctuation {
             border:none;
+        }
+        .guess-letter.punctuation.line-wrap {
+            width : 100%;
+            height:0;
+
         }
         
         .guess-letter {
@@ -46,13 +70,20 @@
         }
 
         .guess-letter:focus {
-    background-color: #f0f0f0;
-    border: 2px solid #4CAF50;
-    text-shadow: 0 0 5px #4CAF50;
-}
+            background-color: #f0f0f0;
+            border: 2px solid #4CAF50;
+            text-shadow: 0 0 5px #4CAF50;
+        }
         #results {
             max-height: 40%;
+        }   
+
+        .guess-letter.start-new-line::before{
+            content: "\a";
+            white-space: pre;
         }
+        #submit-button { float:left}
+        #play-again-button { float:right}
 
     </style>
     <style>
@@ -88,7 +119,7 @@
     </style>
 </head>
 <body>
-    <h1>Movie Quiz v2</h1>
+    <h1>Movie Quiz v3.5</h1>
      <div id="movie-poster">
         <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
         <div id="overlay">
@@ -104,7 +135,7 @@
         <div id="results"></div>
       
         <form id="quiz-form">
-        <label id="guess-label" for="guess-container">Guess the movie title:</label><br>
+        <!-- label id="guess-label" for="guess-container">Guess the movie title:</label><br -->
        
         <div id="guess-container">
         </div>
