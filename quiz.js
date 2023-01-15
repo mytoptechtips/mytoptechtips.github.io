@@ -49,6 +49,36 @@ function formatDate(dateStr) {
     return formattedDate;
 }
 
+function wrapInputBoxes() {
+
+
+   
+   const   MAX_CHARS_PER_LINE = Math.floor(document.getElementById("guess-container").offsetWidth / document.getElementsByClassName("guess-letter")[0].offsetWidth )  - 1;
+
+    let letters = document.querySelectorAll(".guess-letter");
+
+    const string = movieDetails.title
+   // const MAX_CHARS_PER_LINE = 15;
+    let newString = "";
+    let line = "";
+    let linecount=1;
+
+    string.split(" ").forEach(function(word){
+        if ((line + word).length > MAX_CHARS_PER_LINE) {
+            newString += line + "\n";
+            if (letters[newString.length-1 -linecount]) {
+                letters[newString.length-1-linecount].classList.add("line-wrap");
+            }
+            linecount++;
+            line = "";
+        }
+        line += word + " ";
+    });
+    newString += line;
+    console.log(newString);
+
+
+}
 function startQuiz() {
     // Initialize variables
     var movieIds = [];
@@ -111,24 +141,55 @@ function startQuiz() {
                     input.classList.add("punctuation");
                     input.value=answerChar;
                     input.setAttribute("disabled", true)
+                    if (answerChar == " " ) {
+                        input.classList.add("space");
+                        input.setAttribute("data-char-pos", i );
+                    }
                 }
                 input.addEventListener("focus", function(event) {
                     event.target.select();
                 });
                 guessContainer.appendChild(input);
+                wrapInputBoxes();
             }
             // Add event listeners for input boxes
             var inputBoxes = document.getElementsByClassName("guess-letter");
             for (var i = 0; i < inputBoxes.length; i++) {
                 inputBoxes[i].addEventListener("input", function(event) {
-                    var nextBox = event.target.nextElementSibling;
+                    console.log(event.target)
+                    if (event.target.nextElementSibling) {
+                        var nextBox = event.target.nextElementSibling;
+                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
+    
+                    }
+                    console.log("Removing WRONG");
                     event.target.classList.remove("wrong");
                     event.target.classList.remove("correct");
-                    event.target.classList.remove("neutral");
+                    event.target.classList.add("neutral");
 
                     if (event.target.value.length === 1 && nextBox !== null) {
                         nextBox.focus();
                     }
+                });
+                inputBoxes[i].addEventListener("keydown", function(event) {
+                    if (event.key === "Backspace") {
+                        event.preventDefault();
+                        // do something, like delete the last character in the input
+                        event.target.value=null;
+                        event.target.classList.remove("wrong");
+                        event.target.classList.remove("correct");
+                        event.target.classList.add("neutral");
+                        var prevBox = event.target.previousElementSibling;
+                        if (prevBox.disabled) prevBox = prevBox.previousElementSibling;
+                        if (prevBox.disabled) prevBox = prevBox.previousElementSibling;
+                        if (prevBox.disabled) prevBox = prevBox.previousElementSibling;
+                        if (prevBox.disabled) prevBox = prevBox.previousElementSibling;
+                        prevBox.focus();
+                      }
+                      
                 });
             }
 
@@ -151,10 +212,11 @@ function revealPicture() {
     }
 }
 function showCorrectResult(movieDetails) {
-    document.getElementById('results').innerHTML += '<br/><br/><br/>You guessed correctly! The movie was: ' + movieDetails.title;
+    document.getElementById('results').innerHTML += '<p class="correct">CORRECT !</p>';
     
     var inputBoxes = document.querySelectorAll(".guess-letter:not(.correct):not(.punctuation) ");
     for (var i = 0; i < inputBoxes.length; i++) {
+            inputBoxes[i].classList.remove("neutral");
             inputBoxes[i].classList.add("correct");
     }
     
@@ -167,7 +229,7 @@ function promptUser(movieDetails, guesses) {
     var inputBoxes = document.getElementsByClassName("guess-letter");
     if (guesses >= 5) {
         // Display correct answer
-        document.getElementById('results').innerHTML += '<br/><br/>The correct answer was: '  + movieDetails.title;   ;
+        document.getElementById('results').innerHTML += '<p class="incorrect">Better Luck next time ! The correct answer was: </p> '  ;
         for (var i = 0; i < inputBoxes.length; i++) {
             inputBoxes[i].value=movieDetails.title[i];
             if (!inputBoxes[i].classList.contains("punctuation")  ) {
@@ -206,7 +268,7 @@ function promptUser(movieDetails, guesses) {
                     if (!inputBoxes[i].classList.contains("punctuation")  ) {
                     inputBoxes[i].classList.remove("correct");
                     inputBoxes[i].classList.remove("wrong");
-                    
+                    inputBoxes[i].classList.remove("neutral");            
                     if (movieDetails.title[i].toLowerCase() == inputBoxes[i].value.toLowerCase() ) {
                         inputBoxes[i].classList.add("correct");
                     } else {
@@ -225,28 +287,28 @@ function promptUser(movieDetails, guesses) {
                         genreString += movieDetails.genres[i].name + ', ';
                     }
                     genreString = genreString.slice(0, -2); // Remove trailing comma
-                    document.getElementById('results').innerHTML += '<p>Hint 1: The movie was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' movie.'+ '</p>';
+                    document.getElementById('results').innerHTML += '<p> 1: The movie was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' movie.'+ '</p>';
                     break;
                 case 2:
                     // Display first two cast members
-                    document.getElementById('results').innerHTML += '<p>Hint 2: The movie stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'+'</p>';
+                    document.getElementById('results').innerHTML += '<p> 2: The movie stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'+'</p>';
                     break;
                 case 3:
                     // Display movie tagline
-                    document.getElementById('results').innerHTML += '<p>Hint 3: The movie\'s tagline is: ' + movieDetails.tagline+ '</p>';
+                    document.getElementById('results').innerHTML += '<p> 3: The movie\'s tagline is: ' + movieDetails.tagline+ '</p>';
                     break;
                 case 4:
                     // Display movie director
                     for (var i = 0; i < movieDetails.credits.crew.length; i++) {
                         if (movieDetails.credits.crew[i].job === 'Director') {
-                            document.getElementById('results').innerHTML += '<p>Hint 4: The movie was directed by ' + movieDetails.credits.crew[i].name + '.' +'</p>';
+                            document.getElementById('results').innerHTML += '<p> 4: The movie was directed by ' + movieDetails.credits.crew[i].name + '.' +'</p>';
                             break;
                         }
                     }
                     break;
                 case 5:
                     // Get the first two character names
-                    document.getElementById('results').innerHTML += '<p>Hint 5: Two characters in the film are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.'+'</p>';
+                    document.getElementById('results').innerHTML += '<p> 5: Two characters in the film are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.'+'</p>';
                     break;
             }
             // Prompt user again
