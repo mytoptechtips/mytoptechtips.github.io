@@ -56,7 +56,8 @@
 
         }
         
-        .guess-letter {
+        .guess-letter,
+        .tile-letter {
             width: 3ch;
             line-height: 40px;
             font-size: 32px;
@@ -206,10 +207,73 @@
 
 
     </style>
+    <style>
+        body.loading .loading {
+          display:grid;
+          place-items:center;
+          height:100vh;
+        }
+        body:not(.loading) .loading {
+            display:none;
+        }
+        .loading p {
+            font-size: 60px;
+            line-height: 60px;
+        }
+        body.loading .wrapper,
+        body.loading #results,
+        body.loading #quiz-form {
+            display:none;
+        }
+        .titleHeading input {height:100px;font-size:90px}
+
+        </style>
+    <style>
+        .wrapper {
+            display:grid;
+            grid-template-areas: "header header header"
+                                    "poster poster scoreboard"
+                                    "results results results"
+                                    "form form form";
+        }    
+        h1 {
+            grid-area: header;
+        }
+        #movie-poster { grid-area: poster}
+        #scoreboard { grid-area: scoreboard}
+        #results { grid-area : results}
+        #quiz-form { grid-area : form}
+    
+    </style>
 </head>
-<body>
-    <h1>Guess the <span id="categoryLabel">Movie</span> Quiz v3.9</h1>
+<body class="loading">
+  
+    <div class="loading">
+        
+             <div class="titleHeading">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="G">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
+                <br/>
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="H">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"> 
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value=""><br/>
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="I">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="L">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"><br/>
+
+                
+            </div>
+            <p>Getting started... please wait </p>
+    </div>
     <div class="wrapper">
+        <h1>Guess the <span id="categoryLabel">Movie</span> title v3.9</h1>
          <div id="movie-poster">
             <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
             <div id="overlay">
@@ -227,18 +291,20 @@
             <div id="score" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:65"></div>
         </div>
     
-    </div>
-
         <div id="results"></div>
       
         <form id="quiz-form">
-        <!-- label id="guess-label" for="guess-container">Guess the movie title:</label><br -->
-       
-        <div id="guess-container">
-        </div>
-        <button type="submit" id="submit-button">Guess</button>
-        <button type="button" id="play-again-button">Play Again</button>
-    </form> 
+          <!-- label id="guess-label" for="guess-container">Guess the movie title:</label><br -->
+         
+          <div id="guess-container">
+          </div>
+          <button type="submit" id="submit-button">Guess</button>
+          <button type="button" id="play-again-button">Play Again</button>
+        </form> 
+
+    </div>
+
+
 
 
 
