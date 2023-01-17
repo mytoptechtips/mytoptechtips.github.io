@@ -12,13 +12,17 @@ document.getElementById("categoryLabel").innerText = categoryLabel;
 document.addEventListener('DOMContentLoaded', function() {
 
     // Set up event listener for submit button
+
+addClickToImage();
     startQuiz(); // Start the quiz
+
     document.getElementById('submit-button').addEventListener('click', function(event) {
 
         event.preventDefault(); // Prevent form submission
        promptUser(movieDetails, ++guesses); 
     });
 });
+
 
 document.getElementById('play-again-button').addEventListener('click', function(event) {
 
@@ -101,7 +105,8 @@ function startQuiz() {
     for (var i = 0; i < boxes.length; i++)  {
         boxes[i].classList.remove("visible");
     }
-    addClickToImage();
+    
+    resetZoom();
     guesses = 0;
  
     getMovieIds()
@@ -246,7 +251,7 @@ function showCorrectResult(movieDetails) {
             inputBoxes[i].classList.remove("neutral");
             inputBoxes[i].classList.add("correct");
     }
-    
+    resetZoom();
     revealPicture();
     showPlayAgain();
 }
@@ -277,11 +282,11 @@ function addClickToImage() {
                 console.log(imageRect);
                 scale = 4;
 
-                insetTop = scale*(rect.top - imageRect.top );
-                insetRight = scale*(imageRect.right - rect.right);
-                insetBottom = scale*( imageRect.bottom - rect.bottom);
+                var insetTop = scale*(rect.top - imageRect.top );
+                var insetRight = scale*(imageRect.right - rect.right);
+                var insetBottom = scale*( imageRect.bottom - rect.bottom);
                 
-                insetLeft = scale*(rect.x - imageRect.x);
+                var insetLeft = scale*(rect.x - imageRect.x);
                 
           
                 img.style.clipPath = `inset(${1*insetTop}px ${1*(insetRight)}px ${1*(insetBottom)}px ${insetLeft}px)`;
@@ -297,18 +302,26 @@ function addClickToImage() {
 
      var img = document.getElementById("image");
      img.addEventListener('click', function () {
-        img.classList.remove("zoomed");
-        boxes.forEach(b => {
-            b.classList.remove("selected")
-        });
-        var ovl = document.getElementById("overlay");
-        ovl.style.display="flex";
-        img.style.clipPath = `inset(0px 0px 0px 0px)`;
-     
-        img.style.marginLeft = 0;
-        img.style.marginTop = 0;
-        img.style.width = 640+"px"
+        resetZoom();
+
+  
      });
+
+}
+function resetZoom() {
+    const boxes = document.querySelectorAll('.box');
+    var img = document.getElementById("image");
+    img.classList.remove("zoomed");
+    boxes.forEach(b => {
+        b.classList.remove("selected")
+    });
+    var ovl = document.getElementById("overlay");
+    ovl.style.display="flex";
+    img.style.clipPath = `inset(0px 0px 0px 0px)`;
+ 
+    img.style.marginLeft = 0;
+    img.style.marginTop = 0;
+    img.style.width = 640+"px"
 
 }
 function updateScore() {
@@ -330,6 +343,7 @@ function promptUser(movieDetails, guesses) {
         }
         guesses=0;
         revealPicture();
+        resetZoom();
         showPlayAgain();
     } else {
         // Get user's guess
@@ -425,3 +439,5 @@ function promptUser(movieDetails, guesses) {
         }
     }
 }
+
+
