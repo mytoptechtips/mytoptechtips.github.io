@@ -49,6 +49,7 @@ document.getElementById('play-again-button').addEventListener('click', function(
         for (var j = 0; j < json.results.length; j++) {
             movieIds.push(json.results[j].id);
         }
+       
     }
     
     return movieIds;
@@ -123,6 +124,7 @@ function startQuiz() {
         }).then(function(response) {
             return response.json();
         }).then(function(response) {
+            document.body.classList.remove("loading");
             movieDetails = response;
             movieDetails.title = movieDetails.title || movieDetails.name;
             movieDetails.release_date = movieDetails.release_date || movieDetails.first_air_date;
@@ -234,7 +236,7 @@ function  showPlayAgain() {
     document.getElementById('play-again-button').style.display="inline-block";
     document.getElementById('submit-button').style.display="none";
   
-    document.getElementById('guess').style.display="none";
+ //   document.getElementById('guess').style.display="none";
     document.getElementById('guess-label').style.display="none";
 
 }
@@ -332,8 +334,9 @@ function updateScore() {
 function promptUser(movieDetails, guesses) {
     // Check if user has used all their guesses
     var inputBoxes = document.getElementsByClassName("guess-letter");
-    if (guesses >= 5) {
+    if (false) {
         // Display correct answer
+        /* 
         document.getElementById('results').innerHTML += '<p class="incorrect">Better Luck next time ! The correct answer was: </p> '  ;
         for (var i = 0; i < inputBoxes.length; i++) {
             inputBoxes[i].value=movieDetails.title[i];
@@ -347,6 +350,7 @@ function promptUser(movieDetails, guesses) {
         revealPicture();
         resetZoom();
         showPlayAgain();
+        */
     } else {
         // Get user's guess
         // var guess = document.getElementById('guess').value;
@@ -363,6 +367,8 @@ function promptUser(movieDetails, guesses) {
                    guesses=0;
                    showPlayAgain();
         } else {
+
+
             // Increment guesses
             //highlightCorrectCharacters();
             var boxes = document.querySelectorAll(".box:not(.visible) ");
@@ -370,7 +376,7 @@ function promptUser(movieDetails, guesses) {
             boxes[visibleBox].classList.add("visible");
 
 
-            if (guesses > 0 ) {
+            if (guesses < 5) {
                 for (var i = 0; i < inputBoxes.length; i++) {
                     if (!inputBoxes[i].classList.contains("punctuation")  ) {
                     inputBoxes[i].classList.remove("correct");
@@ -387,7 +393,22 @@ function promptUser(movieDetails, guesses) {
                     }
                     }
                 }
-            }
+            } else {
+                document.getElementById('results').innerHTML += '<p class="incorrect">Better Luck next time ! The correct answer was: </p> '  ;
+                for (var i = 0; i < inputBoxes.length; i++) {
+                    inputBoxes[i].value=movieDetails.title[i];
+                    if (!inputBoxes[i].classList.contains("punctuation")  ) {
+                        inputBoxes[i].classList.remove("wrong");
+                        inputBoxes[i].classList.add("correct");
+                    }
+                }
+                guesses=0;
+                score=110;
+                revealPicture();
+                resetZoom();
+                showPlayAgain();
+                return;
+             }
             guesses++;
             score=score-10;
 
