@@ -79,6 +79,10 @@
             max-height: 40%;
         }   
 
+        .wrapper {
+            display:grid;
+            grid-template-columns: 3fr 1fr;
+        }
         .guess-letter.start-new-line::before{
             content: "\a";
             white-space: pre;
@@ -86,10 +90,32 @@
         #submit-button { float:left}
         #play-again-button { float:right}
 
+        .scoreboard {
+            background:silver;
+
+        }
+        #scoreHeader {
+            font-size:34px;
+
+        }
+        #score {
+            font-size:80px;
+            border-radius:50%;
+            border:5px solid silver;
+            display:grid;
+            place-items:center;
+            line-height:200px;
+        }
+        #movie-poster:has(#image.zoomed) {
+            border: 10px solid red;
+        }
     </style>
     <style>
         #movie-poster {
             position:relative;
+            width:640px;
+            height:360px;
+      
         }
         #image {
              width: 640px;
@@ -117,22 +143,43 @@
             opacity: 0.1;
         }
 
+
+
+
+        #image {
+            width: 640px;
+            clip-path: inset(0px 0px 0px 0px);
+        }
+
+        .box.selected {
+            clip-path: inset(0px 0px 0px 0px);
+        }
+
+        
+
     </style>
 </head>
 <body>
     <h1>Guess the <span id="categoryLabel">Movie</span> Quiz v3.5</h1>
-     <div id="movie-poster">
-        <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
-        <div id="overlay">
-            <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
-            <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
-            <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
-            <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+    <div class="wrapper">
+         <div id="movie-poster">
+            <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
+            <div id="overlay">
+                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
 
-            <!-- Add more boxes as needed -->
+                <!-- Add more boxes as needed -->
+            </div>
         </div>
-    </div>
+        <div id="scoreboard">
+            <div id="scoreHeader">Score:</div>
+            <div id="score"></div>
+        </div>
     
+    </div>
+
         <div id="results"></div>
       
         <form id="quiz-form">
