@@ -1,7 +1,8 @@
 var guesses = 0;
 var movieDetails;
 var category="movie";
-var categoryLabel="movie"
+var categoryLabel="movie";
+var score=110;
 
 if (document.location.search == "?tv") {
     category="tv";
@@ -100,6 +101,7 @@ function startQuiz() {
     for (var i = 0; i < boxes.length; i++)  {
         boxes[i].classList.remove("visible");
     }
+    addClickToImage();
     guesses = 0;
  
     getMovieIds()
@@ -179,7 +181,21 @@ function startQuiz() {
                     console.log("Removing WRONG");
                     event.target.classList.remove("wrong");
                     event.target.classList.remove("correct");
-                    event.target.classList.add("neutral");
+                    wrongGuesses = event.target.getAttribute("data-incorrect-guesses") || "";
+                    correctGuess = event.target.getAttribute("data-correct-guess") || "";
+                    console.log("Checking Input : " + event.target.value.toLowerCase() )
+                    if (wrongGuesses.indexOf(event.target.value.toLowerCase()) > -1 ) {
+                        event.target.classList.add("wrong");
+                        event.target.classList.remove("neutral");
+                    }else {
+                        if (correctGuess == (event.target.value.toLowerCase()) ) {
+                            event.target.classList.add("correct");
+                            event.target.classList.remove("neutral");
+                        }else {
+                            event.target.classList.add("neutral");
+                        }
+                    }
+
 
                     if (event.target.value.length === 1 && nextBox !== null) {
                         nextBox.focus();
@@ -235,6 +251,70 @@ function showCorrectResult(movieDetails) {
     showPlayAgain();
 }
 
+
+function addClickToImage() {
+     // Add event listener to all the box elements
+     const boxes = document.querySelectorAll('.box');
+     boxes.forEach(box => {
+         box.addEventListener('click', function () {
+        
+            var ovl = document.getElementById("overlay");
+            var img = document.getElementById("image");
+            if (box.classList.contains("visible")) {                
+                // remove the class selected from all the elements
+                img.classList.add("zoomed");
+                boxes.forEach(b => {
+                    b.classList.remove("selected")
+                });
+                // add the class selected to the current element
+                this.classList.add("selected");
+
+                // update the clip path to match the dimensions of the box
+                var imageRect = document.getElementById("image").getBoundingClientRect();
+                var rect = this.getBoundingClientRect();
+                
+                console.log(rect);
+                console.log(imageRect);
+                scale = 4;
+
+                insetTop = scale*(rect.top - imageRect.top );
+                insetRight = scale*(imageRect.right - rect.right);
+                insetBottom = scale*( imageRect.bottom - rect.bottom);
+                
+                insetLeft = scale*(rect.x - imageRect.x);
+                
+          
+                img.style.clipPath = `inset(${1*insetTop}px ${1*(insetRight)}px ${1*(insetBottom)}px ${insetLeft}px)`;
+                //img.style.transform = `scale(${scale},${scale})`;
+                img.style.marginLeft = -1*insetLeft+"px";
+                img.style.marginTop = -1*insetTop+"px";
+                img.style.width = 640*scale+"px"    
+                ovl.style.display="none";
+                }
+            });
+
+     });
+
+     var img = document.getElementById("image");
+     img.addEventListener('click', function () {
+        img.classList.remove("zoomed");
+        boxes.forEach(b => {
+            b.classList.remove("selected")
+        });
+        var ovl = document.getElementById("overlay");
+        ovl.style.display="flex";
+        img.style.clipPath = `inset(0px 0px 0px 0px)`;
+     
+        img.style.marginLeft = 0;
+        img.style.marginTop = 0;
+        img.style.width = 640+"px"
+     });
+
+}
+function updateScore() {
+    document.getElementById("score").innerText = score;
+}
+
 function promptUser(movieDetails, guesses) {
     // Check if user has used all their guesses
     var inputBoxes = document.getElementsByClassName("guess-letter");
@@ -282,13 +362,19 @@ function promptUser(movieDetails, guesses) {
                     inputBoxes[i].classList.remove("neutral");            
                     if (movieDetails.title[i].toLowerCase() == inputBoxes[i].value.toLowerCase() ) {
                         inputBoxes[i].classList.add("correct");
+                        inputBoxes[i].setAttribute("data-correct-guess", inputBoxes[i].value.toLowerCase());
                     } else {
                         inputBoxes[i].classList.add("wrong");
+                        var wrongGuesses=  inputBoxes[i].getAttribute("data-incorrect-guesses")|| "" ;
+
+                        inputBoxes[i].setAttribute("data-incorrect-guesses", wrongGuesses+inputBoxes[i].value.toLowerCase())
                     }
                     }
                 }
             }
             guesses++;
+            score=score-10;
+
             // Give hint based on number of guesses
             switch (guesses) {
                 case 1:
@@ -333,6 +419,7 @@ function promptUser(movieDetails, guesses) {
                     document.getElementById('results').innerHTML += '<p> 5: Two characters in the '+categoryLabel +' are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.'+'</p>';
                     break;
             }
+            updateScore();
             // Prompt user again
            // promptUser(movieDetails, guesses);
         }
