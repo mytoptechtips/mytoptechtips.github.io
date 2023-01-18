@@ -36,8 +36,8 @@ document.getElementById('play-again-button').addEventListener('click', function(
     // Initialize variables
     var movieIds = [];
 
-    // Loop through pages 1 to 10
-    for (var i = 1; i <= 10; i++) {
+    // Loop through pages 1 to 20
+    for (var i = 1; i <= 20; i++) {
         // Call API and add page parameter
         var response = await fetch('https://api.themoviedb.org/3/discover/'+category+'?api_key=3f2af1df74075e194bc154e7f3233e60&language=en-US&with_original_language=en&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate&page='+i, {
             method: 'GET',
