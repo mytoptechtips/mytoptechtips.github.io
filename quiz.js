@@ -250,7 +250,9 @@ function showCorrectResult(movieDetails) {
     document.getElementById('results').innerHTML += '<p class="correct">CORRECT ! <span id="webshare"></span></p>';
     
     if (navigator.share) {
+
         document.getElementById("webshare").innerText = "Share"
+        document.getElementById("webshare").addEventListener("click", function () {
         navigator.share({
           title: 'Guess the '+category+' Title',
           text: 'I got a score of '+score+', what can you get ?',
@@ -258,6 +260,7 @@ function showCorrectResult(movieDetails) {
         })
           .then(() => console.log('Successful share'))
           .catch((error) => console.log('Error sharing', error));
+        })
       }
 
 
