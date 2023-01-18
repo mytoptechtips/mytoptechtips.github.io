@@ -15,6 +15,9 @@
         h1 > span {
             font-size : 1.5rem; margin : 5px
         }
+        h1 {
+            text-align:center;  
+        }
         input {
             text-transform: uppercase;
             margin-bottom:5px; margin-left:3px;margin-right:3px;
@@ -55,6 +58,8 @@
             height:0;
 
         }
+
+
         
         .guess-letter,
         .tile-letter {
@@ -98,7 +103,7 @@
         }
         #scoreHeader {
             font-size:34px;
-
+            text-align: center;
         }
         #score {
             font-size:80px;
@@ -226,7 +231,7 @@
             display:none;
         }
         .titleHeading input {height:100px;font-size:90px}
-
+        .pageHeading input {line-height:36px;font-size:25px; ;}
         </style>
     <style>
         .wrapper {
@@ -235,15 +240,64 @@
                                     "poster poster scoreboard"
                                     "results results results"
                                     "form form form";
+         grid-template-rows: 1fr 4fr 3fr 3fr;
         }    
         h1 {
             grid-area: header;
+            align-self:center;
         }
         #movie-poster { grid-area: poster}
         #scoreboard { grid-area: scoreboard}
         #results { grid-area : results}
         #quiz-form { grid-area : form}
     
+
+        #results {
+            width: 100%;
+            display: flex;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            min-height: 300px;
+            gap:20px;
+        }
+
+        #results p {
+            flex: 0 0 90%;
+            scroll-snap-align: start;
+            font-size:40px;
+            line-height:40px;
+            display:grid;
+            place-items:center;
+            padding:40px;
+            border-radius:20px;
+            border:1px solid silver;
+            font-weight:bold;
+        }
+        #results p:nth-child(1) {
+            background-color:brown;
+            color:white;
+        }
+        #results p:nth-child(2) {
+            background-color: darkblue;
+            color:white;
+        }
+        #results p:nth-child(3) {
+            background-color:darkgreen;
+            color:white;
+        }
+        #results p:nth-child(4) {
+            background-color:black;
+            color:white;
+        }
+        #results p:nth-child(5) {
+            background-color:blueviolet;
+            color:white;
+        }
+
+
+
     </style>
 </head>
 <body class="loading">
@@ -266,14 +320,29 @@
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="I">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="L">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"><br/>
-
-                
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"><br/>     
             </div>
             <p>Getting started... please wait </p>
     </div>
-    <div class="wrapper">
-        <h1>Guess the <span id="categoryLabel">Movie</span> title v3.9</h1>
+    <div class="wrapper">        <h1>
+            <div class="pageHeading">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="G">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="H">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"> 
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="I">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="L">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">  
+            </div>
+        </h1>
          <div id="movie-poster">
             <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
             <div id="overlay">
