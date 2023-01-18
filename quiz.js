@@ -8,7 +8,7 @@ if (document.location.search == "?tv") {
     category="tv";
     categoryLabel="TV show";
 }
-document.getElementById("categoryLabel").innerText = categoryLabel;
+//document.getElementById("categoryLabel").innerText = categoryLabel;
 document.addEventListener('DOMContentLoaded', function() {
 
     // Set up event listener for submit button
@@ -124,7 +124,7 @@ function startQuiz() {
         }).then(function(response) {
             return response.json();
         }).then(function(response) {
-            document.body.classList.remove("loading");
+            setTimeout( function () {document.body.classList.remove("loading");} , 1000 );
             movieDetails = response;
             movieDetails.title = movieDetails.title || movieDetails.name;
             movieDetails.release_date = movieDetails.release_date || movieDetails.first_air_date;
@@ -237,7 +237,7 @@ function  showPlayAgain() {
     document.getElementById('submit-button').style.display="none";
   
  //   document.getElementById('guess').style.display="none";
-    document.getElementById('guess-label').style.display="none";
+ //   document.getElementById('guess-label').style.display="none";
 
 }
 function revealPicture() {
@@ -257,6 +257,7 @@ function showCorrectResult(movieDetails) {
     resetZoom();
     revealPicture();
     showPlayAgain();
+    showLastHint();
 }
 
 
@@ -331,6 +332,9 @@ function updateScore() {
     document.getElementById("score").style = "--value:"+score;
 }
 
+function showLastHint() {
+    document.querySelector('#results p:last-child').scrollIntoView();
+}
 function promptUser(movieDetails, guesses) {
     // Check if user has used all their guesses
     var inputBoxes = document.getElementsByClassName("guess-letter");
@@ -407,6 +411,7 @@ function promptUser(movieDetails, guesses) {
                 revealPicture();
                 resetZoom();
                 showPlayAgain();
+                showLastHint();
                 return;
              }
             guesses++;
@@ -422,11 +427,12 @@ function promptUser(movieDetails, guesses) {
                     }
                     genreString = genreString.slice(0, -2); // Remove trailing comma
                     document.getElementById('results').innerHTML += '<p> 1: The '+categoryLabel+' was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' '+category+'.'+ '</p>';
+      
                     break;
                 case 2:
                     // Display first two cast members
                     document.getElementById('results').innerHTML += '<p> 2: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'+'</p>';
-                    break;
+                     break;
                 case 3:
                     // Display movie tagline
                     if (movieDetails.tagline ) {
@@ -447,15 +453,18 @@ function promptUser(movieDetails, guesses) {
                             break;
                         }
                     }
+                    
                 } else {
                     document.getElementById('results').innerHTML += '<p> 4: There were a total of '+ movieDetails.number_of_episodes + ' episodes  across '+ movieDetails.number_of_seasons + ' seasons.</p>'
                 }
-                    break;
+                     break;
                 case 5:
                     // Get the first two character names
                     document.getElementById('results').innerHTML += '<p> 5: Two characters in the '+categoryLabel +' are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.'+'</p>';
+                    document.querySelector('#results p:last-child').scrollIntoView();
                     break;
             }
+            showLastHint();
             updateScore();
             // Prompt user again
            // promptUser(movieDetails, guesses);
