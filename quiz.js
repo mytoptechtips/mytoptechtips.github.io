@@ -380,7 +380,7 @@ function promptUser(movieDetails, guesses) {
             boxes[visibleBox].classList.add("visible");
 
 
-            if (guesses < 5) {
+            if (guesses > 0 && guesses < 5) {
                 for (var i = 0; i < inputBoxes.length; i++) {
                     if (!inputBoxes[i].classList.contains("punctuation")  ) {
                     inputBoxes[i].classList.remove("correct");
@@ -397,7 +397,8 @@ function promptUser(movieDetails, guesses) {
                     }
                     }
                 }
-            } else {
+            } 
+            if (guesses >= 5)   {
                 document.getElementById('results').innerHTML += '<p class="incorrect">Better Luck next time ! The correct answer was: </p> '  ;
                 for (var i = 0; i < inputBoxes.length; i++) {
                     inputBoxes[i].value=movieDetails.title[i];
@@ -470,5 +471,5 @@ function promptUser(movieDetails, guesses) {
            // promptUser(movieDetails, guesses);
         }
     }
-} 
+}
 
