@@ -247,8 +247,20 @@ function revealPicture() {
     }
 }
 function showCorrectResult(movieDetails) {
-    document.getElementById('results').innerHTML += '<p class="correct">CORRECT !</p>';
+    document.getElementById('results').innerHTML += '<p class="correct">CORRECT ! <span id="webshare"></span></p>';
     
+    if (navigator.share) {
+        document.getElementById("webshare").innerText = "Share"
+        navigator.share({
+          title: 'Guess the '+category+' Title',
+          text: 'I got a score of '+score+', what can you get ?',
+          url: document.location.href,
+        })
+          .then(() => console.log('Successful share'))
+          .catch((error) => console.log('Error sharing', error));
+      }
+
+
     var inputBoxes = document.querySelectorAll(".guess-letter:not(.correct):not(.punctuation) ");
     for (var i = 0; i < inputBoxes.length; i++) {
             inputBoxes[i].classList.remove("neutral");
