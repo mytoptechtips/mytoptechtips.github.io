@@ -3,9 +3,16 @@
     <meta name="viewport" content=" user-scalable=no" />
     <title>Movie Quiz v3.9</title>
     <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background-color: black;
+                 --foreground-color: white;
+            }
+        }
         body {
             padding-left:30px;
             padding-right:30px;
+            background-color: var(--background-color);
         }
         * { font-family:Arial;
              font-size: 1rem;
@@ -39,11 +46,13 @@
         }
         #results .correct {
             padding:20px;
+            margin-right:30px;
         }
         #results .incorrect {
             padding:20px;
             background-color : blue;
             color:white;
+            margin-right:30px;
         }
         
         .neutral {
@@ -52,6 +61,7 @@
         }
         .punctuation {
             border:none;
+            background-color:var(--background-color);
         }
         .guess-letter.punctuation.line-wrap {
             width : 100%;
@@ -75,6 +85,9 @@
             margin-right:30px;
             margin-top:20px;
             margin-left:30px;
+            padding:20px;
+            border-radius:20px ; 
+
         }
 
         .guess-letter:focus {
@@ -104,6 +117,7 @@
         #scoreHeader {
             font-size:34px;
             text-align: center;
+            color: var(--foreground-color);
         }
         #score {
             font-size:80px;
@@ -142,7 +156,7 @@
             width: 25%;
             height: 25%;
             opacity: 1;
-            background-color:white;
+            background-color: var(--background-color);
             outline:1px solid silver;
         }
 
@@ -224,6 +238,7 @@
         .loading p {
             font-size: 60px;
             line-height: 60px;
+            color : var(--foreground-color);
         }
         body.loading .wrapper,
         body.loading #results,
