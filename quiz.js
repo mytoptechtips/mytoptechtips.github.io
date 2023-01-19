@@ -292,9 +292,14 @@ function startQuiz() {
                     }
 
 
-                    if (event.target.value.length === 1 && nextBox ) {
-                        nextBox.focus();
+                    if (event.target.value.length === 1  ) {
+                        if (nextBox) {
+                            nextBox.focus();
+                        } else {
+                            document.querySelector("button").focus();
+                        }
                     } 
+                
                 });
              
                 inputBoxes[i].addEventListener("keydown", function(event) {
