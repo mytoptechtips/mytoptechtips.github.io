@@ -290,6 +290,7 @@ function startQuiz() {
 function  showPlayAgain() {
     document.getElementById('play-again-button').style.display="inline-block";
     document.getElementById('submit-button').style.display="none";
+    document.getElementById('reveal-vowels-button').style.display = 'none';
   
  //   document.getElementById('guess').style.display="none";
  //   document.getElementById('guess-label').style.display="none";
