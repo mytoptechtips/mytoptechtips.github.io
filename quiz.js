@@ -252,7 +252,7 @@ function startQuiz() {
                     }
 
 
-                    if (event.target.value.length === 1 && nextBox && ) {
+                    if (event.target.value.length === 1 && nextBox ) {
                         nextBox.focus();
                     } else {
                         if (event.key != "Backspace") {
