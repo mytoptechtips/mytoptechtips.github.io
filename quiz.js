@@ -4,13 +4,19 @@ var category="movie";
 var categoryLabel="movie";
 var score=110;
 var zoomScale = 4;
+var specificId;
+
 const today = new Date();
 const imdblink="https://www.imdb.com/title/";
+let params = new URLSearchParams(document.location.search)
 
-if (document.location.search.indexOf( "tv")  > -1 )  {
+
+if (params.get( "tv") )  {
     category="tv";
     categoryLabel="TV show";
 }
+
+
 let randomSeed;
 
 todayDate = today.toISOString().slice(0,10);
@@ -49,6 +55,15 @@ addRevealVowels();
 document.getElementById('play-again-button').addEventListener('click', function(event) {
 
     event.preventDefault(); // Prevent form submission
+    
+    //remove the specific id 
+
+    if (history.pushState) {
+        params.delete("id");
+        var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?"+ params.toString() ;
+        window.history.pushState({path:newurl},'',newurl);
+    }
+
     startQuiz();
 });
 
@@ -115,6 +130,7 @@ function wrapInputBoxes() {
    const   MAX_CHARS_PER_LINE = Math.floor(document.getElementById("guess-container").offsetWidth / document.getElementsByClassName("guess-letter")[0].offsetWidth )  - 2;
 
     let letters = document.querySelectorAll(".guess-letter");
+    console.log(letters);
 
     const string = movieDetails.title
    // const MAX_CHARS_PER_LINE = 15;
@@ -142,7 +158,11 @@ function startQuiz() {
     // Initialize variables
     var movieIds = [];
     var movieId;
-  
+    if (params.get("id")) {
+        specificId = params.get("id");
+    } else {
+        specificId = null;
+    }
 
     document.getElementById('submit-button').style.display="inline-block";
 
@@ -161,8 +181,15 @@ function startQuiz() {
     .then(function(movieIds) {
         console.log(movieIds);
         // Step 2: Choose a random movie ID
-     
-        movieId = movieIds[Math.floor(randomNumber() * movieIds.length)];
+
+        movieId = specificId ? specificId : movieIds[Math.floor(randomNumber() * movieIds.length)];
+       
+        if (history.pushState) {
+            params.append("id",movieId);
+            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?"+ params.toString() ;
+            window.history.pushState({path:newurl},'',newurl);
+        }
+
         // Step 3: Call API to get movie details
         fetch('https://api.themoviedb.org/3/'+category+'/' + movieId + '?api_key=3f2af1df74075e194bc154e7f3233e60', {
             method: 'GET',
@@ -198,7 +225,11 @@ function startQuiz() {
 
             var guessContainer = document.getElementById("guess-container");
             guessContainer.innerHTML = "";
+            var MAX_PER_LINE=14;
+            var currPoss = 1;
+            words=movieDetails.title.split(" ");
             for (var i = 0; i < movieDetails.title.length; i++) {
+               
                 var answerChar = movieDetails.title[i];
                 var input = document.createElement("input");
                 input.setAttribute("size", "1");
@@ -214,12 +245,18 @@ function startQuiz() {
                         input.setAttribute("data-char-pos", i );
                     }
                 }
+                if (currPoss + (movieDetails.title+ " ").slice(i+1).indexOf(" " ) > MAX_PER_LINE ) {
+                    input.classList.add("line-wrap");
+                    currPoss=0;
+                }
+                currPoss++;
                 input.addEventListener("focus", function(event) {
                     event.target.select();
                 });
                 guessContainer.appendChild(input);
-                wrapInputBoxes();
+           
             }
+//            setTimeout(5000, wrapInputBoxes);
             // Add event listeners for input boxes
             var inputBoxes = document.getElementsByClassName("guess-letter");
             for (var i = 0; i < inputBoxes.length; i++) {
@@ -478,6 +515,8 @@ function promptUser(movieDetails, guesses) {
             } 
             if (guesses >= 5)   {
                 document.getElementById('results').innerHTML += '<p class="incorrect">Better Luck next time ! <br/> The correct answer was: </p> '  ;
+                speak();
+
                 for (var i = 0; i < inputBoxes.length; i++) {
                     inputBoxes[i].value=movieDetails.title[i];
                     if (!inputBoxes[i].classList.contains("punctuation")  ) {
@@ -551,3 +590,8 @@ function promptUser(movieDetails, guesses) {
     }
 }
 
+function speak() {
+    var msg = new SpeechSynthesisUtterance();
+    msg.text = "Better Luck next time ! The correct answer was "+movieDetails.title ;
+    window.speechSynthesis.speak(msg);
+}
