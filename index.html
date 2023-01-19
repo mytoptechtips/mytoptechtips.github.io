@@ -2,6 +2,10 @@
 <head>
     <meta name="viewport" content=" user-scalable=no" />
     <title>Movie Quiz v3.9</title>
+    <!-- inline Seedrandom.js from https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js">
+    </script>
+
     <style>
         :root {
             --background-color: white;
@@ -67,6 +71,7 @@
         .punctuation {
             border:none;
             background-color:var(--background-color);
+            color:var(--foreground-color);
         }
         .guess-letter.punctuation.line-wrap {
             width : 100%;
@@ -94,6 +99,10 @@
             border-radius:20px ; 
 
         }
+        button:focus {
+            border: 4px solid white;
+            outline: 2px solid green;
+        }
 
         .guess-letter:focus {
             background-color: #f0f0f0;
@@ -114,6 +123,7 @@
         }
         #submit-button { float:left; color:white; background:green}
         #play-again-button { float:right; color:white; background:darkolivegreen}
+        #reveal-vowels-button {float:right;color:white; background: darkolivegreen}
 
         .scoreboard {
             background:silver;
@@ -158,8 +168,8 @@
         }
 
         .box {
-            width: 25%;
-            height: 25%;
+            width: calc(100%/var(--colcount));
+            height:  calc(100%/var(--rowcount));
             opacity: 1;
             background-color: var(--background-color);
             outline:1px solid silver;
@@ -319,6 +329,47 @@
 
 
     </style>
+    <style>
+    /* add animation to the loading page */    
+    @keyframes rotate {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+
+
+.titleHeading input{
+    animation-name: rotate;
+    animation-delay:0.2s;
+    animation-duration: 0.5s;
+    animation-iteration-count: once;
+    animation-timing-function: linear;
+}
+.titleHeading input:nth-child(1){     animation-delay:0.1s;}
+.titleHeading input:nth-child(2){     animation-delay:0.2s;}
+.titleHeading input:nth-child(3){     animation-delay:0.3s;}
+.titleHeading input:nth-child(4){     animation-delay:0.4s;}
+.titleHeading input:nth-child(5){     animation-delay:0.5s;}
+.titleHeading input:nth-child(6){     animation-delay:0.6s;}
+.titleHeading input:nth-child(7){     animation-delay:0.7s;}
+.titleHeading input:nth-child(8){     animation-delay:0.8s;}
+.titleHeading input:nth-child(9){     animation-delay:0.9s;}
+.titleHeading input:nth-child(10){    animation-delay:1s;}
+.titleHeading input:nth-child(11){    animation-delay:1.1s;}
+.titleHeading input:nth-child(12){    animation-delay:1.2s;}
+.titleHeading input:nth-child(13){    animation-delay:1.3s;}
+.titleHeading input:nth-child(14){    animation-delay:1.4s;}
+.titleHeading input:nth-child(15){    animation-delay:1.5s;}
+.titleHeading input:nth-child(16){    animation-delay:1.6s;}
+.titleHeading input:nth-child(17){    animation-delay:1.7s;}
+/* and so on for each input element */
+
+
+</style>
 </head>
 <body class="loading">
   
@@ -365,12 +416,13 @@
         </h1>
          <div id="movie-poster">
             <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
-            <div id="overlay">
+            <div id="overlay" style="--colcount:4;--rowcount:4">
                 <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
                 <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
                 <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
                 <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
 
+    
                 <!-- Add more boxes as needed -->
             </div>
         </div>
@@ -388,7 +440,9 @@
           <div id="guess-container">
           </div>
           <button type="submit" id="submit-button">Guess</button>
+     
           <button type="button" id="play-again-button">Play Again</button>
+          <button type="button" id="reveal-vowels-button">Vowels (-20)</button>
         </form> 
 
     </div>
