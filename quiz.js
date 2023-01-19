@@ -5,6 +5,7 @@ var categoryLabel="movie";
 var score=110;
 var zoomScale = 4;
 const today = new Date();
+const imdblink="https://www.imdb.com/title/";
 
 if (document.location.search.indexOf( "tv")  > -1 )  {
     category="tv";
@@ -467,7 +468,7 @@ function promptUser(movieDetails, guesses) {
                 }
             } 
             if (guesses >= 5)   {
-                document.getElementById('results').innerHTML += '<p class="incorrect">Better Luck next time ! The correct answer was: </p> '  ;
+                document.getElementById('results').innerHTML += '<p class="incorrect">Better Luck next time ! <br/> The correct answer was: </p> '  ;
                 for (var i = 0; i < inputBoxes.length; i++) {
                     inputBoxes[i].value=movieDetails.title[i];
                     if (!inputBoxes[i].classList.contains("punctuation")  ) {
