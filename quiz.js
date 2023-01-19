@@ -254,7 +254,10 @@ function startQuiz() {
 
                     if (event.target.value.length === 1 && nextBox ) {
                         nextBox.focus();
-                    } else {
+                    } 
+                    /* 
+                    else {
+                    
                         if (event.key != "Backspace") {
 
                             if (document.querySelector("button").checkVisibility() ) {
@@ -263,6 +266,7 @@ function startQuiz() {
                         }
 
                     }
+                    */
                 });
                 inputBoxes[i].addEventListener("keydown", function(event) {
                     if (event.key === "Backspace") {
