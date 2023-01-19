@@ -3,17 +3,38 @@ var movieDetails;
 var category="movie";
 var categoryLabel="movie";
 var score=110;
+var zoomScale = 4;
+const today = new Date();
 
-if (document.location.search == "?tv") {
+if (document.location.search.indexOf( "tv")  > -1 )  {
     category="tv";
     categoryLabel="TV show";
 }
+let randomSeed;
+
+todayDate = today.toISOString().slice(0,10);
+
+lastDatePlayed = localStorage.getItem("lastDatePlayed");
+
+if (!lastDatePlayed || lastDatePlayed != todayDate ) {
+    randomSeed = todayDate;
+} else {
+    // include the current time 
+    randomSeed = today.toISOString();
+}
+localStorage.setItem("lastDatePlayed", todayDate);
+
+
+let randomNumber = new Math.seedrandom(randomSeed);
+
 //document.getElementById("categoryLabel").innerText = categoryLabel;
 document.addEventListener('DOMContentLoaded', function() {
 
     // Set up event listener for submit button
 
 addClickToImage();
+addRevealVowels();
+
     startQuiz(); // Start the quiz
 
     document.getElementById('submit-button').addEventListener('click', function(event) {
@@ -55,6 +76,13 @@ document.getElementById('play-again-button').addEventListener('click', function(
     return movieIds;
 }
 
+function addRevealVowels() {
+    document.getElementById('reveal-vowels-button').addEventListener('click', function(event) {
+
+        event.preventDefault(); 
+        revealVowels();
+    });
+}
 function formatDate(dateStr) {
     const date = new Date(dateStr);
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -63,11 +91,27 @@ function formatDate(dateStr) {
     return formattedDate;
 }
 
+function revealVowels () {
+    var inputBoxes = document.getElementsByClassName("guess-letter");
+    score=score -20;
+    updateScore();
+for (var i = 0; i < inputBoxes.length; i++) {
+     if (movieDetails.title[i].match(/[aeiou]/)) {
+                    inputBoxes[i].value=movieDetails.title[i];
+                      inputBoxes[i].setAttribute("data-correct-guess",movieDetails.title[i]);
+                    if (!inputBoxes[i].classList.contains("punctuation")  ) {
+                        inputBoxes[i].classList.remove("wrong");
+                        inputBoxes[i].classList.add("correct");
+                    }}
+                }
+
+                document.getElementById('reveal-vowels-button').style.display = 'none';
+}
 function wrapInputBoxes() {
 
 
    
-   const   MAX_CHARS_PER_LINE = Math.floor(document.getElementById("guess-container").offsetWidth / document.getElementsByClassName("guess-letter")[0].offsetWidth )  - 1;
+   const   MAX_CHARS_PER_LINE = Math.floor(document.getElementById("guess-container").offsetWidth / document.getElementsByClassName("guess-letter")[0].offsetWidth )  - 2;
 
     let letters = document.querySelectorAll(".guess-letter");
 
@@ -110,12 +154,14 @@ function startQuiz() {
     resetZoom();
     guesses = 0;
     score = 110;
+    document.getElementById('reveal-vowels-button').style.display = 'inline-block';
  
     getMovieIds()
     .then(function(movieIds) {
         console.log(movieIds);
         // Step 2: Choose a random movie ID
-        movieId = movieIds[Math.floor(Math.random() * movieIds.length)];
+     
+        movieId = movieIds[Math.floor(randomNumber() * movieIds.length)];
         // Step 3: Call API to get movie details
         fetch('https://api.themoviedb.org/3/'+category+'/' + movieId + '?api_key=3f2af1df74075e194bc154e7f3233e60', {
             method: 'GET',
@@ -124,7 +170,7 @@ function startQuiz() {
         }).then(function(response) {
             return response.json();
         }).then(function(response) {
-            setTimeout( function () {document.body.classList.remove("loading");} , 1000 );
+            setTimeout( function () {document.body.classList.remove("loading");} , 3000 );
             movieDetails = response;
             movieDetails.title = movieDetails.title || movieDetails.name;
             movieDetails.release_date = movieDetails.release_date || movieDetails.first_air_date;
@@ -205,8 +251,12 @@ function startQuiz() {
                     }
 
 
-                    if (event.target.value.length === 1 && nextBox !== null) {
+                    if (event.target.value.length === 1 && nextBox) {
                         nextBox.focus();
+                    } else {
+                        if (document.querySelector("button").checkVisibility() ) {
+                            document.querySelector("button").focus();
+                        }
                     }
                 });
                 inputBoxes[i].addEventListener("keydown", function(event) {
@@ -287,6 +337,8 @@ function addClickToImage() {
             if (box.classList.contains("visible")) {                
                 // remove the class selected from all the elements
                 img.classList.add("zoomed");
+                score--;
+                updateScore();
                 boxes.forEach(b => {
                     b.classList.remove("selected")
                 });
@@ -299,7 +351,7 @@ function addClickToImage() {
                 
                 console.log(rect);
                 console.log(imageRect);
-                scale = 4;
+                scale = zoomScale;
 
                 var insetTop = scale*(rect.top - imageRect.top );
                 var insetRight = scale*(imageRect.right - rect.right);
@@ -391,7 +443,8 @@ function promptUser(movieDetails, guesses) {
             // Increment guesses
             //highlightCorrectCharacters();
             var boxes = document.querySelectorAll(".box:not(.visible) ");
-            var visibleBox = Math.floor(Math.random() * boxes.length);
+           
+            var visibleBox = Math.floor(randomNumber() * boxes.length);
             boxes[visibleBox].classList.add("visible");
 
 
