@@ -185,6 +185,7 @@ function startQuiz() {
         movieId = specificId ? specificId : movieIds[Math.floor(randomNumber() * movieIds.length)];
        
         if (history.pushState) {
+            params.delete("id");
             params.append("id",movieId);
             var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?"+ params.toString() ;
             window.history.pushState({path:newurl},'',newurl);
@@ -236,6 +237,7 @@ function startQuiz() {
                 input.setAttribute("maxlength", "1");
                 input.setAttribute("type", "text");
                 input.setAttribute("class", "guess-letter");
+                input.setAttribute("data-letter-index", i);
                 if (answerChar.match(/[^a-zA-Z0-9]/)) {
                     input.classList.add("punctuation");
                     input.value=answerChar;
@@ -258,10 +260,11 @@ function startQuiz() {
             }
 //            setTimeout(5000, wrapInputBoxes);
             // Add event listeners for input boxes
-            var inputBoxes = document.getElementsByClassName("guess-letter");
+            var inputBoxes = document.querySelectorAll(".guess-letter:not(.punctuation) ");
             for (var i = 0; i < inputBoxes.length; i++) {
+                /*
                 inputBoxes[i].addEventListener("input", function(event) {
-                    console.log(event.target)
+                
                     if (event.target.nextElementSibling) {
                         var nextBox = event.target.nextElementSibling;
                         if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
@@ -292,19 +295,9 @@ function startQuiz() {
                     if (event.target.value.length === 1 && nextBox ) {
                         nextBox.focus();
                     } 
-                    /* 
-                    else {
-                    
-                        if (event.key != "Backspace") {
-
-                            if (document.querySelector("button").checkVisibility() ) {
-                                document.querySelector("button").focus();
-                            }
-                        }
-
-                    }
-                    */
                 });
+                */
+                /*
                 inputBoxes[i].addEventListener("keydown", function(event) {
                     if (event.key === "Backspace") {
                         event.preventDefault();
@@ -321,6 +314,58 @@ function startQuiz() {
                         prevBox.focus();
                       }
                       
+                });
+                */
+                inputBoxes[i].addEventListener('keydown', function(e) {
+                    var keyCode = e.keyCode;
+                    var currentIndex = Array.prototype.indexOf.call(inputBoxes, this);
+                    if (keyCode === 8 && this.value === '' && currentIndex !== 0) { // backspace
+                        inputBoxes[currentIndex - 1].focus();
+                        inputBoxes[currentIndex - 1].value = '';
+                        inputBoxes[currentIndex -1 ].classList.remove("wrong");
+                        inputBoxes[currentIndex -1 ].classList.remove("correct");
+                        inputBoxes[currentIndex -1 ].classList.add("neutral");
+                    } else if (keyCode === 8 && this.value === '' && currentIndex === 0) {
+                        this.value = '';
+                    } else if (keyCode === 39 && this.value !== '' && currentIndex !== inputBoxes.length - 1) { // right arrow
+                        inputBoxes[currentIndex + 1].focus();
+                    } else if (keyCode === 37 && currentIndex !== 0) { // left arrow
+                        inputBoxes[currentIndex - 1].focus();
+                    }
+                });
+
+                inputBoxes[i].addEventListener('keyup', function(e) {
+                    var keyCode = e.keyCode;
+                    var currentIndex = Array.prototype.indexOf.call(inputBoxes, this);
+                    if( (keyCode >= 65 && keyCode <= 90) || (keyCode >= 48 && keyCode <= 57) ){ // check if the key pressed is a letter or number
+                        this.value = e.key;
+                        //* now check if the new one is correct or not */
+                        inputBoxes[currentIndex ].classList.remove("wrong");
+                        inputBoxes[currentIndex ].classList.remove("correct");
+                        inputBoxes[currentIndex ].classList.remove("neutral");
+                       
+                        
+                        incorrectGuesses=inputBoxes[currentIndex ].getAttribute("data-incorrect-guesses");
+                        correctGuess=inputBoxes[currentIndex ].getAttribute("data-correct-guess");
+
+                        if (correctGuess && e.key.toLowerCase() == correctGuess.toLowerCase()) {
+                            inputBoxes[currentIndex ].classList.add("correct");
+                            
+                        } else {
+                            if (incorrectGuesses && incorrectGuesses.toLowerCase().indexOf(e.key.toLowerCase())> -1 )  {
+                                inputBoxes[currentIndex ].classList.add("wrong");
+                            } else {
+                                inputBoxes[currentIndex ].classList.add("neutral");
+                            }
+                        }
+
+
+                        if(currentIndex !== inputBoxes.length -1 ){ // check if the input is at the end of the inputs
+                            inputBoxes[currentIndex + 1].focus();
+                        }else {
+                            document.querySelector("button").focus();
+                        }
+                    }
                 });
             }
 
