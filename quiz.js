@@ -262,7 +262,7 @@ function startQuiz() {
             // Add event listeners for input boxes
             var inputBoxes = document.querySelectorAll(".guess-letter:not(.punctuation) ");
             for (var i = 0; i < inputBoxes.length; i++) {
-                /*
+                
                 inputBoxes[i].addEventListener("input", function(event) {
                 
                     if (event.target.nextElementSibling) {
@@ -296,8 +296,7 @@ function startQuiz() {
                         nextBox.focus();
                     } 
                 });
-                */
-                /*
+             
                 inputBoxes[i].addEventListener("keydown", function(event) {
                     if (event.key === "Backspace") {
                         event.preventDefault();
@@ -315,9 +314,10 @@ function startQuiz() {
                       }
                       
                 });
-                */
-                inputBoxes[i].addEventListener('keydown', function(e) {
+                /*
+                inputBoxes[i].addEventListener('input', function(e) {
                     var keyCode = e.keyCode;
+                    console.log(e.keyCode);
                     var currentIndex = Array.prototype.indexOf.call(inputBoxes, this);
                     if (keyCode === 8 && this.value === '' && currentIndex !== 0) { // backspace
                         inputBoxes[currentIndex - 1].focus();
@@ -335,11 +335,13 @@ function startQuiz() {
                 });
 
                 inputBoxes[i].addEventListener('keyup', function(e) {
+                    
                     var keyCode = e.keyCode;
+                    console.log("Key Up: ", e.keyCode)
                     var currentIndex = Array.prototype.indexOf.call(inputBoxes, this);
                     if( (keyCode >= 65 && keyCode <= 90) || (keyCode >= 48 && keyCode <= 57) ){ // check if the key pressed is a letter or number
                         this.value = e.key;
-                        //* now check if the new one is correct or not */
+                     
                         inputBoxes[currentIndex ].classList.remove("wrong");
                         inputBoxes[currentIndex ].classList.remove("correct");
                         inputBoxes[currentIndex ].classList.remove("neutral");
@@ -367,6 +369,7 @@ function startQuiz() {
                         }
                     }
                 });
+                */
             }
 
 
