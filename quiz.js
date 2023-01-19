@@ -252,12 +252,16 @@ function startQuiz() {
                     }
 
 
-                    if (event.target.value.length === 1 && nextBox) {
+                    if (event.target.value.length === 1 && nextBox && ) {
                         nextBox.focus();
                     } else {
-                        if (document.querySelector("button").checkVisibility() ) {
-                            document.querySelector("button").focus();
+                        if (event.key != "Backspace") {
+
+                            if (document.querySelector("button").checkVisibility() ) {
+                                document.querySelector("button").focus();
+                            }
                         }
+
                     }
                 });
                 inputBoxes[i].addEventListener("keydown", function(event) {
