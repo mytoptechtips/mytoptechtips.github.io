@@ -3,9 +3,66 @@ var movieDetails;
 var category="movie";
 var categoryLabel="movie";
 var score=110;
-var zoomScale = 4;
+var zoomScale = 8;
 var specificId;
+var sound=false;
 
+
+function getPreferences() {
+    var preferences;
+    try {
+        preferences = JSON.parse(localStorage.getItem("preferences") || "{}" );
+        }
+        catch (ex) {
+            preferences = {};
+            savePreferences(preferences);
+        }
+    return preferences;
+}
+var preferences = getPreferences();
+
+function setTheme(preferences) {
+    document.body.classList.remove("light");
+    document.body.classList.remove("dark");
+    document.body.classList.add(  preferences.theme );
+
+}
+setTheme(preferences);
+function setScale() {
+    if (preferences && preferences.mode == "hard") {
+        zoomScale = 12;
+    } else {
+        zoomScale = 4;
+    }
+}
+
+setScale();
+sound = preferences.sound;
+
+function createOverlay() {
+    
+    ovl = document.getElementById ('overlay');
+    ovl.innerHTML = "";
+    ovl.style="--colcount:"+zoomScale+";--rowcount:"+zoomScale;
+    for (var i=0 ; i < zoomScale * zoomScale ; i++ ) {
+        b = document.createElement('DIV');
+        b.classList.add("box");
+        ovl.appendChild(b);
+
+    }
+
+
+}
+createOverlay() ;
+
+
+function setPreferencesInMenu() {
+
+    document.getElementById("modeSetting").checked= (preferences.mode == "hard") ;
+    document.getElementById("themeSetting").checked = (preferences.theme == "dark") ;
+    document.getElementById("soundSetting").checked= (preferences.sound) ;
+}
+setPreferencesInMenu() ;
 const today = new Date();
 const imdblink="https://www.imdb.com/title/";
 let params = new URLSearchParams(document.location.search)
@@ -117,6 +174,7 @@ for (var i = 0; i < inputBoxes.length; i++) {
                       inputBoxes[i].setAttribute("data-correct-guess",movieDetails.title[i]);
                     if (!inputBoxes[i].classList.contains("punctuation")  ) {
                         inputBoxes[i].classList.remove("wrong");
+                        inputBoxes[i].classList.remove("neutral");
                         inputBoxes[i].classList.add("correct");
                     }}
                 }
@@ -258,7 +316,8 @@ function startQuiz() {
                 guessContainer.appendChild(input);
            
             }
-//            setTimeout(5000, wrapInputBoxes);
+
+
             // Add event listeners for input boxes
             var inputBoxes = document.querySelectorAll(".guess-letter:not(.punctuation) ");
             for (var i = 0; i < inputBoxes.length; i++) {
@@ -273,7 +332,7 @@ function startQuiz() {
                         if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
     
                     }
-                    console.log("Removing WRONG");
+
                     event.target.classList.remove("wrong");
                     event.target.classList.remove("correct");
                     wrongGuesses = event.target.getAttribute("data-incorrect-guesses") || "";
@@ -319,63 +378,9 @@ function startQuiz() {
                       }
                       
                 });
-                /*
-                inputBoxes[i].addEventListener('input', function(e) {
-                    var keyCode = e.keyCode;
-                    console.log(e.keyCode);
-                    var currentIndex = Array.prototype.indexOf.call(inputBoxes, this);
-                    if (keyCode === 8 && this.value === '' && currentIndex !== 0) { // backspace
-                        inputBoxes[currentIndex - 1].focus();
-                        inputBoxes[currentIndex - 1].value = '';
-                        inputBoxes[currentIndex -1 ].classList.remove("wrong");
-                        inputBoxes[currentIndex -1 ].classList.remove("correct");
-                        inputBoxes[currentIndex -1 ].classList.add("neutral");
-                    } else if (keyCode === 8 && this.value === '' && currentIndex === 0) {
-                        this.value = '';
-                    } else if (keyCode === 39 && this.value !== '' && currentIndex !== inputBoxes.length - 1) { // right arrow
-                        inputBoxes[currentIndex + 1].focus();
-                    } else if (keyCode === 37 && currentIndex !== 0) { // left arrow
-                        inputBoxes[currentIndex - 1].focus();
-                    }
-                });
-
-                inputBoxes[i].addEventListener('keyup', function(e) {
-                    
-                    var keyCode = e.keyCode;
-                    console.log("Key Up: ", e.keyCode)
-                    var currentIndex = Array.prototype.indexOf.call(inputBoxes, this);
-                    if( (keyCode >= 65 && keyCode <= 90) || (keyCode >= 48 && keyCode <= 57) ){ // check if the key pressed is a letter or number
-                        this.value = e.key;
-                     
-                        inputBoxes[currentIndex ].classList.remove("wrong");
-                        inputBoxes[currentIndex ].classList.remove("correct");
-                        inputBoxes[currentIndex ].classList.remove("neutral");
-                       
-                        
-                        incorrectGuesses=inputBoxes[currentIndex ].getAttribute("data-incorrect-guesses");
-                        correctGuess=inputBoxes[currentIndex ].getAttribute("data-correct-guess");
-
-                        if (correctGuess && e.key.toLowerCase() == correctGuess.toLowerCase()) {
-                            inputBoxes[currentIndex ].classList.add("correct");
-                            
-                        } else {
-                            if (incorrectGuesses && incorrectGuesses.toLowerCase().indexOf(e.key.toLowerCase())> -1 )  {
-                                inputBoxes[currentIndex ].classList.add("wrong");
-                            } else {
-                                inputBoxes[currentIndex ].classList.add("neutral");
-                            }
-                        }
-
-
-                        if(currentIndex !== inputBoxes.length -1 ){ // check if the input is at the end of the inputs
-                            inputBoxes[currentIndex + 1].focus();
-                        }else {
-                            document.querySelector("button").focus();
-                        }
-                    }
-                });
-                */
+                
             }
+            inputBoxes[0].focus();
 
 
         });
@@ -567,8 +572,11 @@ function promptUser(movieDetails, guesses) {
                 }
             } 
             if (guesses >= 5)   {
-                document.getElementById('results').innerHTML += '<p class="incorrect">Better Luck next time ! <br/> The correct answer was: </p> '  ;
-                speak();
+                notice="Better Luck next time ! <br/> The correct answer was: ";
+                msg="Better Luck next time !  The correct answer was: "+ movieDetails.title;
+              
+                document.getElementById('results').innerHTML += '<p class="incorrect">'+notice+'</p> '  ;
+                speak(msg);
 
                 for (var i = 0; i < inputBoxes.length; i++) {
                     inputBoxes[i].value=movieDetails.title[i];
@@ -597,41 +605,51 @@ function promptUser(movieDetails, guesses) {
                         genreString += movieDetails.genres[i].name + ', ';
                     }
                     genreString = genreString.slice(0, -2); // Remove trailing comma
-                    document.getElementById('results').innerHTML += '<p> 1: The '+categoryLabel+' was released on ' + formatDate(movieDetails.release_date) + ' and is a ' + genreString + ' '+category+'.'+ '</p>';
-      
+                    msg = ' 1: The '+categoryLabel+' was released on ' + formatDate(movieDetails.release_date) + '. It is a ' + genreString + ' '+category+'.';
+                    document.getElementById('results').innerHTML += '<p> ' + msg+ '</p>';
+                    speak(msg);
                     break;
                 case 2:
                     // Display first two cast members
-                    document.getElementById('results').innerHTML += '<p> 2: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'+'</p>';
+                    msg = '2: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'
+                    document.getElementById('results').innerHTML += '<p> '+msg+'</p>';
+                    speak(msg);
                      break;
                 case 3:
                     // Display movie tagline
                     if (movieDetails.tagline ) {
 
                     
-                      document.getElementById('results').innerHTML += '<p> 3: The '+categoryLabel +'\'s tagline is: ' + movieDetails.tagline+ '</p>';
+                      msg = '3: The '+categoryLabel +'\'s tagline is: ' + movieDetails.tagline;
                     } else {
-                        document.getElementById('results').innerHTML += '<p> 3: The '+categoryLabel +'\'s overview starts: ' + movieDetails.overview.substr(0,100)+ '...</p>';
+                       msg = '3: The '+categoryLabel +'\'s overview starts: ' + movieDetails.overview.substr(0,100)+ '...';
                     }
+                    document.getElementById('results').innerHTML += '<p> '+msg+'</p>';
+                    speak(msg);
                     break;
                 case 4:
                     // Display movie director
                     if (category == "movie") {
                         
-                    for (var i = 0; i < movieDetails.credits.crew.length; i++) {
-                        if (movieDetails.credits.crew[i].job === 'Director') {
-                            document.getElementById('results').innerHTML += '<p> 4: The '+categoryLabel +' was directed by ' + movieDetails.credits.crew[i].name + '.' +'</p>';
-                            break;
+                        for (var i = 0; i < movieDetails.credits.crew.length; i++) {
+                            if (movieDetails.credits.crew[i].job === 'Director') {
+                                msg='4: The '+categoryLabel +' was directed by ' + movieDetails.credits.crew[i].name + '.';
+                            
+                                break;
+                            }
                         }
-                    }
                     
-                } else {
-                    document.getElementById('results').innerHTML += '<p> 4: There were a total of '+ movieDetails.number_of_episodes + ' episodes  across '+ movieDetails.number_of_seasons + ' seasons.</p>'
-                }
+                    } else {
+                        msg='4: There were a total of '+ movieDetails.number_of_episodes + ' episodes  across '+ movieDetails.number_of_seasons + ' seasons.';
+                    }
+                    document.getElementById('results').innerHTML += '<p> '+msg  +'</p>';
+                    speak(msg);
                      break;
                 case 5:
                     // Get the first two character names
-                    document.getElementById('results').innerHTML += '<p> 5: Two characters in the '+categoryLabel +' are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.'+'</p>';
+                    msg='5: Two characters in the '+categoryLabel +' are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.';
+                    document.getElementById('results').innerHTML += '<p>'+msg+'</p>';
+                    speak(msg);
                     document.querySelector('#results p:last-child').scrollIntoView();
                     break;
             }
@@ -643,8 +661,51 @@ function promptUser(movieDetails, guesses) {
     }
 }
 
-function speak() {
-    var msg = new SpeechSynthesisUtterance();
-    msg.text = "Better Luck next time ! The correct answer was "+movieDetails.title ;
-    window.speechSynthesis.speak(msg);
+function speak(txt) {
+    if (sound ) {
+        var msg = new SpeechSynthesisUtterance();
+        msg.text = txt;
+        window.speechSynthesis.speak(msg);
+    }
 }
+
+function openDrawer() {
+    var drawer = document.getElementById("drawer");
+    drawer.classList.toggle("hidden");
+    drawer.classList.toggle("visible");
+  }
+  document.querySelector(".menu-icon").addEventListener("click", openDrawer);
+  document.querySelector(".close-menu").addEventListener("click", openDrawer);
+
+
+  /* Add listeners for menu items */
+  function savePreferences (pref) {
+    localStorage.setItem("preferences", JSON.stringify(preferences) );
+  }
+  document.getElementById("themeSetting").addEventListener("click", function (e) {
+    preferences = getPreferences();
+    preferences.theme = e.target.checked ? "dark" : "light";
+   setTheme(preferences);
+    savePreferences(preferences);
+  })
+
+
+  document.getElementById("modeSetting").addEventListener("click", function (e) {
+    preferences = getPreferences();
+    preferences.mode = e.target.checked ? "hard" : "easy";
+    document.body.classList.add(  preferences.mode );
+    setScale();
+    createOverlay() ;
+    savePreferences(preferences);
+  })
+
+
+  document.getElementById("soundSetting").addEventListener("click", function (e) {
+    preferences = getPreferences();
+    preferences.sound = e.target.checked ? true : false;
+    sound = preferences.sound;
+    if (sound) {
+        speak(document.querySelector('#results p:last-child').innerText);
+    }
+    savePreferences(preferences);
+  })
