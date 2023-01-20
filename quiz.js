@@ -337,7 +337,7 @@ function startQuiz() {
                     event.target.classList.remove("correct");
                     wrongGuesses = event.target.getAttribute("data-incorrect-guesses") || "";
                     correctGuess = event.target.getAttribute("data-correct-guess") || "";
-                    console.log("Checking Input : " + event.target.value.toLowerCase() )
+                    //console.log("Checking Input : " + event.target.value.toLowerCase() )
                     if (wrongGuesses.indexOf(event.target.value.toLowerCase()) > -1 ) {
                         event.target.classList.add("wrong");
                         event.target.classList.remove("neutral");
@@ -401,9 +401,27 @@ function revealPicture() {
         boxes[i].classList.add("visible");
     }
 }
+function enableShareLink() {
+
+    if (navigator.share ) {
+
+     document.getElementById("shareLink").addEventListener("click", function () {
+            navigator.share({
+            title: 'Guess the '+category+' Title',
+            text: 'Try out this game : ',
+            url: document.location.href,
+            })
+            .then(() => console.log('Successful share'))
+            .catch((error) => console.log('Error sharing', error));
+            })
+        } else {
+            document.querySelector("#shareLink").remove();
+        }
+
+}
 function showCorrectResult(movieDetails) {
-    document.getElementById('results').innerHTML += '<p class="correct">CORRECT ! <span id="webshare"></span></p>';
-    
+    document.getElementById('results').innerHTML += '<p class="correct">Well Done! <br />That is the right answer.  You scored '+score+'.<br /> <span id="webshare"></span></p>';
+    speak("Well Done ! That is the right answer, you scored : "+ score);
     if (navigator.share) {
 
         document.getElementById("webshare").innerText = "Share"
@@ -501,7 +519,9 @@ function resetZoom() {
 
 }
 function updateScore() {
-    document.getElementById("score").style = "--value:"+score;
+//    document.getElementById("score").style = "--value:"+score;
+    document.getElementById("score").value = score;
+    document.getElementById("scoreDisplay").innerText = score;
 }
 
 function showLastHint() {
@@ -668,6 +688,7 @@ function speak(txt) {
         window.speechSynthesis.speak(msg);
     }
 }
+enableShareLink();
 
 function openDrawer() {
     var drawer = document.getElementById("drawer");
@@ -696,6 +717,7 @@ function openDrawer() {
     document.body.classList.add(  preferences.mode );
     setScale();
     createOverlay() ;
+    addClickToImage();
     savePreferences(preferences);
   })
 
