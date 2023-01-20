@@ -7,14 +7,16 @@
     </script>
 
     <style>
-        :root {
+        :root,
+        body.light {
             --background-color: white;
             --foreground-color: black;
         }
         @media (prefers-color-scheme: dark) {
-            :root {
+            :root,
+            body.dark {
                 --background-color: black;
-                 --foreground-color: white;
+                --foreground-color: white;
             }
         }
         body {
@@ -24,6 +26,25 @@
         }
         * { font-family:Arial;
              font-size: 1rem;
+        }
+
+        header {
+            display: flex;
+   
+            justify-content: space-around;
+
+        }
+
+        .menu-icon  {
+            stroke-width:2; 
+            stroke:green; 
+            fill:darkgray
+        }
+
+        .close-menu  {
+            stroke-width:2; 
+            stroke:var(--foreground-color); 
+            fill: var(--foreground-color);
         }
 
         h1, label, input,
@@ -113,10 +134,7 @@
             max-height: 40%;
         }   
 
-        .wrapper {
-            display:grid;
-            grid-template-columns: 3fr 1fr;
-        }
+   
         .guess-letter.start-new-line::before{
             content: "\a";
             white-space: pre;
@@ -219,7 +237,7 @@
             --fg: #369;
             --bg: #def;
             --pgPercentage: var(--value);
-            animation: shrinkProgressBar 5s 1 backwards;
+            animation: shrinkProgressBar 5s 1 backwards;#
          
             width: var(--size);
             height: var(--size);
@@ -269,12 +287,14 @@
         .wrapper {
             display:grid;
             grid-template-areas: "header header header"
-                                    "poster poster scoreboard"
-                                    "results results results"
-                                    "form form form";
+                                 "poster poster scoreboard" 
+                                 "results results results"
+                                "form form form";
          grid-template-rows: 1fr 4fr 3fr 3fr;
+            grid-template-columns: 2fr 2fr 1fr ;
+    
         }    
-        h1 {
+        header {
             grid-area: header;
             align-self:center;
         }
@@ -285,14 +305,14 @@
     
 
         #results {
-            width: 100%;
+            width: 95vw;
             display: flex;
             overflow-x: scroll;
             overflow-y: hidden;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
             min-height: 300px;
-            gap:20px;
+            gap:2vw;
         }
 
         #results p {
@@ -372,6 +392,142 @@
 
 
 </style>
+
+<style>
+
+    .menu-icon {
+  padding-top: 10px;
+  padding-right:10px;
+  top: 10px;
+  right: 10px;
+}
+
+#drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+
+  background-color: var(--background-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-out;
+}
+#drawer span, 
+#drawer label, 
+#drawer p,
+#drawer h2,
+#drawer h3,
+#drawer h4,
+#drawer h5,
+#drawer a
+{
+    color: var(--foreground-color);
+    text-decoration:none
+}
+
+#drawer.hidden {
+  transform: translateX(100%);
+}
+
+#drawer.visible {
+  transform: translateX(0);
+}
+
+#drawer-content {
+  padding: 20px;
+}
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+
+}
+.close-menu {
+    float:right;
+    padding-top: 10px;
+  padding-right:10px;
+}
+
+
+
+</style>
+<style>
+
+    .toggle {
+  cursor: pointer;
+  
+  display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-items: center;
+    justify-content: space-evenly;
+}
+
+.toggle-switch {
+  display: inline-block;
+  background: #ccc;
+  border-radius: 16px;
+  width: 58px;
+  height: 32px;
+  position: relative;
+  vertical-align: middle;
+  transition: background 0.25s;
+}
+.toggle-switch:before, .toggle-switch:after {
+  content: "";
+}
+.toggle-switch:before {
+  display: block;
+  background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  transition: left 0.25s;
+}
+.toggle:hover .toggle-switch:before {
+  background: linear-gradient(to bottom, #fff 0%, #fff 100%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+.toggle-checkbox:checked + .toggle-switch {
+  background: #56c080;
+}
+.toggle-checkbox:checked + .toggle-switch:before {
+  left: 30px;
+}
+
+.toggle-checkbox {
+  position: absolute;
+  visibility: hidden;
+}
+
+.toggle-label {
+  margin-left: 5px;
+  position: relative;
+  top: 2px;
+}    
+
+.link-container a {
+    font-size:22px;
+}
+
+.drawer-content {
+    padding:30px;
+    padding-top:100px;
+
+}
+.drawer-content h2 {
+    font-size:40px;
+    margin-bottom:20px;
+}
+</style>
 </head>
 <body class="loading">
   
@@ -395,9 +551,12 @@
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="L">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"><br/>     
             </div>
-            <p>Getting started... please wait </p>
+            <p>Getting started ... please wait </p>
     </div>
-    <div class="wrapper">        <h1>
+
+    <div class="wrapper">       
+        <header>
+        <h1>
             <div class="pageHeading">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="G">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
@@ -416,15 +575,19 @@
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">  
             </div>
         </h1>
+        <div>
+            <svg class="menu-icon" 
+            viewBox="0 0 100 80" width="40" height="40">
+                <rect width="100" height="20"></rect>
+                <rect y="30" width="100" height="20"></rect>
+                <rect y="60" width="100" height="20"></rect>
+            </svg>
+</div>
+         </header>
          <div id="movie-poster">
             <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
-            <div id="overlay" style="--colcount:4;--rowcount:4">
-                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
-                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
-                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
-                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
-
-    
+            <div id="overlay" style="--colcount:8;--rowcount:8">
+          
                 <!-- Add more boxes as needed -->
             </div>
         </div>
@@ -448,6 +611,62 @@
         </form> 
 
     </div>
+
+
+
+
+
+    
+
+<div id="drawer" class="hidden">
+    <svg class="close-menu" viewBox="0 0 100 80" width="40" height="40">
+    <line x1="10" y1="10" x2="90" y2="70"  stroke-width="15"></line>
+    <line x1="90" y1="10" x2="10" y2="70"  stroke-width="15"></line>
+</svg>
+    
+  <div id="drawer-content">
+    <h2> Settings </h2>
+    <div class="select-container">
+        <label class="toggle">
+            <span class="">Easy</span>
+            <input class="toggle-checkbox" type="checkbox" id="modeSetting">
+             <div class="toggle-switch"></div>
+             <span class="toggle-label">Hard</span>
+        </label>
+        <hr/>
+        <label class="toggle">
+            <span class="">Light</span>
+            <input class="toggle-checkbox" type="checkbox" id="themeSetting">
+             <div class="toggle-switch"></div>
+             <span class="toggle-label">Dark</span>
+        </label>
+        <hr />
+        <label class="toggle">
+            <span class="">Sound Off</span>
+            <input class="toggle-checkbox" type="checkbox" id="soundSetting">
+             <div class="toggle-switch"></div>
+             <span class="toggle-label">On</span>
+        </label>
+        <hr />
+      
+    <div class="link-container">
+      <a href="#" class="link">How to Play</a>
+    </div>
+    <hr />
+    <div class="link-container">
+      <a href="#" class="link">About</a>
+    </div>
+    <hr />
+    <div class="link-container">
+      <a href="#" class="link">Credits</a>
+    </div>
+    <hr />
+    <div class="link-container">
+      <a href="#" class="link">Share</a>
+    </div>
+ 
+  </div>
+</div>
 
 
 
