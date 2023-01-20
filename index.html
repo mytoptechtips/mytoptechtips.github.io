@@ -38,21 +38,31 @@
         .menu-icon  {
             stroke-width:2; 
             stroke:green; 
-            fill:darkgray
+            fill:darkgray;
+            margin:15px;
         }
 
         .close-menu  {
             stroke-width:2; 
             stroke:var(--foreground-color); 
             fill: var(--foreground-color);
+            margin:10px;
         }
 
         h1, label, input,
         h1 > span {
-            font-size : 1.5rem; margin : 5px
+            font-size : 1.5rem;
+           
+
+        }
+
+        h1 > span {
+            margin : 5px;
+            width: 93vw;
         }
         h1 {
             text-align:center;  
+            
         }
         input {
             text-transform: uppercase;
@@ -148,17 +158,25 @@
 
         }
         #scoreHeader {
-            font-size:34px;
+            font-size:15px;
             text-align: center;
             color: var(--foreground-color);
         }
         #score {
-            font-size:80px;
-            border-radius:50%;
+            font-size:20px;
+
             border:5px solid silver;
-            display:grid;
-            place-items:center;
-            line-height:200px;
+ 
+            width:80vw;
+            height: 3rem;
+
+  
+        }
+        #scoreDisplay {
+            font-size: 30px;
+    line-height: 20px;
+    vertical-align: 10px;
+            
         }
         #movie-poster:has(#image.zoomed) {
             border: 10px solid red;
@@ -184,6 +202,7 @@
             display: flex;
             flex-wrap: wrap;
         }
+        .hidden {display:none}
 
         .box {
             width: calc(100%/var(--colcount));
@@ -287,10 +306,11 @@
         .wrapper {
             display:grid;
             grid-template-areas: "header header header"
-                                 "poster poster scoreboard" 
+                                 "poster poster poster"
+                                 "scoreboard scoreboard scoreboard" 
                                  "results results results"
                                 "form form form";
-         grid-template-rows: 1fr 4fr 3fr 3fr;
+         grid-template-rows: 1fr 4fr 0.25fr 3fr 3fr;
             grid-template-columns: 2fr 2fr 1fr ;
     
         }    
@@ -298,7 +318,7 @@
             grid-area: header;
             align-self:center;
         }
-        #movie-poster { grid-area: poster}
+        #movie-poster { grid-area: poster; justify-self:center}
         #scoreboard { grid-area: scoreboard}
         #results { grid-area : results}
         #quiz-form { grid-area : form}
@@ -396,10 +416,9 @@
 <style>
 
     .menu-icon {
-  padding-top: 10px;
-  padding-right:10px;
-  top: 10px;
-  right: 10px;
+
+  height:25px;
+  width:25px;
 }
 
 #drawer {
@@ -439,6 +458,19 @@
 #drawer-content {
   padding: 20px;
 }
+#drawer-content label span,
+#drawer-content h2
+ {
+ font-size:1.6rem;
+}
+#drawer-content h3
+ {
+ font-size:1.4rem;
+}
+#drawer-content hr {
+    margin-top : 30px;
+    margin-bottom: 30px;
+}
 
 .switch-container {
   display: flex;
@@ -448,8 +480,14 @@
 }
 .close-menu {
     float:right;
-    padding-top: 10px;
-  padding-right:10px;
+    padding-top: 30px;
+  padding-right:35px;
+  height: 30px;
+    width: 30px;
+
+    stroke-width: 2;
+    stroke: darkgray;
+  
 }
 
 
@@ -518,16 +556,37 @@
     font-size:22px;
 }
 
-.drawer-content {
-    padding:30px;
-    padding-top:100px;
-
+#drawer-content {
+    padding: 30px;
+    padding-top: 90px;
 }
-.drawer-content h2 {
+#drawer-content h2 {
     font-size:40px;
     margin-bottom:20px;
 }
+dialog {
+    position: absolute;
+    top:0;
+    left:0;
+    margin:30px;
+    border:1px solid silver;
+    z-index:9999;
+    height:100vh;
+    background : var(--background-color);
+    color:var(--foreground-color);
+}
+dialog .close {
+    width:100%;
+    text-align:right;
+    display:block;
+    font-size:30px;
+}
+dialog h2 {
+    font-size:40px;
+}
 </style>
+<style>
+    meter {width : 80vw; height:2rem;}    </style>
 </head>
 <body class="loading">
   
@@ -592,9 +651,10 @@
             </div>
         </div>
         <div id="scoreboard">
-            <div id="scoreHeader">Score:</div>
-            <!-- div id="score"></div --> 
-            <div id="score" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:65"></div>
+            <div id="scoreHeader">
+                <meter id="score" max=100 min=0 value=100 high=80 low=40 optimum=90></meter><span id="scoreDisplay"></span>
+        </div>
+            <!-- div id="score" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:65"></div -->
         </div>
     
         <div id="results"></div>
@@ -620,20 +680,23 @@
 
 <div id="drawer" class="hidden">
     <svg class="close-menu" viewBox="0 0 100 80" width="40" height="40">
-    <line x1="10" y1="10" x2="90" y2="70"  stroke-width="15"></line>
-    <line x1="90" y1="10" x2="10" y2="70"  stroke-width="15"></line>
-</svg>
+        <line x1="10" y1="10" x2="90" y2="70"  stroke-width="15"></line>
+        <line x1="90" y1="10" x2="10" y2="70"  stroke-width="15"></line>
+    </svg>
     
-  <div id="drawer-content">
-    <h2> Settings </h2>
+    <div id="drawer-content">
+        <h2> Settings </h2>
     <div class="select-container">
+    
+        <h3> Difficulty:</h3>
         <label class="toggle">
-            <span class="">Easy</span>
+            <span>Easy:</span>
             <input class="toggle-checkbox" type="checkbox" id="modeSetting">
              <div class="toggle-switch"></div>
              <span class="toggle-label">Hard</span>
         </label>
         <hr/>
+        <h3> Theme:</h3>
         <label class="toggle">
             <span class="">Light</span>
             <input class="toggle-checkbox" type="checkbox" id="themeSetting">
@@ -641,31 +704,32 @@
              <span class="toggle-label">Dark</span>
         </label>
         <hr />
+        <h3> Sound:</h3>
         <label class="toggle">
-            <span class="">Sound Off</span>
+            <span class="">On</span>
             <input class="toggle-checkbox" type="checkbox" id="soundSetting">
              <div class="toggle-switch"></div>
-             <span class="toggle-label">On</span>
+             <span class="toggle-label">Off</span>
         </label>
         <hr />
       
-    <div class="link-container">
-      <a href="#" class="link">How to Play</a>
+        <div class="link-container">
+            <a href="javascript:void(document.getElementById('howToPlayDialog').show()) " class="link">How to Play</a>
+        </div>
+        <hr />
+        <div class="link-container">
+            <a href="javascript:void(document.getElementById('aboutDialog').show()) " class="link">About</a>
+        </div>
+        <hr />
+        <div class="link-container">
+            <a href="javascript:void(document.getElementById('creditsDialog').show()) " class="link">Credits</a>
+        </div>
+        <hr />
+        <div class="link-container">
+             <a href="#" id=shareLink class="link">Share</a>
+        </div>
+        </div>
     </div>
-    <hr />
-    <div class="link-container">
-      <a href="#" class="link">About</a>
-    </div>
-    <hr />
-    <div class="link-container">
-      <a href="#" class="link">Credits</a>
-    </div>
-    <hr />
-    <div class="link-container">
-      <a href="#" class="link">Share</a>
-    </div>
- 
-  </div>
 </div>
 
 
@@ -679,5 +743,54 @@
     </script>
 
     <script src="quiz.js"></script>
+<dialog id="howToPlayDialog">
+    
+    <div>
+        <a class="close" href="#" id="closeHowToPlay">X</a>
+        <h2>How To Play</h2>
+
+        <p>You will be given a series of clues to identify a show. Type your guesses into the boxes and press the Guess button</p>.
+        <p> As the game progresses more and more of the picture is revealed.  You can click on the exposed tiles to zoom into them.</p>
+        <p>With each guess your points total goes down.</p>
+        <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
+
+    </div>
+</dialog>
+<dialog id="aboutDialog">
+    
+    <div>
+        <a class="close" href="#" id="closeAbout">X</a>
+        <h2>About</h2>
+
+        <p>You will be given a series of clues to identify a show. Type your guesses into the boxes and press the Guess button</p>.
+        <p> As the game progresses more and more of the picture is revealed.  You can click on the exposed tiles to zoom into them.</p>
+        <p>With each guess your points total goes down.</p>
+        <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
+
+    </div>
+</dialog>
+<dialog id="creditsDialog">
+    <a class="close" href="#" id="closeCredits">X</a>
+    <div>
+        <h2>Credits</h2>
+
+        <p>The movie database - Pictures and data about the films and tv shows are sourced from themoviedb.org</p>
+
+
+    </div>
+</dialog>
+<script>
+
+
+document.getElementById("closeHowToPlay").addEventListener("click", function () {
+    document.getElementById("howToPlayDialog").close()
+});
+document.getElementById("closeAbout").addEventListener("click", function () {
+    document.getElementById("aboutDialog").close()
+});
+document.getElementById("closeCredits").addEventListener("click", function () {
+    document.getElementById("creditsDialog").close()
+});
+    </script>
 </body>
 </html>
