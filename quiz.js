@@ -731,4 +731,4 @@ function openDrawer() {
         speak(document.querySelector('#results p:last-child').innerText);
     }
     savePreferences(preferences);
-  })
+  }) 
