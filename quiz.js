@@ -703,6 +703,7 @@ function openDrawer() {
   function savePreferences (pref) {
     localStorage.setItem("preferences", JSON.stringify(preferences) );
   }
+  
   document.getElementById("themeSetting").addEventListener("click", function (e) {
     preferences = getPreferences();
     preferences.theme = e.target.checked ? "dark" : "light";
