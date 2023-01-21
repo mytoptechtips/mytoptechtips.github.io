@@ -565,7 +565,7 @@
     font-size:40px;
     margin-bottom:20px;
 }
-dialog {
+.dialog {
     position: absolute;
     top:0;
     left:0;
@@ -575,10 +575,13 @@ dialog {
     height:100vh;
     background : var(--background-color);
     color:var(--foreground-color);
-   
+   display:none;
 
 }
-dialog .close {
+.dialog.shown {
+    display:block;
+}
+.dialog .close {
     width:100%;
     text-align:right;
     display:block;
@@ -587,7 +590,7 @@ dialog .close {
     border:0;
     outline:0;
 }
-dialog h2 {
+.dialog h2 {
     font-size:40px;
 }
 </style>
@@ -720,15 +723,15 @@ dialog h2 {
         <hr />
       
         <div class="link-container">
-            <a href="javascript:document.getElementById('howToPlayDialog').show(); openDrawer()  " class="link">How to Play</a>
+            <a href="javascript:document.getElementById('howToPlayDialog').classList.add('shown'); openDrawer()  " class="link">How to Play</a>
         </div>
         <hr />
         <div class="link-container">
-            <a href="javascript:document.getElementById('aboutDialog').show() ; openDrawer()  " class="link">About</a>
+            <a href="javascript:document.getElementById('aboutDialog').classList.add('shown') ; openDrawer()  " class="link">About</a>
         </div>
         <hr />
         <div class="link-container">
-            <a href="javascript:document.getElementById('creditsDialog').show(); openDrawer()  " class="link">Credits</a>
+            <a href="javascript:document.getElementById('creditsDialog').classList.add('shown'); openDrawer()  " class="link">Credits</a>
         </div>
         <hr />
         <div class="link-container">
@@ -749,7 +752,7 @@ dialog h2 {
     </script>
 
     <script src="quiz.js"></script>
-<dialog id="howToPlayDialog">
+<div class="dialog" id="howToPlayDialog">
     
     <div>
         <a class="close" href="#" id="closeHowToPlay">X</a>
@@ -761,8 +764,8 @@ dialog h2 {
         <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
 
     </div>
-</dialog>
-<dialog id="aboutDialog">
+</div>
+<div class="dialog" id="aboutDialog">
     
     <div>
         <a class="close" href="#" id="closeAbout">X</a>
@@ -774,8 +777,8 @@ dialog h2 {
         <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
 
     </div>
-</dialog>
-<dialog id="creditsDialog">
+</div>
+<div  class="dialog" id="creditsDialog">
     <a class="close" href="#" id="closeCredits">X</a>
     <div>
         <h2>Credits</h2>
@@ -784,18 +787,18 @@ dialog h2 {
 
 
     </div>
-</dialog>
+</div>
 <script>
 
 
 document.getElementById("closeHowToPlay").addEventListener("click", function () {
-    document.getElementById("howToPlayDialog").close()
+    document.getElementById("howToPlayDialog").classList.remove('shown');
 });
 document.getElementById("closeAbout").addEventListener("click", function () {
-    document.getElementById("aboutDialog").close()
+    document.getElementById("aboutDialog").classList.remove('shown');
 });
 document.getElementById("closeCredits").addEventListener("click", function () {
-    document.getElementById("creditsDialog").close()
+    document.getElementById("creditsDialog").classList.remove('shown');
 });
     </script>
 </body>
