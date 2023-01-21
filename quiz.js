@@ -6,7 +6,7 @@ var score=110;
 var zoomScale = 8;
 var specificId;
 var sound=false;
-var defaultImageWidth=480;
+var defaultImageWidth=640;
 
 function getPreferences() {
     var preferences;
