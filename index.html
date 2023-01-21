@@ -1,734 +1,802 @@
-var guesses = 0;
-var movieDetails;
-var category="movie";
-var categoryLabel="movie";
-var score=110;
-var zoomScale = 8;
-var specificId;
-var sound=false;
+<html>
+<head>
+    <meta name="viewport" content=" user-scalable=no" />
+    <title>Movie Quiz v3.9</title>
+    <!-- inline Seedrandom.js from https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js">
+    </script>
 
-
-function getPreferences() {
-    var preferences;
-    try {
-        preferences = JSON.parse(localStorage.getItem("preferences") || "{}" );
+    <style>
+        :root,
+        body.light {
+            --background-color: white;
+            --foreground-color: black;
         }
-        catch (ex) {
-            preferences = {};
-            savePreferences(preferences);
+        @media (prefers-color-scheme: dark) {
+            :root,
+            body.dark {
+                --background-color: black;
+                --foreground-color: white;
+            }
         }
-    return preferences;
-}
-var preferences = getPreferences();
-
-function setTheme(preferences) {
-    document.body.classList.remove("light");
-    document.body.classList.remove("dark");
-    document.body.classList.add(  preferences.theme );
-
-}
-setTheme(preferences);
-function setScale() {
-    if (preferences && preferences.mode == "hard") {
-        zoomScale = 12;
-    } else {
-        zoomScale = 4;
-    }
-}
-
-setScale();
-sound = preferences.sound;
-
-function createOverlay() {
-    
-    ovl = document.getElementById ('overlay');
-    ovl.innerHTML = "";
-    ovl.style="--colcount:"+zoomScale+";--rowcount:"+zoomScale;
-    for (var i=0 ; i < zoomScale * zoomScale ; i++ ) {
-        b = document.createElement('DIV');
-        b.classList.add("box");
-        ovl.appendChild(b);
-
-    }
-
-
-}
-createOverlay() ;
-
-
-function setPreferencesInMenu() {
-
-    document.getElementById("modeSetting").checked= (preferences.mode == "hard") ;
-    document.getElementById("themeSetting").checked = (preferences.theme == "dark") ;
-    document.getElementById("soundSetting").checked= (preferences.sound) ;
-}
-setPreferencesInMenu() ;
-const today = new Date();
-const imdblink="https://www.imdb.com/title/";
-let params = new URLSearchParams(document.location.search)
-
-
-if (params.get( "tv") )  {
-    category="tv";
-    categoryLabel="TV show";
-}
-
-
-let randomSeed;
-
-todayDate = today.toISOString().slice(0,10);
-
-lastDatePlayed = localStorage.getItem("lastDatePlayed");
-
-if (!lastDatePlayed || lastDatePlayed != todayDate ) {
-    randomSeed = todayDate;
-} else {
-    // include the current time 
-    randomSeed = today.toISOString();
-}
-localStorage.setItem("lastDatePlayed", todayDate);
-
-
-let randomNumber = new Math.seedrandom(randomSeed);
-
-//document.getElementById("categoryLabel").innerText = categoryLabel;
-document.addEventListener('DOMContentLoaded', function() {
-
-    // Set up event listener for submit button
-
-addClickToImage();
-addRevealVowels();
-
-    startQuiz(); // Start the quiz
-
-    document.getElementById('submit-button').addEventListener('click', function(event) {
-
-        event.preventDefault(); // Prevent form submission
-       promptUser(movieDetails, ++guesses); 
-    });
-});
-
-
-document.getElementById('play-again-button').addEventListener('click', function(event) {
-
-    event.preventDefault(); // Prevent form submission
-    
-    //remove the specific id 
-
-    if (history.pushState) {
-        params.delete("id");
-        var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?"+ params.toString() ;
-        window.history.pushState({path:newurl},'',newurl);
-    }
-
-    startQuiz();
-});
-
-  // Step 1: Call API to get list of movie IDs
-
-  async function getMovieIds() {
-    // Initialize variables
-    var movieIds = [];
-
-    // Loop through pages 1 to 20
-    for (var i = 1; i <= 20; i++) {
-        // Call API and add page parameter
-        var response = await fetch('https://api.themoviedb.org/3/discover/'+category+'?api_key=3f2af1df74075e194bc154e7f3233e60&language=en-US&with_original_language=en&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate&page='+i, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'default'
-        });
-        var json = await response.json();
-        // Save movie IDs to array
-        for (var j = 0; j < json.results.length; j++) {
-            movieIds.push(json.results[j].id);
+        body {
+            padding-left:30px;
+            padding-right:30px;
+            background-color: var(--background-color);
         }
-       
-    }
-    
-    return movieIds;
-}
+        * { font-family:Arial;
+             font-size: 1rem;
+        }
 
-function addRevealVowels() {
-    document.getElementById('reveal-vowels-button').addEventListener('click', function(event) {
+        header {
+            display: flex;
+   
+            justify-content: space-around;
 
-        event.preventDefault(); 
-        revealVowels();
-    });
-}
-function formatDate(dateStr) {
-    const date = new Date(dateStr);
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-    const formattedDate = formatter.format(date);
-    return formattedDate;
-}
+        }
 
-function revealVowels () {
-    var inputBoxes = document.getElementsByClassName("guess-letter");
-    score=score -20;
-    updateScore();
-for (var i = 0; i < inputBoxes.length; i++) {
-     if (movieDetails.title[i].match(/[aeiou]/)) {
-                    inputBoxes[i].value=movieDetails.title[i];
-                      inputBoxes[i].setAttribute("data-correct-guess",movieDetails.title[i]);
-                    if (!inputBoxes[i].classList.contains("punctuation")  ) {
-                        inputBoxes[i].classList.remove("wrong");
-                        inputBoxes[i].classList.remove("neutral");
-                        inputBoxes[i].classList.add("correct");
-                    }}
-                }
+        .menu-icon  {
+            stroke-width:2; 
+            stroke:green; 
+            fill:darkgray;
+            margin:15px;
+        }
 
-                document.getElementById('reveal-vowels-button').style.display = 'none';
-}
-function wrapInputBoxes() {
+        .close-menu  {
+            stroke-width:2; 
+            stroke:var(--foreground-color); 
+            fill: var(--foreground-color);
+            margin:10px;
+        }
 
+        h1, label, input,
+        h1 > span {
+            font-size : 1.5rem;
+           
+
+        }
+
+        h1 > span {
+            margin : 5px;
+            width: 93vw;
+        }
+        h1 {
+            text-align:center;  
+            
+        }
+        input {
+            text-transform: uppercase;
+            margin-bottom:5px; margin-left:3px;margin-right:3px;
+            padding:0;
+        }
+        p {
+         
+    font-size: 28px;
+    line-height: 30px;
+
+        }
+     
+        .wrong {
+            background-color:red;
+            color:white;
+        }
+        .correct {
+            background-color:green;
+            color:white;
+        }
+        #results .correct {
+            padding:20px;
+            margin-right:30px;
+        }
+        #results .incorrect {
+            padding:20px;
+            background-color : blue;
+            color:white;
+            margin-right:30px;
+        }
+        
+        .neutral {
+            background-color: white;
+            color:black;
+        }
+        .punctuation {
+            border:none;
+            background-color:var(--background-color);
+            color:var(--foreground-color);
+        }
+        .guess-letter.punctuation.line-wrap {
+            width : 100%;
+            height:0;
+
+        }
+
+
+        
+        .guess-letter,
+        .tile-letter {
+            width: 3ch;
+            line-height: 40px;
+            font-size: 32px;
+            text-align: center;
+
+        }
+
+        button {
+            font-size:2rem;
+            margin-right:30px;
+            margin-top:20px;
+            margin-left:30px;
+            padding:20px;
+            border-radius:20px ; 
+
+        }
+        button:focus {
+            border: 4px solid white;
+            outline: 2px solid green;
+        }
+
+        .guess-letter:focus {
+            background-color: #f0f0f0;
+            border: 2px solid #4CAF50;
+            text-shadow: 0 0 5px #4CAF50;
+        }
+        #results {
+            max-height: 40%;
+        }   
 
    
-   const   MAX_CHARS_PER_LINE = Math.floor(document.getElementById("guess-container").offsetWidth / document.getElementsByClassName("guess-letter")[0].offsetWidth )  - 2;
-
-    let letters = document.querySelectorAll(".guess-letter");
-    console.log(letters);
-
-    const string = movieDetails.title
-   // const MAX_CHARS_PER_LINE = 15;
-    let newString = "";
-    let line = "";
-    let linecount=1;
-
-    string.split(" ").forEach(function(word){
-        if ((line + word).length > MAX_CHARS_PER_LINE) {
-            newString += line + "\n";
-            if (letters[newString.length-1 -linecount]) {
-                letters[newString.length-1-linecount].classList.add("line-wrap");
-            }
-            linecount++;
-            line = "";
+        .guess-letter.start-new-line::before{
+            content: "\a";
+            white-space: pre;
         }
-        line += word + " ";
-    });
-    newString += line;
-    console.log(newString);
+        #submit-button { float:left; color:white; background:green}
+        #play-again-button { float:right; color:white; background:darkolivegreen}
+        #reveal-vowels-button {float:right;color:white; background: darkolivegreen}
 
+        .scoreboard {
+            background:silver;
 
-}
-function startQuiz() {
-    // Initialize variables
-    var movieIds = [];
-    var movieId;
-    if (params.get("id")) {
-        specificId = params.get("id");
-    } else {
-        specificId = null;
-    }
+        }
+        #scoreHeader {
+            font-size:15px;
+            text-align: center;
+            color: var(--foreground-color);
+        }
+        #score {
+            font-size:20px;
 
-    document.getElementById('submit-button').style.display="inline-block";
-
-    document.getElementById('results').innerHTML = "";
-    var boxes = document.querySelectorAll(".box.visible");
-    for (var i = 0; i < boxes.length; i++)  {
-        boxes[i].classList.remove("visible");
-    }
-    
-    resetZoom();
-    guesses = 0;
-    score = 110;
-    document.getElementById('reveal-vowels-button').style.display = 'inline-block';
+            border:5px solid silver;
  
-    getMovieIds()
-    .then(function(movieIds) {
-        console.log(movieIds);
-        // Step 2: Choose a random movie ID
+            width:80vw;
+            height: 3rem;
 
-        movieId = specificId ? specificId : movieIds[Math.floor(randomNumber() * movieIds.length)];
-       
-        if (history.pushState) {
-            params.delete("id");
-            params.append("id",movieId);
-            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?"+ params.toString() ;
-            window.history.pushState({path:newurl},'',newurl);
-        }
-
-        // Step 3: Call API to get movie details
-        fetch('https://api.themoviedb.org/3/'+category+'/' + movieId + '?api_key=3f2af1df74075e194bc154e7f3233e60', {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'default'
-        }).then(function(response) {
-            return response.json();
-        }).then(function(response) {
-            setTimeout( function () {document.body.classList.remove("loading");} , 3000 );
-            movieDetails = response;
-            movieDetails.title = movieDetails.title || movieDetails.name;
-            movieDetails.release_date = movieDetails.release_date || movieDetails.first_air_date;
-
-            // Step 4: Call API to get movie credits
-            fetch('https://api.themoviedb.org/3/'+category+'/' + movieId + '/credits?api_key=3f2af1df74075e194bc154e7f3233e60', {
-                method: 'GET',
-                mode: 'cors',
-                cache: 'default'
-            }).then(function(response) {
-                return response.json();
-            }).then(function(response) {
-                movieDetails.credits = response;
-                // Step 5: Prompt user to guess movie title
-                promptUser(movieDetails, guesses);
-            });
-        }).then (function(data) {
-
-            var imgSrc="https://image.tmdb.org/t/p/original"+movieDetails.backdrop_path;
-            document.getElementById("image").setAttribute("src",imgSrc);
-
-       
-
-
-            var guessContainer = document.getElementById("guess-container");
-            guessContainer.innerHTML = "";
-            var MAX_PER_LINE=14;
-            var currPoss = 1;
-            words=movieDetails.title.split(" ");
-            for (var i = 0; i < movieDetails.title.length; i++) {
-               
-                var answerChar = movieDetails.title[i];
-                var input = document.createElement("input");
-                input.setAttribute("size", "1");
-                input.setAttribute("maxlength", "1");
-                input.setAttribute("type", "text");
-                input.setAttribute("class", "guess-letter");
-                input.setAttribute("data-letter-index", i);
-                if (answerChar.match(/[^a-zA-Z0-9]/)) {
-                    input.classList.add("punctuation");
-                    input.value=answerChar;
-                    input.setAttribute("disabled", true)
-                    if (answerChar == " " ) {
-                        input.classList.add("space");
-                        input.setAttribute("data-char-pos", i );
-                    }
-                }
-                if (currPoss + (movieDetails.title+ " ").slice(i+1).indexOf(" " ) > MAX_PER_LINE ) {
-                    input.classList.add("line-wrap");
-                    currPoss=0;
-                }
-                currPoss++;
-                input.addEventListener("focus", function(event) {
-                    event.target.select();
-                });
-                guessContainer.appendChild(input);
-           
-            }
-
-
-            // Add event listeners for input boxes
-            var inputBoxes = document.querySelectorAll(".guess-letter:not(.punctuation) ");
-            for (var i = 0; i < inputBoxes.length; i++) {
-                
-                inputBoxes[i].addEventListener("input", function(event) {
-                
-                    if (event.target.nextElementSibling) {
-                        var nextBox = event.target.nextElementSibling;
-                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
-                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
-                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
-                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
-    
-                    }
-
-                    event.target.classList.remove("wrong");
-                    event.target.classList.remove("correct");
-                    wrongGuesses = event.target.getAttribute("data-incorrect-guesses") || "";
-                    correctGuess = event.target.getAttribute("data-correct-guess") || "";
-                    //console.log("Checking Input : " + event.target.value.toLowerCase() )
-                    if (wrongGuesses.indexOf(event.target.value.toLowerCase()) > -1 ) {
-                        event.target.classList.add("wrong");
-                        event.target.classList.remove("neutral");
-                    }else {
-                        if (correctGuess == (event.target.value.toLowerCase()) ) {
-                            event.target.classList.add("correct");
-                            event.target.classList.remove("neutral");
-                        }else {
-                            event.target.classList.add("neutral");
-                        }
-                    }
-
-
-                    if (event.target.value.length === 1  ) {
-                        if (nextBox) {
-                            nextBox.focus();
-                        } else {
-                            document.querySelector("button").focus();
-                        }
-                    } 
-                
-                });
-             
-                inputBoxes[i].addEventListener("keydown", function(event) {
-                    if (event.key === "Backspace") {
-                        event.preventDefault();
-                        // do something, like delete the last character in the input
-                        event.target.value=null;
-                        event.target.classList.remove("wrong");
-                        event.target.classList.remove("correct");
-                        event.target.classList.add("neutral");
-                        var prevBox = event.target.previousElementSibling;
-                        if (prevBox.disabled) prevBox = prevBox.previousElementSibling;
-                        if (prevBox.disabled) prevBox = prevBox.previousElementSibling;
-                        if (prevBox.disabled) prevBox = prevBox.previousElementSibling;
-                        if (prevBox.disabled) prevBox = prevBox.previousElementSibling;
-                        prevBox.focus();
-                      }
-                      
-                });
-                
-            }
-            inputBoxes[0].focus();
-
-
-        });
-    })
-}
-function  showPlayAgain() {
-    document.getElementById('play-again-button').style.display="inline-block";
-    document.getElementById('submit-button').style.display="none";
-    document.getElementById('reveal-vowels-button').style.display = 'none';
   
- //   document.getElementById('guess').style.display="none";
- //   document.getElementById('guess-label').style.display="none";
-
-}
-function revealPicture() {
-    var boxes = document.querySelectorAll(".box:not(.visible)");
-    for (var i = 0; i < boxes.length; i++)  {
-        boxes[i].classList.add("visible");
-    }
-}
-function enableShareLink() {
-
-    if (navigator.share ) {
-
-     document.getElementById("shareLink").addEventListener("click", function () {
-            navigator.share({
-            title: 'Guess the '+category+' Title',
-            text: 'Try out this game : ',
-            url: document.location.href,
-            })
-            .then(() => console.log('Successful share'))
-            .catch((error) => console.log('Error sharing', error));
-            })
-        } else {
-            document.querySelector("#shareLink").remove();
+        }
+        #scoreDisplay {
+            font-size: 30px;
+    line-height: 20px;
+    vertical-align: 10px;
+            
+        }
+        #movie-poster:has(#image.zoomed) {
+            border: 10px solid red;
+        }
+    </style>
+    <style>
+        #movie-poster {
+            position:relative;
+            width:640px;
+            height:360px;
+      
+        }
+        #image {
+             width: 640px;
         }
 
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 640px;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .hidden {display:none}
+
+        .box {
+            width: calc(100%/var(--colcount));
+            height:  calc(100%/var(--rowcount));
+            opacity: 1;
+            background-color: var(--background-color);
+            outline:1px solid silver;
+        }
+
+        .box.visible {
+            opacity: 0.1;
+        }
+
+
+
+
+        #image {
+            width: 640px;
+            clip-path: inset(0px 0px 0px 0px);
+        }
+
+        .box.selected {
+            clip-path: inset(0px 0px 0px 0px);
+        }
+
+        .small {
+            font-size:20px;
+        }        
+
+    </style>
+    <style>
+        /* https://codepen.io/alvaromontoro/pen/LYjZqzP */
+        @keyframes growProgressBar {
+            0%, 33% { --pgPercentage: 0; }
+            100% { --pgPercentage: var(--value); }
+            }
+            @keyframes shrinkProgressBar {
+            0%, 33% { --pgPercentage: 100; }
+            100% { --pgPercentage: var(--value); }
+            }
+
+
+            @property --pgPercentage {
+            syntax: '<number>';
+            inherits: false;
+            initial-value: 100;
+            }
+
+            div[role="progressbar"] {
+            --size: 12rem;
+            --fg: #369;
+            --bg: #def;
+            --pgPercentage: var(--value);
+            animation: shrinkProgressBar 5s 1 backwards;#
+         
+            width: var(--size);
+            height: var(--size);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: 
+                radial-gradient(closest-side, white 80%, transparent 0 99.9%, white 0),
+                conic-gradient(var(--fg) calc(var(--pgPercentage) * 1%), var(--bg) 0)
+                ;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: calc(var(--size) / 5);
+            color: var(--fg);
+            }
+
+            div[role="progressbar"]::before {
+            counter-reset: percentage var(--value);
+            content: counter(percentage) '';
+            }
+
+
+
+    </style>
+    <style>
+        body.loading .loading {
+          display:grid;
+          place-items:center;
+          height:100vh;
+          background: var(--background-color);
+        }
+        body:not(.loading) .loading {
+            display:none;
+        }
+        .loading p {
+            font-size: 60px;
+            line-height: 60px;
+            color : var(--foreground-color);
+        }
+        body.loading .wrapper,
+        body.loading #results,
+        body.loading #quiz-form {
+            display:none;
+        }
+        .titleHeading input {line-height:100px; height:100px;font-size:90px;padding:0;}
+        .pageHeading input {line-height:36px;font-size:25px; padding:0;}
+        </style>
+    <style>
+        .wrapper {
+            display:grid;
+            grid-template-areas: "header header header"
+                                 "poster poster poster"
+                                 "scoreboard scoreboard scoreboard" 
+                                 "results results results"
+                                "form form form";
+         grid-template-rows: 1fr 4fr 0.25fr 3fr 3fr;
+            grid-template-columns: 2fr 2fr 1fr ;
+    
+        }    
+        header {
+            grid-area: header;
+            align-self:center;
+        }
+        #movie-poster { grid-area: poster; justify-self:center}
+        #scoreboard { grid-area: scoreboard}
+        #results { grid-area : results}
+        #quiz-form { grid-area : form}
+    
+
+        #results {
+            width: 95vw;
+            display: flex;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            min-height: 300px;
+            gap:2vw;
+        }
+
+        #results p {
+            flex: 0 0 90%;
+            scroll-snap-align: start;
+            font-size:40px;
+            line-height:40px;
+            display:grid;
+            place-items:center;
+            padding:40px;
+            border-radius:20px;
+            border:1px solid silver;
+            font-weight:bold;
+        }
+        #results p:nth-child(1) {
+            background-color:brown;
+            color:white;
+        }
+        #results p:nth-child(2) {
+            background-color: darkblue;
+            color:white;
+        }
+        #results p:nth-child(3) {
+            background-color:darkgreen;
+            color:white;
+        }
+        #results p:nth-child(4) {
+            background-color:black;
+            color:white;
+        }
+        #results p:nth-child(5) {
+            background-color:blueviolet;
+            color:white;
+        }
+
+
+
+    </style>
+    <style>
+    /* add animation to the loading page */    
+    @keyframes rotate {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
 }
-function showCorrectResult(movieDetails) {
-    document.getElementById('results').innerHTML += '<p class="correct">Well Done! <br />That is the right answer.  You scored '+score+'.<br /> <span id="webshare"></span></p>';
-    speak("Well Done ! That is the right answer, you scored : "+ score);
-    if (navigator.share) {
-
-        document.getElementById("webshare").innerText = "Share"
-        document.getElementById("webshare").addEventListener("click", function () {
-        navigator.share({
-          title: 'Guess the '+category+' Title',
-          text: 'I got a score of '+score+', what can you get ?',
-          url: document.location.href,
-        })
-          .then(() => console.log('Successful share'))
-          .catch((error) => console.log('Error sharing', error));
-        })
-      }
 
 
-    var inputBoxes = document.querySelectorAll(".guess-letter:not(.correct):not(.punctuation) ");
-    for (var i = 0; i < inputBoxes.length; i++) {
-            inputBoxes[i].classList.remove("neutral");
-            inputBoxes[i].classList.add("correct");
-    }
-    resetZoom();
-    revealPicture();
-    showPlayAgain();
-    showLastHint();
+
+.titleHeading input{
+    animation-name: rotate;
+    animation-delay:0.2s;
+    animation-duration: 0.5s;
+    animation-iteration-count: once;
+    animation-timing-function: linear;
+}
+.titleHeading input:nth-child(1){     animation-delay:0.1s;}
+.titleHeading input:nth-child(2){     animation-delay:0.2s;}
+.titleHeading input:nth-child(3){     animation-delay:0.3s;}
+.titleHeading input:nth-child(4){     animation-delay:0.4s;}
+.titleHeading input:nth-child(5){     animation-delay:0.5s;}
+.titleHeading input:nth-child(6){     animation-delay:0.6s;}
+.titleHeading input:nth-child(7){     animation-delay:0.7s;}
+.titleHeading input:nth-child(8){     animation-delay:0.8s;}
+.titleHeading input:nth-child(9){     animation-delay:0.9s;}
+.titleHeading input:nth-child(10){    animation-delay:1s;}
+.titleHeading input:nth-child(11){    animation-delay:1.1s;}
+.titleHeading input:nth-child(12){    animation-delay:1.2s;}
+.titleHeading input:nth-child(13){    animation-delay:1.3s;}
+.titleHeading input:nth-child(14){    animation-delay:1.4s;}
+.titleHeading input:nth-child(15){    animation-delay:1.5s;}
+.titleHeading input:nth-child(16){    animation-delay:1.6s;}
+.titleHeading input:nth-child(17){    animation-delay:1.7s;}
+/* and so on for each input element */
+
+
+</style>
+
+<style>
+
+    .menu-icon {
+
+  height:25px;
+  width:25px;
+}
+
+#drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+
+  background-color: var(--background-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-out;
+}
+#drawer span, 
+#drawer label, 
+#drawer p,
+#drawer h2,
+#drawer h3,
+#drawer h4,
+#drawer h5,
+#drawer a
+{
+    color: var(--foreground-color);
+    text-decoration:none
+}
+
+#drawer.hidden {
+  transform: translateX(100%);
+}
+
+#drawer.visible {
+  transform: translateX(0);
+}
+
+#drawer-content {
+  padding: 20px;
+}
+#drawer-content label span,
+#drawer-content h2
+ {
+ font-size:1.6rem;
+}
+#drawer-content h3
+ {
+ font-size:1.4rem;
+}
+#drawer-content hr {
+    margin-top : 30px;
+    margin-bottom: 30px;
+}
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+
+}
+.close-menu {
+    float:right;
+    padding-top: 30px;
+  padding-right:35px;
+  height: 30px;
+    width: 30px;
+
+    stroke-width: 2;
+    stroke: darkgray;
+  
 }
 
 
-function addClickToImage() {
-     // Add event listener to all the box elements
-     const boxes = document.querySelectorAll('.box');
-     boxes.forEach(box => {
-         box.addEventListener('click', function () {
+
+</style>
+<style>
+
+    .toggle {
+  cursor: pointer;
+  
+  display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-items: center;
+    justify-content: space-evenly;
+}
+
+.toggle-switch {
+  display: inline-block;
+  background: #ccc;
+  border-radius: 16px;
+  width: 58px;
+  height: 32px;
+  position: relative;
+  vertical-align: middle;
+  transition: background 0.25s;
+}
+.toggle-switch:before, .toggle-switch:after {
+  content: "";
+}
+.toggle-switch:before {
+  display: block;
+  background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  transition: left 0.25s;
+}
+.toggle:hover .toggle-switch:before {
+  background: linear-gradient(to bottom, #fff 0%, #fff 100%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+.toggle-checkbox:checked + .toggle-switch {
+  background: #56c080;
+}
+.toggle-checkbox:checked + .toggle-switch:before {
+  left: 30px;
+}
+
+.toggle-checkbox {
+  position: absolute;
+  visibility: hidden;
+}
+
+.toggle-label {
+  margin-left: 5px;
+  position: relative;
+  top: 2px;
+}    
+
+.link-container a {
+    font-size:22px;
+}
+
+#drawer-content {
+    padding: 30px;
+    padding-top: 90px;
+}
+#drawer-content h2 {
+    font-size:40px;
+    margin-bottom:20px;
+}
+dialog {
+    position: absolute;
+    top:0;
+    left:0;
+    margin:30px;
+    border:1px solid silver;
+ 
+    height:100vh;
+    background : var(--background-color);
+    color:var(--foreground-color);
+   
+
+}
+dialog .close {
+    width:100%;
+    text-align:right;
+    display:block;
+    font-size:30px;
+    text-decoration:none;
+    border:0;
+    outline:0;
+}
+dialog h2 {
+    font-size:40px;
+}
+</style>
+<style>
+    meter {width : 80vw; height:2rem;}    </style>
+</head>
+<body class="loading">
+  
+    <div class="loading">
         
-            var ovl = document.getElementById("overlay");
-            var img = document.getElementById("image");
-            if (box.classList.contains("visible")) {                
-                // remove the class selected from all the elements
-                img.classList.add("zoomed");
-                score--;
-                updateScore();
-                boxes.forEach(b => {
-                    b.classList.remove("selected")
-                });
-                // add the class selected to the current element
-                this.classList.add("selected");
+             <div class="titleHeading">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="G">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
+                <br/>
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="H">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"> 
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value=""><br/>
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="I">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="L">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"><br/>     
+            </div>
+            <p>Getting started ... please wait </p>
+    </div>
 
-                // update the clip path to match the dimensions of the box
-                var imageRect = document.getElementById("image").getBoundingClientRect();
-                var rect = this.getBoundingClientRect();
-                
-                console.log(rect);
-                console.log(imageRect);
-                scale = zoomScale;
-
-                var insetTop = scale*(rect.top - imageRect.top );
-                var insetRight = scale*(imageRect.right - rect.right);
-                var insetBottom = scale*( imageRect.bottom - rect.bottom);
-                
-                var insetLeft = scale*(rect.x - imageRect.x);
-                
+    <div class="wrapper">       
+        <header>
+        <h1>
+            <div class="pageHeading">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="G">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="H">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"> 
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="I">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="L">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">  
+            </div>
+        </h1>
+        <div>
+            <svg class="menu-icon" 
+            viewBox="0 0 100 80" width="40" height="40">
+                <rect width="100" height="20"></rect>
+                <rect y="30" width="100" height="20"></rect>
+                <rect y="60" width="100" height="20"></rect>
+            </svg>
+</div>
+         </header>
+         <div id="movie-poster">
+            <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
+            <div id="overlay" style="--colcount:8;--rowcount:8">
           
-                img.style.clipPath = `inset(${1*insetTop}px ${1*(insetRight)}px ${1*(insetBottom)}px ${insetLeft}px)`;
-                //img.style.transform = `scale(${scale},${scale})`;
-                img.style.marginLeft = -1*insetLeft+"px";
-                img.style.marginTop = -1*insetTop+"px";
-                img.style.width = 640*scale+"px"    
-                ovl.style.display="none";
-                }
-            });
+                <!-- Add more boxes as needed -->
+            </div>
+        </div>
+        <div id="scoreboard">
+            <div id="scoreHeader">
+                <meter id="score" max=100 min=0 value=100 high=80 low=40 optimum=90></meter><span id="scoreDisplay"></span>
+        </div>
+            <!-- div id="score" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:65"></div -->
+        </div>
+    
+        <div id="results"></div>
+      
+        <form id="quiz-form">
+          <!-- label id="guess-label" for="guess-container">Guess the movie title:</label><br -->
+         
+          <div id="guess-container">
+          </div>
+          <button type="submit" id="submit-button">Guess</button>
+     
+          <button type="button" id="play-again-button">Play Again</button>
+          <button type="button" id="reveal-vowels-button">Vowels <span class="small">(-20)</span></button>
+        </form> 
 
-     });
-
-     var img = document.getElementById("image");
-     img.addEventListener('click', function () {
-        resetZoom();
-
-  
-     });
-
-}
-function resetZoom() {
-    const boxes = document.querySelectorAll('.box');
-    var img = document.getElementById("image");
-    img.classList.remove("zoomed");
-    boxes.forEach(b => {
-        b.classList.remove("selected")
-    });
-    var ovl = document.getElementById("overlay");
-    ovl.style.display="flex";
-    img.style.clipPath = `inset(0px 0px 0px 0px)`;
- 
-    img.style.marginLeft = 0;
-    img.style.marginTop = 0;
-    img.style.width = 640+"px"
-
-}
-function updateScore() {
-//    document.getElementById("score").style = "--value:"+score;
-    document.getElementById("score").value = score;
-    document.getElementById("scoreDisplay").innerText = score;
-}
-
-function showLastHint() {
-    document.querySelector('#results p:last-child').scrollIntoView();
-}
-function promptUser(movieDetails, guesses) {
-    // Check if user has used all their guesses
-    var inputBoxes = document.getElementsByClassName("guess-letter");
-    if (false) {
-        // Display correct answer
-        /* 
-        document.getElementById('results').innerHTML += '<p class="incorrect">Better Luck next time ! The correct answer was: </p> '  ;
-        for (var i = 0; i < inputBoxes.length; i++) {
-            inputBoxes[i].value=movieDetails.title[i];
-            if (!inputBoxes[i].classList.contains("punctuation")  ) {
-                inputBoxes[i].classList.remove("wrong");
-                inputBoxes[i].classList.add("correct");
-            }
-        }
-        guesses=0;
-        score=110;
-        revealPicture();
-        resetZoom();
-        showPlayAgain();
-        */
-    } else {
-        // Get user's guess
-        // var guess = document.getElementById('guess').value;
-        // Check if guess is correct
-        var guess = "";
-       
-        for (var i = 0; i < inputBoxes.length; i++) {
-            guess += inputBoxes[i].value;
-        }
-        
-        if (guess.toLowerCase() === movieDetails.title.toLowerCase()) {
-            // Display success message
-                   showCorrectResult(movieDetails);
-                   guesses=0;
-                   showPlayAgain();
-        } else {
+    </div>
 
 
-            // Increment guesses
-            //highlightCorrectCharacters();
-            var boxes = document.querySelectorAll(".box:not(.visible) ");
-           
-            var visibleBox = Math.floor(randomNumber() * boxes.length);
-            boxes[visibleBox].classList.add("visible");
 
 
-            if (guesses > 0 && guesses < 5) {
-                for (var i = 0; i < inputBoxes.length; i++) {
-                    if (!inputBoxes[i].classList.contains("punctuation")  ) {
-                    inputBoxes[i].classList.remove("correct");
-                    inputBoxes[i].classList.remove("wrong");
-                    inputBoxes[i].classList.remove("neutral");            
-                    if (movieDetails.title[i].toLowerCase() == inputBoxes[i].value.toLowerCase() ) {
-                        inputBoxes[i].classList.add("correct");
-                        inputBoxes[i].setAttribute("data-correct-guess", inputBoxes[i].value.toLowerCase());
-                    } else {
-                        inputBoxes[i].classList.add("wrong");
-                        var wrongGuesses=  inputBoxes[i].getAttribute("data-incorrect-guesses")|| "" ;
 
-                        inputBoxes[i].setAttribute("data-incorrect-guesses", wrongGuesses+inputBoxes[i].value.toLowerCase())
-                    }
-                    }
-                }
-            } 
-            if (guesses >= 5)   {
-                notice="Better Luck next time ! <br/> The correct answer was: ";
-                msg="Better Luck next time !  The correct answer was: "+ movieDetails.title;
-              
-                document.getElementById('results').innerHTML += '<p class="incorrect">'+notice+'</p> '  ;
-                speak(msg);
+    
 
-                for (var i = 0; i < inputBoxes.length; i++) {
-                    inputBoxes[i].value=movieDetails.title[i];
-                    if (!inputBoxes[i].classList.contains("punctuation")  ) {
-                        inputBoxes[i].classList.remove("wrong");
-                        inputBoxes[i].classList.add("correct");
-                    }
-                }
-                guesses=0;
-                score=110;
-                revealPicture();
-                resetZoom();
-                showPlayAgain();
-                showLastHint();
-                return;
-             }
-            guesses++;
-            score=score-10;
-
-            // Give hint based on number of guesses
-            switch (guesses) {
-                case 1:
-                    // Display release date and list of genres
-                    var genreString = '';
-                    for (var i = 0; i < movieDetails.genres.length; i++) {
-                        genreString += movieDetails.genres[i].name + ', ';
-                    }
-                    genreString = genreString.slice(0, -2); // Remove trailing comma
-                    msg = ' 1: The '+categoryLabel+' was released on ' + formatDate(movieDetails.release_date) + '. It is a ' + genreString + ' '+category+'.';
-                    document.getElementById('results').innerHTML += '<p> ' + msg+ '</p>';
-                    speak(msg);
-                    break;
-                case 2:
-                    // Display first two cast members
-                    msg = '2: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'
-                    document.getElementById('results').innerHTML += '<p> '+msg+'</p>';
-                    speak(msg);
-                     break;
-                case 3:
-                    // Display movie tagline
-                    if (movieDetails.tagline ) {
-
-                    
-                      msg = '3: The '+categoryLabel +'\'s tagline is: ' + movieDetails.tagline;
-                    } else {
-                       msg = '3: The '+categoryLabel +'\'s overview starts: ' + movieDetails.overview.substr(0,100)+ '...';
-                    }
-                    document.getElementById('results').innerHTML += '<p> '+msg+'</p>';
-                    speak(msg);
-                    break;
-                case 4:
-                    // Display movie director
-                    if (category == "movie") {
-                        
-                        for (var i = 0; i < movieDetails.credits.crew.length; i++) {
-                            if (movieDetails.credits.crew[i].job === 'Director') {
-                                msg='4: The '+categoryLabel +' was directed by ' + movieDetails.credits.crew[i].name + '.';
-                            
-                                break;
-                            }
-                        }
-                    
-                    } else {
-                        msg='4: There were a total of '+ movieDetails.number_of_episodes + ' episodes  across '+ movieDetails.number_of_seasons + ' seasons.';
-                    }
-                    document.getElementById('results').innerHTML += '<p> '+msg  +'</p>';
-                    speak(msg);
-                     break;
-                case 5:
-                    // Get the first two character names
-                    msg='5: Two characters in the '+categoryLabel +' are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.';
-                    document.getElementById('results').innerHTML += '<p>'+msg+'</p>';
-                    speak(msg);
-                    document.querySelector('#results p:last-child').scrollIntoView();
-                    break;
-            }
-            showLastHint();
-            updateScore();
-            // Prompt user again
-           // promptUser(movieDetails, guesses);
-        }
-    }
-}
-
-function speak(txt) {
-    if (sound ) {
-        var msg = new SpeechSynthesisUtterance();
-        msg.text = txt;
-        window.speechSynthesis.speak(msg);
-    }
-}
-enableShareLink();
-
-function openDrawer() {
-    var drawer = document.getElementById("drawer");
-    drawer.classList.toggle("hidden");
-    drawer.classList.toggle("visible");
-  }
-  document.querySelector(".menu-icon").addEventListener("click", openDrawer);
-  document.querySelector(".close-menu").addEventListener("click", openDrawer);
+<div id="drawer" class="hidden">
+    <svg class="close-menu" viewBox="0 0 100 80" width="40" height="40">
+        <line x1="10" y1="10" x2="90" y2="70"  stroke-width="15"></line>
+        <line x1="90" y1="10" x2="10" y2="70"  stroke-width="15"></line>
+    </svg>
+    
+    <div id="drawer-content">
+        <h2> Settings </h2>
+    <div class="select-container">
+    
+        <h3> Difficulty:</h3>
+        <label class="toggle">
+            <span>Easy:</span>
+            <input class="toggle-checkbox" type="checkbox" id="modeSetting">
+             <div class="toggle-switch"></div>
+             <span class="toggle-label">Hard</span>
+        </label>
+        <hr/>
+        <h3> Theme:</h3>
+        <label class="toggle">
+            <span class="">Light</span>
+            <input class="toggle-checkbox" type="checkbox" id="themeSetting">
+             <div class="toggle-switch"></div>
+             <span class="toggle-label">Dark</span>
+        </label>
+        <hr />
+        <h3> Sound:</h3>
+        <label class="toggle">
+            <span class="">Off</span>
+            <input class="toggle-checkbox" type="checkbox" id="soundSetting">
+             <div class="toggle-switch"></div>
+             <span class="toggle-label">On</span>
+        </label>
+        <hr />
+      
+        <div class="link-container">
+            <a href="javascript:document.getElementById('howToPlayDialog').show(); openDrawer()  " class="link">How to Play</a>
+        </div>
+        <hr />
+        <div class="link-container">
+            <a href="javascript:document.getElementById('aboutDialog').show() ; openDrawer()  " class="link">About</a>
+        </div>
+        <hr />
+        <div class="link-container">
+            <a href="javascript:document.getElementById('creditsDialog').show(); openDrawer()  " class="link">Credits</a>
+        </div>
+        <hr />
+        <div class="link-container">
+             <a href="#" id=shareLink class="link">Share</a>
+        </div>
+        </div>
+    </div>
+</div>
 
 
-  /* Add listeners for menu items */
-  function savePreferences (pref) {
-    localStorage.setItem("preferences", JSON.stringify(preferences) );
-  }
-  
-  document.getElementById("themeSetting").addEventListener("click", function (e) {
-    preferences = getPreferences();
-    preferences.theme = e.target.checked ? "dark" : "light";
-   setTheme(preferences);
-    savePreferences(preferences);
-  })
 
 
-  document.getElementById("modeSetting").addEventListener("click", function (e) {
-    preferences = getPreferences();
-    preferences.mode = e.target.checked ? "hard" : "easy";
-    document.body.classList.add(  preferences.mode );
-    setScale();
-    createOverlay() ;
-    addClickToImage();
-    savePreferences(preferences);
-  })
 
 
-  document.getElementById("soundSetting").addEventListener("click", function (e) {
-    preferences = getPreferences();
-    preferences.sound = e.target.checked ? true : false;
-    sound = preferences.sound;
-    if (sound) {
-        speak(document.querySelector('#results p:last-child').innerText);
-    }
-    savePreferences(preferences);
-  })
+
+    <script>
+   
+    </script>
+
+    <script src="quiz.js"></script>
+<dialog id="howToPlayDialog">
+    
+    <div>
+        <a class="close" href="#" id="closeHowToPlay">X</a>
+        <h2>How To Play</h2>
+
+        <p>You will be given a series of clues to identify a show. Type your guesses into the boxes and press the Guess button</p>.
+        <p> As the game progresses more and more of the picture is revealed.  You can click on the exposed tiles to zoom into them.</p>
+        <p>With each guess your points total goes down.</p>
+        <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
+
+    </div>
+</dialog>
+<dialog id="aboutDialog">
+    
+    <div>
+        <a class="close" href="#" id="closeAbout">X</a>
+        <h2>About</h2>
+
+        <p>You will be given a series of clues to identify a show. Type your guesses into the boxes and press the Guess button</p>.
+        <p> As the game progresses more and more of the picture is revealed.  You can click on the exposed tiles to zoom into them.</p>
+        <p>With each guess your points total goes down.</p>
+        <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
+
+    </div>
+</dialog>
+<dialog id="creditsDialog">
+    <a class="close" href="#" id="closeCredits">X</a>
+    <div>
+        <h2>Credits</h2>
+
+        <p>The movie database - Pictures and data about the films and tv shows are sourced from themoviedb.org</p>
+
+
+    </div>
+</dialog>
+<script>
+
+
+document.getElementById("closeHowToPlay").addEventListener("click", function () {
+    document.getElementById("howToPlayDialog").close()
+});
+document.getElementById("closeAbout").addEventListener("click", function () {
+    document.getElementById("aboutDialog").close()
+});
+document.getElementById("closeCredits").addEventListener("click", function () {
+    document.getElementById("creditsDialog").close()
+});
+    </script>
+</body>
+</html>
