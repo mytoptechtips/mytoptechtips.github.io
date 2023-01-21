@@ -6,7 +6,7 @@ var score=110;
 var zoomScale = 8;
 var specificId;
 var sound=false;
-
+var defaultImageWidth=480;
 
 function getPreferences() {
     var preferences;
@@ -487,7 +487,7 @@ function addClickToImage() {
                 //img.style.transform = `scale(${scale},${scale})`;
                 img.style.marginLeft = -1*insetLeft+"px";
                 img.style.marginTop = -1*insetTop+"px";
-                img.style.width = 640*scale+"px"    
+                img.style.width = defaultImageWidth*scale+"px"    
                 ovl.style.display="none";
                 }
             });
@@ -515,7 +515,8 @@ function resetZoom() {
  
     img.style.marginLeft = 0;
     img.style.marginTop = 0;
-    img.style.width = 640+"px"
+   // img.style.width = 640+"px"
+   img.style.width = "100%";
 
 }
 function updateScore() {
@@ -703,7 +704,7 @@ function openDrawer() {
   function savePreferences (pref) {
     localStorage.setItem("preferences", JSON.stringify(preferences) );
   }
-  
+
   document.getElementById("themeSetting").addEventListener("click", function (e) {
     preferences = getPreferences();
     preferences.theme = e.target.checked ? "dark" : "light";
@@ -731,4 +732,4 @@ function openDrawer() {
         speak(document.querySelector('#results p:last-child').innerText);
     }
     savePreferences(preferences);
-  }) 
+  })
