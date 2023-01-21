@@ -7,16 +7,14 @@
     </script>
 
     <style>
-        :root,
-        body.light {
+        :root {
             --background-color: white;
             --foreground-color: black;
         }
         @media (prefers-color-scheme: dark) {
-            :root,
-            body.dark {
+            :root {
                 --background-color: black;
-                --foreground-color: white;
+                 --foreground-color: white;
             }
         }
         body {
@@ -28,41 +26,12 @@
              font-size: 1rem;
         }
 
-        header {
-            display: flex;
-   
-            justify-content: space-around;
-
-        }
-
-        .menu-icon  {
-            stroke-width:2; 
-            stroke:green; 
-            fill:darkgray;
-            margin:15px;
-        }
-
-        .close-menu  {
-            stroke-width:2; 
-            stroke:var(--foreground-color); 
-            fill: var(--foreground-color);
-            margin:10px;
-        }
-
         h1, label, input,
         h1 > span {
-            font-size : 1.5rem;
-           
-
-        }
-
-        h1 > span {
-            margin : 5px;
-            width: 93vw;
+            font-size : 1.5rem; margin : 5px
         }
         h1 {
             text-align:center;  
-            
         }
         input {
             text-transform: uppercase;
@@ -144,7 +113,10 @@
             max-height: 40%;
         }   
 
-   
+        .wrapper {
+            display:grid;
+            grid-template-columns: 3fr 1fr;
+        }
         .guess-letter.start-new-line::before{
             content: "\a";
             white-space: pre;
@@ -158,25 +130,17 @@
 
         }
         #scoreHeader {
-            font-size:15px;
+            font-size:34px;
             text-align: center;
             color: var(--foreground-color);
         }
         #score {
-            font-size:20px;
-
+            font-size:80px;
+            border-radius:50%;
             border:5px solid silver;
- 
-            width:80vw;
-            height: 3rem;
-
-  
-        }
-        #scoreDisplay {
-            font-size: 30px;
-    line-height: 20px;
-    vertical-align: 10px;
-            
+            display:grid;
+            place-items:center;
+            line-height:200px;
         }
         #movie-poster:has(#image.zoomed) {
             border: 10px solid red;
@@ -202,7 +166,6 @@
             display: flex;
             flex-wrap: wrap;
         }
-        .hidden {display:none}
 
         .box {
             width: calc(100%/var(--colcount));
@@ -256,7 +219,7 @@
             --fg: #369;
             --bg: #def;
             --pgPercentage: var(--value);
-            animation: shrinkProgressBar 5s 1 backwards;#
+            animation: shrinkProgressBar 5s 1 backwards;
          
             width: var(--size);
             height: var(--size);
@@ -306,33 +269,30 @@
         .wrapper {
             display:grid;
             grid-template-areas: "header header header"
-                                 "poster poster poster"
-                                 "scoreboard scoreboard scoreboard" 
-                                 "results results results"
-                                "form form form";
-         grid-template-rows: 1fr 4fr 0.25fr 3fr 3fr;
-            grid-template-columns: 2fr 2fr 1fr ;
-    
+                                    "poster poster scoreboard"
+                                    "results results results"
+                                    "form form form";
+         grid-template-rows: 1fr 4fr 3fr 3fr;
         }    
-        header {
+        h1 {
             grid-area: header;
             align-self:center;
         }
-        #movie-poster { grid-area: poster; justify-self:center}
+        #movie-poster { grid-area: poster}
         #scoreboard { grid-area: scoreboard}
         #results { grid-area : results}
         #quiz-form { grid-area : form}
     
 
         #results {
-            width: 95vw;
+            width: 100%;
             display: flex;
             overflow-x: scroll;
             overflow-y: hidden;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
             min-height: 300px;
-            gap:2vw;
+            gap:20px;
         }
 
         #results p {
@@ -412,181 +372,6 @@
 
 
 </style>
-
-<style>
-
-    .menu-icon {
-
-  height:25px;
-  width:25px;
-}
-
-#drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 300px;
-  height: 100%;
-
-  background-color: var(--background-color);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  transform: translateX(100%);
-  transition: transform 0.3s ease-out;
-}
-#drawer span, 
-#drawer label, 
-#drawer p,
-#drawer h2,
-#drawer h3,
-#drawer h4,
-#drawer h5,
-#drawer a
-{
-    color: var(--foreground-color);
-    text-decoration:none
-}
-
-#drawer.hidden {
-  transform: translateX(100%);
-}
-
-#drawer.visible {
-  transform: translateX(0);
-}
-
-#drawer-content {
-  padding: 20px;
-}
-#drawer-content label span,
-#drawer-content h2
- {
- font-size:1.6rem;
-}
-#drawer-content h3
- {
- font-size:1.4rem;
-}
-#drawer-content hr {
-    margin-top : 30px;
-    margin-bottom: 30px;
-}
-
-.switch-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-
-}
-.close-menu {
-    float:right;
-    padding-top: 30px;
-  padding-right:35px;
-  height: 30px;
-    width: 30px;
-
-    stroke-width: 2;
-    stroke: darkgray;
-  
-}
-
-
-
-</style>
-<style>
-
-    .toggle {
-  cursor: pointer;
-  
-  display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-items: center;
-    justify-content: space-evenly;
-}
-
-.toggle-switch {
-  display: inline-block;
-  background: #ccc;
-  border-radius: 16px;
-  width: 58px;
-  height: 32px;
-  position: relative;
-  vertical-align: middle;
-  transition: background 0.25s;
-}
-.toggle-switch:before, .toggle-switch:after {
-  content: "";
-}
-.toggle-switch:before {
-  display: block;
-  background: linear-gradient(to bottom, #fff 0%, #eee 100%);
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  transition: left 0.25s;
-}
-.toggle:hover .toggle-switch:before {
-  background: linear-gradient(to bottom, #fff 0%, #fff 100%);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
-}
-.toggle-checkbox:checked + .toggle-switch {
-  background: #56c080;
-}
-.toggle-checkbox:checked + .toggle-switch:before {
-  left: 30px;
-}
-
-.toggle-checkbox {
-  position: absolute;
-  visibility: hidden;
-}
-
-.toggle-label {
-  margin-left: 5px;
-  position: relative;
-  top: 2px;
-}    
-
-.link-container a {
-    font-size:22px;
-}
-
-#drawer-content {
-    padding: 30px;
-    padding-top: 90px;
-}
-#drawer-content h2 {
-    font-size:40px;
-    margin-bottom:20px;
-}
-dialog {
-    position: absolute;
-    top:0;
-    left:0;
-    margin:30px;
-    border:1px solid silver;
- 
-    height:100vh;
-    background : var(--background-color);
-    color:var(--foreground-color);
-}
-dialog .close {
-    width:100%;
-    text-align:right;
-    display:block;
-    font-size:30px;
-}
-dialog h2 {
-    font-size:40px;
-}
-</style>
-<style>
-    meter {width : 80vw; height:2rem;}    </style>
 </head>
 <body class="loading">
   
@@ -610,12 +395,9 @@ dialog h2 {
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="L">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"><br/>     
             </div>
-            <p>Getting started ... please wait </p>
+            <p>Getting started... please wait </p>
     </div>
-
-    <div class="wrapper">       
-        <header>
-        <h1>
+    <div class="wrapper">        <h1>
             <div class="pageHeading">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="G">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
@@ -634,27 +416,22 @@ dialog h2 {
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">  
             </div>
         </h1>
-        <div>
-            <svg class="menu-icon" 
-            viewBox="0 0 100 80" width="40" height="40">
-                <rect width="100" height="20"></rect>
-                <rect y="30" width="100" height="20"></rect>
-                <rect y="60" width="100" height="20"></rect>
-            </svg>
-</div>
-         </header>
          <div id="movie-poster">
             <img id="image" src="https://image.tmdb.org/t/p/original/hqh5O4KssfJWI62HGAgrjHXbxhD.jpg">
-            <div id="overlay" style="--colcount:8;--rowcount:8">
-          
+            <div id="overlay" style="--colcount:4;--rowcount:4">
+                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+                <div class="box"></div> <div class="box"></div> <div class="box"></div> <div class="box"></div>
+
+    
                 <!-- Add more boxes as needed -->
             </div>
         </div>
         <div id="scoreboard">
-            <div id="scoreHeader">
-                <meter id="score" max=100 min=0 value=100 high=80 low=40 optimum=90></meter><span id="scoreDisplay"></span>
-        </div>
-            <!-- div id="score" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:65"></div -->
+            <div id="scoreHeader">Score:</div>
+            <!-- div id="score"></div --> 
+            <div id="score" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:65"></div>
         </div>
     
         <div id="results"></div>
@@ -676,66 +453,6 @@ dialog h2 {
 
 
 
-    
-
-<div id="drawer" class="hidden">
-    <svg class="close-menu" viewBox="0 0 100 80" width="40" height="40">
-        <line x1="10" y1="10" x2="90" y2="70"  stroke-width="15"></line>
-        <line x1="90" y1="10" x2="10" y2="70"  stroke-width="15"></line>
-    </svg>
-    
-    <div id="drawer-content">
-        <h2> Settings </h2>
-    <div class="select-container">
-    
-        <h3> Difficulty:</h3>
-        <label class="toggle">
-            <span>Easy:</span>
-            <input class="toggle-checkbox" type="checkbox" id="modeSetting">
-             <div class="toggle-switch"></div>
-             <span class="toggle-label">Hard</span>
-        </label>
-        <hr/>
-        <h3> Theme:</h3>
-        <label class="toggle">
-            <span class="">Light</span>
-            <input class="toggle-checkbox" type="checkbox" id="themeSetting">
-             <div class="toggle-switch"></div>
-             <span class="toggle-label">Dark</span>
-        </label>
-        <hr />
-        <h3> Sound:</h3>
-        <label class="toggle">
-            <span class="">Off</span>
-            <input class="toggle-checkbox" type="checkbox" id="soundSetting">
-             <div class="toggle-switch"></div>
-             <span class="toggle-label">On</span>
-        </label>
-        <hr />
-      
-        <div class="link-container">
-            <a href="javascript:void(document.getElementById('howToPlayDialog').show()) " class="link">How to Play</a>
-        </div>
-        <hr />
-        <div class="link-container">
-            <a href="javascript:void(document.getElementById('aboutDialog').show()) " class="link">About</a>
-        </div>
-        <hr />
-        <div class="link-container">
-            <a href="javascript:void(document.getElementById('creditsDialog').show()) " class="link">Credits</a>
-        </div>
-        <hr />
-        <div class="link-container">
-             <a href="#" id=shareLink class="link">Share</a>
-        </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-
 
 
     <script>
@@ -743,54 +460,5 @@ dialog h2 {
     </script>
 
     <script src="quiz.js"></script>
-<dialog id="howToPlayDialog">
-    
-    <div>
-        <a class="close" href="#" id="closeHowToPlay">X</a>
-        <h2>How To Play</h2>
-
-        <p>You will be given a series of clues to identify a show. Type your guesses into the boxes and press the Guess button</p>.
-        <p> As the game progresses more and more of the picture is revealed.  You can click on the exposed tiles to zoom into them.</p>
-        <p>With each guess your points total goes down.</p>
-        <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
-
-    </div>
-</dialog>
-<dialog id="aboutDialog">
-    
-    <div>
-        <a class="close" href="#" id="closeAbout">X</a>
-        <h2>About</h2>
-
-        <p>You will be given a series of clues to identify a show. Type your guesses into the boxes and press the Guess button</p>.
-        <p> As the game progresses more and more of the picture is revealed.  You can click on the exposed tiles to zoom into them.</p>
-        <p>With each guess your points total goes down.</p>
-        <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
-
-    </div>
-</dialog>
-<dialog id="creditsDialog">
-    <a class="close" href="#" id="closeCredits">X</a>
-    <div>
-        <h2>Credits</h2>
-
-        <p>The movie database - Pictures and data about the films and tv shows are sourced from themoviedb.org</p>
-
-
-    </div>
-</dialog>
-<script>
-
-
-document.getElementById("closeHowToPlay").addEventListener("click", function () {
-    document.getElementById("howToPlayDialog").close()
-});
-document.getElementById("closeAbout").addEventListener("click", function () {
-    document.getElementById("aboutDialog").close()
-});
-document.getElementById("closeCredits").addEventListener("click", function () {
-    document.getElementById("creditsDialog").close()
-});
-    </script>
 </body>
 </html>
