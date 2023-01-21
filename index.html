@@ -580,6 +580,7 @@ dialog .close {
     text-align:right;
     display:block;
     font-size:30px;
+    text-decoration:none;
 }
 dialog h2 {
     font-size:40px;
@@ -714,15 +715,15 @@ dialog h2 {
         <hr />
       
         <div class="link-container">
-            <a href="javascript:void(document.getElementById('howToPlayDialog').show()) " class="link">How to Play</a>
+            <a href="javascript:void(document.getElementById('howToPlayDialog').show()); openDrawer()  " class="link">How to Play</a>
         </div>
         <hr />
         <div class="link-container">
-            <a href="javascript:void(document.getElementById('aboutDialog').show()) " class="link">About</a>
+            <a href="javascript:void(document.getElementById('aboutDialog').show()) ; openDrawer() " class="link">About</a>
         </div>
         <hr />
         <div class="link-container">
-            <a href="javascript:void(document.getElementById('creditsDialog').show()) " class="link">Credits</a>
+            <a href="javascript:void(document.getElementById('creditsDialog').show()); openDrawer()  " class="link">Credits</a>
         </div>
         <hr />
         <div class="link-container">
