@@ -732,3 +732,4 @@ function openDrawer() {
     }
     savePreferences(preferences);
   })
+
