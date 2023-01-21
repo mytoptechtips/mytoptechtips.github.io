@@ -285,6 +285,7 @@
           display:grid;
           place-items:center;
           height:100vh;
+          background: var(--background-color);
         }
         body:not(.loading) .loading {
             display:none;
@@ -574,6 +575,8 @@ dialog {
     height:100vh;
     background : var(--background-color);
     color:var(--foreground-color);
+   
+
 }
 dialog .close {
     width:100%;
@@ -717,15 +720,15 @@ dialog h2 {
         <hr />
       
         <div class="link-container">
-            <a href="javascript:void(document.getElementById('howToPlayDialog').show()); openDrawer()  " class="link">How to Play</a>
+            <a href="javascript:document.getElementById('howToPlayDialog').show(); openDrawer()  " class="link">How to Play</a>
         </div>
         <hr />
         <div class="link-container">
-            <a href="javascript:void(document.getElementById('aboutDialog').show()) ; openDrawer() " class="link">About</a>
+            <a href="javascript:document.getElementById('aboutDialog').show() ; openDrawer()  " class="link">About</a>
         </div>
         <hr />
         <div class="link-container">
-            <a href="javascript:void(document.getElementById('creditsDialog').show()); openDrawer()  " class="link">Credits</a>
+            <a href="javascript:document.getElementById('creditsDialog').show(); openDrawer()  " class="link">Credits</a>
         </div>
         <hr />
         <div class="link-container">
