@@ -7,6 +7,16 @@ var zoomScale = 8;
 var specificId;
 var sound=false;
 var defaultImageWidth=640;
+var filters = {
+        "60s" : "&primary_release_date.gte=1960&primary_release_date.lte=1969",
+        "70s" : "&primary_release_date.gte=1970&primary_release_date.lte=1979",
+        "80s" : "&primary_release_date.gte=1980&primary_release_date.lte=1989",
+        "90s" : "&primary_release_date.gte=1990&primary_release_date.lte=1999",
+        "00s" : "&primary_release_date.gte=2000&primary_release_date.lte=2009",
+        "10s" : "&primary_release_date.gte=2010&primary_release_date.lte=2019"
+
+    }
+var movieIds = [];
 
 function getPreferences() {
     var preferences;
@@ -47,11 +57,20 @@ function createOverlay() {
     for (var i=0 ; i < zoomScale * zoomScale ; i++ ) {
         b = document.createElement('DIV');
         b.classList.add("box");
+        if (i < zoomScale || i >= zoomScale * (zoomScale - 1) || i % zoomScale === 0 || i % zoomScale === zoomScale - 1) {
+            b.classList.add("outer");
+            scoreDelta = zoomScale < 6 ? -10 : -3;   
+        } else {
+            scoreDelta = zoomScale < 6 ? -25 : -10;
+        }
+        b.style.setProperty("--data-score-delta", "\""+scoreDelta+ "\"");
+
+        
         ovl.appendChild(b);
 
     }
 
-
+    setupBoxAnimation();
 }
 createOverlay() ;
 
@@ -62,16 +81,49 @@ function setPreferencesInMenu() {
     document.getElementById("themeSetting").checked = (preferences.theme == "dark") ;
     document.getElementById("soundSetting").checked= (preferences.sound) ;
 }
+/*
+function censorWords(movieTitle, message) {
+    const titleWords = movieTitle.toLowerCase().split(" ");
+    const messageWords = message.toLowerCase().split(" ");
+    for (let i = 0; i < messageWords.length; i++) {
+      if (titleWords.includes(messageWords[i])) {
+        messageWords[i] = "*".repeat(messageWords[i].length);
+      }
+    }
+    return messageWords.join(" ");
+}
+*/
+const commonWords = ['this', 'it', 'on', 'of', 'and', 'is', 'in', 'to', 'for', 'with', 'the', 'a'];
+function censorWords(movieTitle, message) {
+  const titleWords = movieTitle.toLowerCase().split(" ");
+  const messageWords = message.split(" ");
+  for (let i = 0; i < messageWords.length; i++) {
+    const lowerCaseWord = messageWords[i].toLowerCase();
+    if (titleWords.includes(lowerCaseWord) && !commonWords.includes(lowerCaseWord)) {
+      messageWords[i] = "*".repeat(messageWords[i].length);
+    }
+  }
+  return messageWords.join(" ");
+}
+
 setPreferencesInMenu() ;
 const today = new Date();
 const imdblink="https://www.imdb.com/title/";
 let params = new URLSearchParams(document.location.search)
 
 
-if (params.get( "tv") )  {
+if (params.get( "tv")!= null  )  {
     category="tv";
     categoryLabel="TV show";
 }
+let filterParam=params.get("filter");
+let filter="";
+if (filterParam != null ){
+    if (filters[filterParam]) {
+        filter = filters[filterParam];
+    } 
+}
+document.body.classList.add("category-"+category);
 
 
 let randomSeed;
@@ -128,20 +180,25 @@ document.getElementById('play-again-button').addEventListener('click', function(
 
   async function getMovieIds() {
     // Initialize variables
-    var movieIds = [];
-
+    const sessionMoviesStr = sessionStorage.getItem("sessionMovies") || "[]";
+    const sessionMovies = JSON.parse(sessionMoviesStr);
     // Loop through pages 1 to 20
     for (var i = 1; i <= 20; i++) {
         // Call API and add page parameter
-        var response = await fetch('https://api.themoviedb.org/3/discover/'+category+'?api_key=3f2af1df74075e194bc154e7f3233e60&language=en-US&with_original_language=en&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate&page='+i, {
+        console.log("Added filter ", filter);
+        var response = await fetch('https://api.themoviedb.org/3/discover/'+category+'?api_key=3f2af1df74075e194bc154e7f3233e60'+filter+'&language=en-US&with_original_language=en&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate&page='+i, {
             method: 'GET',
             mode: 'cors',
             cache: 'default'
         });
         var json = await response.json();
         // Save movie IDs to array
+      
         for (var j = 0; j < json.results.length; j++) {
-            movieIds.push(json.results[j].id);
+            console.log("Batch : "+ i + " : "+ json.results[j].id);
+            if (sessionMovies.indexOf(json.results[j].id) < 0 ) {
+                movieIds.push(json.results[j].id);
+            }
         }
        
     }
@@ -166,7 +223,7 @@ function formatDate(dateStr) {
 
 function revealVowels () {
     var inputBoxes = document.getElementsByClassName("guess-letter");
-    score=score -20;
+    score=score -40;
     updateScore();
 for (var i = 0; i < inputBoxes.length; i++) {
      if (movieDetails.title[i].match(/[aeiou]/)) {
@@ -181,6 +238,18 @@ for (var i = 0; i < inputBoxes.length; i++) {
 
                 document.getElementById('reveal-vowels-button').style.display = 'none';
 }
+
+function saveMovieToSessionStorage(movieId) {
+    const sessionMoviesStr = sessionStorage.getItem("sessionMovies") || "[]";
+    let sessionMovies = JSON.parse(sessionMoviesStr);
+    sessionMovies.push(movieId);
+    sessionStorage.setItem("sessionMovies", JSON.stringify(sessionMovies));
+
+}
+function removePreviouslyPlayed(movieIds, previouslyPlayed) {
+    return movieIds.filter(id => !previouslyPlayed.includes(id));
+  }
+
 function wrapInputBoxes() {
 
 
@@ -217,7 +286,7 @@ function startQuiz() {
     var movieIds = [];
     var movieId;
     if (params.get("id")) {
-        specificId = params.get("id");
+        specificId = parseInt(params.get("id"));
     } else {
         specificId = null;
     }
@@ -240,17 +309,21 @@ function startQuiz() {
         console.log(movieIds);
         // Step 2: Choose a random movie ID
 
-        movieId = specificId ? specificId : movieIds[Math.floor(randomNumber() * movieIds.length)];
+        let movieIdx = Math.floor(randomNumber() * movieIds.length);
+
+        movieId = specificId ? specificId : movieIds[movieIdx];
        
+        console.log("Found movieId ["+movieId+"] at position "+ movieIdx +"from ["+movieIds.join(" ") +"]" )
         if (history.pushState) {
             params.delete("id");
             params.append("id",movieId);
             var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?"+ params.toString() ;
             window.history.pushState({path:newurl},'',newurl);
+            saveMovieToSessionStorage(movieId);
         }
 
         // Step 3: Call API to get movie details
-        fetch('https://api.themoviedb.org/3/'+category+'/' + movieId + '?api_key=3f2af1df74075e194bc154e7f3233e60', {
+        fetch('https://api.themoviedb.org/3/'+category+'/' + movieId + '?api_key=3f2af1df74075e194bc154e7f3233e60&append_to_response=images,credits', {
             method: 'GET',
             mode: 'cors',
             cache: 'default'
@@ -261,7 +334,11 @@ function startQuiz() {
             movieDetails = response;
             movieDetails.title = movieDetails.title || movieDetails.name;
             movieDetails.release_date = movieDetails.release_date || movieDetails.first_air_date;
+            
+         
+            promptUser(movieDetails, guesses);
 
+            /*
             // Step 4: Call API to get movie credits
             fetch('https://api.themoviedb.org/3/'+category+'/' + movieId + '/credits?api_key=3f2af1df74075e194bc154e7f3233e60', {
                 method: 'GET',
@@ -274,9 +351,14 @@ function startQuiz() {
                 // Step 5: Prompt user to guess movie title
                 promptUser(movieDetails, guesses);
             });
+            */
+            
         }).then (function(data) {
+            var backdrops = movieDetails.images.backdrops.filter( (bd) => { return (bd.iso_639_1 == null ) } )
+            randomBD = Math.floor(randomNumber() * backdrops.length);
 
-            var imgSrc="https://image.tmdb.org/t/p/original"+movieDetails.backdrop_path;
+           // var imgSrc="https://image.tmdb.org/t/p/original"+(movieDetails.backdrop_path)  ;
+            var imgSrc = "https://image.tmdb.org/t/p/original"+ backdrops[randomBD].file_path;
             document.getElementById("image").setAttribute("src",imgSrc);
 
        
@@ -420,15 +502,15 @@ function enableShareLink() {
 
 }
 function showCorrectResult(movieDetails) {
-    document.getElementById('results').innerHTML += '<p class="correct">Well Done! <br />That is the right answer.  You scored '+score+'.<br /> <span id="webshare"></span></p>';
+    document.getElementById('results').innerHTML += '<p class="correct">Well Done! <br />That is the right answer.  You scored '+score+'.<br /> <span id="webshare"></span><a target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDB</a></p>';
     speak("Well Done ! That is the right answer, you scored : "+ score);
     if (navigator.share) {
 
         document.getElementById("webshare").innerText = "Share"
         document.getElementById("webshare").addEventListener("click", function () {
         navigator.share({
-          title: 'Guess the '+category+' Title',
-          text: 'I got a score of '+score+', what can you get ?',
+          title: 'QuizWordsz',
+          text: 'I got a score of '+score+' today , what can you get ?',
           url: document.location.href,
         })
           .then(() => console.log('Successful share'))
@@ -489,6 +571,17 @@ function addClickToImage() {
                 img.style.marginTop = -1*insetTop+"px";
                 img.style.width = defaultImageWidth*scale+"px"    
                 ovl.style.display="none";
+                } else {
+                    box.classList.add("visible");
+                    let isOuter = (  box.classList.contains("outer")  ) ; 
+                    let scoreDelta = getComputedStyle(box).getPropertyValue('--data-score-delta');
+                 
+                    if (scoreDelta) { 
+                        scoreDelta = parseInt(scoreDelta.replaceAll(/[^0-9-]/g,""))
+                    }
+                    score=score+ scoreDelta;
+                    updateScore();
+
                 }
             });
 
@@ -570,9 +663,10 @@ function promptUser(movieDetails, guesses) {
             //highlightCorrectCharacters();
             var boxes = document.querySelectorAll(".box:not(.visible) ");
            
-            var visibleBox = Math.floor(randomNumber() * boxes.length);
-            boxes[visibleBox].classList.add("visible");
-
+            if (boxes.length > 0 ) {
+                var visibleBox = Math.floor(randomNumber() * boxes.length);
+                boxes[visibleBox].classList.add("visible");
+            }
 
             if (guesses > 0 && guesses < 5) {
                 for (var i = 0; i < inputBoxes.length; i++) {
@@ -596,7 +690,7 @@ function promptUser(movieDetails, guesses) {
                 notice="Better Luck next time ! <br/> The correct answer was: ";
                 msg="Better Luck next time !  The correct answer was: "+ movieDetails.title;
               
-                document.getElementById('results').innerHTML += '<p class="incorrect">'+notice+'</p> '  ;
+                document.getElementById('results').innerHTML += '<p class="incorrect">'+notice+' <br/><a target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDB</a> </p>';
                 speak(msg);
 
                 for (var i = 0; i < inputBoxes.length; i++) {
@@ -633,6 +727,7 @@ function promptUser(movieDetails, guesses) {
                 case 2:
                     // Display first two cast members
                     msg = '2: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'
+                    msg = censorWords(movieDetails.title, msg);
                     document.getElementById('results').innerHTML += '<p> '+msg+'</p>';
                     speak(msg);
                      break;
@@ -669,6 +764,7 @@ function promptUser(movieDetails, guesses) {
                 case 5:
                     // Get the first two character names
                     msg='5: Two characters in the '+categoryLabel +' are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.';
+                    msg = censorWords(movieDetails.title, msg);
                     document.getElementById('results').innerHTML += '<p>'+msg+'</p>';
                     speak(msg);
                     document.querySelector('#results p:last-child').scrollIntoView();
@@ -733,3 +829,39 @@ function openDrawer() {
     }
     savePreferences(preferences);
   })
+
+
+
+
+ 
+
+  
+
+
+
+function animateRandomBox(animationBoxCount) {
+    console.log(animationBoxCount);
+    if (animationBoxCount > 10) return;
+
+    let boxes=document.querySelectorAll("#overlay .box:not(.animated):not(.visible)")
+    console.log("Boxes Length : ", boxes.length)
+    let randomIndex = Math.floor(Math.random() * boxes.length);
+
+    const randomBox = boxes[randomIndex];
+    randomBox.classList.add("animate");
+    randomBox.classList.add("animated");
+    animationBoxCount++;
+    setTimeout(() => {
+        randomBox.classList.remove("animate");
+        console.log("Recursing", animationBoxCount)
+        animateRandomBox(animationBoxCount);
+    
+    }, 1000);
+}
+
+function setupBoxAnimation () {
+
+
+const overlay = document.getElementById("overlay");
+overlay.addEventListener("animationstart", function () {animateRandomBox(0)  });
+}
