@@ -1,7 +1,7 @@
 <html>
 <head>
     !-- <meta name="viewport" content=" user-scalable=no" / -->
-    <title>Movie Quiz v3.9</title>
+    <title>QuizWordz v0.2</title>
     <!-- inline Seedrandom.js from https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js">
     </script>
@@ -26,6 +26,17 @@
         }
         * { font-family:Arial;
              font-size: 1rem;
+        }
+
+        body *.category {
+            display:none;
+        }
+        
+        body.category-tv *.tv { 
+             display:initial;
+        }
+        body.category-movie  *.movie {
+            display:initial;
         }
 
         header {
@@ -62,6 +73,7 @@
         }
         h1 {
             text-align:center;  
+            width:100%;
             
         }
         input {
@@ -377,19 +389,24 @@
     /* add animation to the loading page */    
     @keyframes rotate {
   from {
-    transform: rotateY(0deg);
+  
+    transform: scale(0) rotateY(-360deg) ;
+    background-color:black;
+
   }
   to {
-    transform: rotateY(360deg);
+    transform: scale(1) rotateY(360deg) ;
+    background-color: green;
   }
 }
 
 
 
 .titleHeading input{
+    
     animation-name: rotate;
     animation-delay:0.2s;
-    animation-duration: 0.5s;
+    animation-duration: 1.7s;
     animation-iteration-count: once;
     animation-timing-function: linear;
 }
@@ -402,7 +419,7 @@
 .titleHeading input:nth-child(7){     animation-delay:0.7s;}
 .titleHeading input:nth-child(8){     animation-delay:0.8s;}
 .titleHeading input:nth-child(9){     animation-delay:0.9s;}
-.titleHeading input:nth-child(10){    animation-delay:1s;}
+.titleHeading input:nth-child(10){    animation-delay:1.0s;}
 .titleHeading input:nth-child(11){    animation-delay:1.1s;}
 .titleHeading input:nth-child(12){    animation-delay:1.2s;}
 .titleHeading input:nth-child(13){    animation-delay:1.3s;}
@@ -410,6 +427,11 @@
 .titleHeading input:nth-child(15){    animation-delay:1.5s;}
 .titleHeading input:nth-child(16){    animation-delay:1.6s;}
 .titleHeading input:nth-child(17){    animation-delay:1.7s;}
+
+.titleHeading input:nth-child(18){    animation-delay:1.8s;}
+.titleHeading input:nth-child(19){    animation-delay:1.9s;}
+.titleHeading input:nth-child(20){    animation-delay:2.0s;}
+.titleHeading input:nth-child(21){    animation-delay:2.1s;}
 /* and so on for each input element */
 
 
@@ -571,6 +593,7 @@
     top:0;
     left:0;
     margin:30px;
+    padding:30px;
     border:1px solid silver;
  
     height:100vh;
@@ -590,35 +613,77 @@
     text-decoration:none;
     border:0;
     outline:0;
+    color:var(--foreground-color); 
 }
 .dialog h2 {
     font-size:40px;
 }
 </style>
 <style>
-    meter {width : 80vw; height:2rem;}    </style>
+    meter {width : 80vw; height:2rem;}   
+     </style>
+     <style>
+        #overlay.animated .box {
+    animation: animateBox 0.3s ease-out;
+}
+
+.box.animate {
+    background-color: orange;
+}
+
+@keyframes animateBox {
+    0% {
+        background-color: black;
+    }
+    100% {
+        background-color: black;
+    }
+}
+
+.box:before {
+  
+    content: var(--data-score-delta);
+    color: gray;
+    display: grid;
+    /* align-self: center; */
+    justify-items: center;
+    align-content: center;
+    height: 100%;
+}
+/*
+.box.outer:before {
+    content: "-10";
+}*/
+        
+        </style>
 </head>
 <body class="loading">
   
     <div class="loading">
         
              <div class="titleHeading">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="G">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Q">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
-                <br/>
-                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="H">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"> 
-                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value=""><br/>
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="I">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="L">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"><br/>     
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Z">
+                            <!-- input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="" -->
+                <br/>
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="W">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="O">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="R"> 
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="D">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Z">
+                <br />
+                
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="M">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="O">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="V">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="I">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="E">
+        
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category tv" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category tv" value="V">
+  ><br/>     
             </div>
             <p>Getting started ... please wait </p>
     </div>
@@ -627,21 +692,26 @@
         <header>
         <h1>
             <div class="pageHeading">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="G">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Q">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="S">
-                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="H">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E"> 
-                <input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="I">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="T">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="L">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="E">  
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Z">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="W">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="O">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="R">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="D">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Z">
+
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation category movie" value="">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="M">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="O">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="V">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="I">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category movie" value="E">
+
+                <input size="1" maxlength="1" type="text" class="tile-letter punctuation category tv" value="">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category tv" value="T">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct category tv" value="V">
             </div>
         </h1>
         <div>
@@ -677,7 +747,7 @@
           <button type="submit" id="submit-button">Guess</button>
      
           <button type="button" id="play-again-button">Play Again</button>
-          <button type="button" id="reveal-vowels-button">Vowels <span class="small">(-20)</span></button>
+          <button type="button" id="reveal-vowels-button">Vowels <span class="small">(-40)</span></button>
         </form> 
 
     </div>
@@ -757,10 +827,12 @@
     
     <div>
         <a class="close" href="#" id="closeHowToPlay">X</a>
-        <h2>How To Play</h2>
+        <h2>Quizwordz</h2>
+
+        <p> The aim of the game is to guess the title</p>
 
         <p>You will be given a series of clues to identify a show. Type your guesses into the boxes and press the Guess button</p>.
-        <p> As the game progresses more and more of the picture is revealed.  You can click on the exposed tiles to zoom into them.</p>
+        <p>As the game progresses more and more of the picture is revealed.  You can click on the exposed tiles to zoom into them.</p>
         <p>With each guess your points total goes down.</p>
         <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
 
@@ -772,11 +844,8 @@
         <a class="close" href="#" id="closeAbout">X</a>
         <h2>About</h2>
 
-        <p>You will be given a series of clues to identify a show. Type your guesses into the boxes and press the Guess button</p>.
-        <p> As the game progresses more and more of the picture is revealed.  You can click on the exposed tiles to zoom into them.</p>
-        <p>With each guess your points total goes down.</p>
-        <p>You can share a link to the game using the menu "Share" link, or you can just copy the URL from your browser.</p>
-
+        <p>This game is purely for fun, follow us on social media to find out more about it. @quizwordz</p>.
+      
     </div>
 </div>
 <div  class="dialog" id="creditsDialog">
