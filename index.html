@@ -88,7 +88,7 @@
             text-transform: uppercase;
             margin-bottom:5px; margin-left:3px;margin-right:3px;
             padding:0;
-            font-family: "League Spartan";
+            font-family: "League Spartan", Arial, Helvetica, sans-serif;
             
             border: 2px solid white;
              border-radius: 20%;
@@ -178,6 +178,8 @@
         #submit-button { float:left; color:white; background:green}
         #play-again-button { float:right; color:white; background:darkolivegreen}
         #reveal-vowels-button {float:right;color:white; background: darkolivegreen}
+
+        #webshare { color:white; border:3px solid white; background: darkolivegreen; border-radius: 10px; display:block; margin-bottom:10px;text-align:center}
 
         .scoreboard {
             background:silver;
@@ -375,8 +377,8 @@
             border:1px solid silver;
          
             font-weight: 500;
-            font-family: "League Spartan";
-
+            font-family: "League Spartan", Arial, Helvetica, sans-serif;
+            grid-template-columns: 7fr 1fr;
         }
         #results p:nth-child(1) {
             background-color:brown;
@@ -401,6 +403,19 @@
 
 
 
+    </style>
+    <style>
+        .imdblink {
+            display:block;
+            color: black;
+    background-color: #f5c519;
+    padding: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 10px;
+    outline: 2px solid black;
+    line-height:20px;
+        }
     </style>
     <style>
     /* add animation to the loading page */    
@@ -673,6 +688,21 @@
 }*/
         
         </style>
+
+        <style>
+            @media screen and (min-width: 1200px) {
+            .wrapper {
+                grid-template-areas:
+                    "header header header header"
+                    "poster poster poster results "
+                    "scoreboard scoreboard scoreboard scoreboard"
+                    "form form form form";
+                }
+            #results {
+                width : 48vw;
+            }
+        }
+            </style>
 </head>
 <body class="loading">
   
