@@ -1,10 +1,11 @@
 <html>
 <head>
+<!-- Load the fonts from google - refacor when final font chosen -->
 
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Josefin+Sans:wght@100;200;300;400;500;600;700&family=League+Spartan:wght@100;200;300;400;500;600;700;800;900&family=Lexend+Tera:wght@100;200;300;400;500;600;700;800;900&family=Lexend:wght@100;200;300;400;500;600;700&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=Nunito:wght@200;300;500;600;700;800;809;900;1000&family=Open+Sans:wght@300;400;500;600;700;800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,500&family=Work+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
 
 
     !-- <meta name="viewport" content=" user-scalable=no" / -->
@@ -87,6 +88,10 @@
             text-transform: uppercase;
             margin-bottom:5px; margin-left:3px;margin-right:3px;
             padding:0;
+            font-family: "League Spartan";
+            
+            border: 2px solid white;
+             border-radius: 20%;
         }
         p {
          
@@ -134,9 +139,11 @@
         .guess-letter,
         .tile-letter {
             width: 3ch;
-            line-height: 40px;
-            font-size: 32px;
-            text-align: center;
+    line-height: 36px;
+    font-size: 32px;
+    text-align: center;
+    padding-top: 4px;
+
 
         }
 
@@ -320,8 +327,8 @@
         body.loading #quiz-form {
             display:none;
         }
-        .titleHeading input {line-height:100px; height:100px;font-size:90px;padding:0;}
-        .pageHeading input {line-height:36px;font-size:25px; padding:0;}
+        .titleHeading input {line-height:100px; height:100px;font-size:90px;padding:0;padding-top: 13px;border-radius:10px}
+        .pageHeading input {line-height:36px;font-size:25px; padding:0;padding-top: 3px;border-radius:10%;}
         </style>
     <style>
         .wrapper {
@@ -366,7 +373,10 @@
             padding:40px;
             border-radius:20px;
             border:1px solid silver;
-            font-weight:bold;
+         
+            font-weight: 500;
+            font-family: "League Spartan";
+
         }
         #results p:nth-child(1) {
             background-color:brown;
