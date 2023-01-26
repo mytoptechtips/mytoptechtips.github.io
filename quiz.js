@@ -740,9 +740,9 @@ function promptUser(movieDetails, guesses) {
                     document.getElementById('results').innerHTML += '<p> ' + msg+ '</p>';
                     speak(msg);
                     break;
-                case 2:
+                case 4:
                     // Display first two cast members
-                    msg = '2: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'
+                    msg = '4: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'
                     msg = censorWords(movieDetails.title, msg);
                     document.getElementById('results').innerHTML += '<p> '+msg+'</p>';
                     speak(msg);
@@ -759,20 +759,20 @@ function promptUser(movieDetails, guesses) {
                     document.getElementById('results').innerHTML += '<p> '+msg+'</p>';
                     speak(msg);
                     break;
-                case 4:
+                case 2:
                     // Display movie director
                     if (category == "movie") {
                         
                         for (var i = 0; i < movieDetails.credits.crew.length; i++) {
                             if (movieDetails.credits.crew[i].job === 'Director') {
-                                msg='4: The '+categoryLabel +' was directed by ' + movieDetails.credits.crew[i].name + '.';
+                                msg='2: The '+categoryLabel +' was directed by ' + movieDetails.credits.crew[i].name + '.';
                             
                                 break;
                             }
                         }
                     
                     } else {
-                        msg='4: There were a total of '+ movieDetails.number_of_episodes + ' episodes  across '+ movieDetails.number_of_seasons + ' seasons.';
+                        msg='2: There were a total of '+ movieDetails.number_of_episodes + ' episodes  across '+ movieDetails.number_of_seasons + ' seasons.';
                     }
                     document.getElementById('results').innerHTML += '<p> '+msg  +'</p>';
                     speak(msg);
