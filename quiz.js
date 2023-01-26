@@ -490,7 +490,7 @@ function enableShareLink() {
      document.getElementById("shareLink").addEventListener("click", function () {
             navigator.share({
             title: 'Guess the '+category+' Title',
-            text: 'Try out this game : ',
+            text: 'Play QuizWordz : ',
             url: document.location.href,
             })
             .then(() => console.log('Successful share'))
@@ -502,20 +502,22 @@ function enableShareLink() {
 
 }
 function showCorrectResult(movieDetails) {
-    document.getElementById('results').innerHTML += '<p class="correct">Well Done! <br />That is the right answer.  You scored '+score+'.<br /> <span id="webshare"></span><a target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDB</a></p>';
+    document.getElementById('results').innerHTML += '<p class="correct">Well Done! <br />That is the right answer.  You scored '+score+'.<br /> <span><span id="webshare"></span><a class="imdblink" target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDB</a></span></p>';
     speak("Well Done ! That is the right answer, you scored : "+ score);
     if (navigator.share) {
 
         document.getElementById("webshare").innerText = "Share"
         document.getElementById("webshare").addEventListener("click", function () {
         navigator.share({
-          title: 'QuizWordsz',
+          title: 'QuizWordz',
           text: 'I got a score of '+score+' today , what can you get ?',
           url: document.location.href,
         })
           .then(() => console.log('Successful share'))
           .catch((error) => console.log('Error sharing', error));
         })
+      } else {
+        document.getElementById("webshare").style.display="none";
       }
 
 
@@ -690,8 +692,22 @@ function promptUser(movieDetails, guesses) {
                 notice="Better Luck next time ! <br/> The correct answer was: ";
                 msg="Better Luck next time !  The correct answer was: "+ movieDetails.title;
               
-                document.getElementById('results').innerHTML += '<p class="incorrect">'+notice+' <br/><a target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDB</a> </p>';
+                document.getElementById('results').innerHTML += '<p class="incorrect">'+notice+' <br/><span><span id="webshare"></span><a class="imdblink" target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDb</a> </span></p>';
                 speak(msg);
+
+                if (navigator.share) {
+
+                    document.getElementById("webshare").innerText = "Share"
+                    document.getElementById("webshare").addEventListener("click", function () {
+                    navigator.share({
+                      title: 'QuizWordz',
+                      text: 'I got '+score+' today , what can you get ?',
+                      url: document.location.href,
+                    })
+                      .then(() => console.log('Successful share'))
+                      .catch((error) => console.log('Error sharing', error));
+                    })
+                  }
 
                 for (var i = 0; i < inputBoxes.length; i++) {
                     inputBoxes[i].value=movieDetails.title[i];
