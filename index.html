@@ -8,7 +8,7 @@
 
 
 
-    !-- <meta name="viewport" content=" user-scalable=no" / -->
+    <!-- <meta name="viewport" content=" user-scalable=no" / -->
     <title>QuizWordz v0.2</title>
     <!-- inline Seedrandom.js from https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js">
@@ -415,6 +415,7 @@
     border-radius: 10px;
     outline: 2px solid black;
     line-height:20px;
+    text-align:center;
         }
     </style>
     <style>
@@ -697,9 +698,13 @@
                     "poster poster poster results "
                     "scoreboard scoreboard scoreboard scoreboard"
                     "form form form form";
+                height:100vh;
                 }
             #results {
                 width : 48vw;
+            }
+            #quiz-form : {
+                display:flex;
             }
         }
             </style>
