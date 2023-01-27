@@ -156,7 +156,7 @@ addRevealVowels();
     document.getElementById('submit-button').addEventListener('click', function(event) {
 
         event.preventDefault(); // Prevent form submission
-       promptUser(movieDetails, ++guesses); 
+       promptUser(movieDetails, guesses); 
     });
 });
 
@@ -172,6 +172,7 @@ document.getElementById('play-again-button').addEventListener('click', function(
         var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?"+ params.toString() ;
         window.history.pushState({path:newurl},'',newurl);
     }
+    document.getElementById("image").setAttribute("src","");
 
     startQuiz();
 });
@@ -182,27 +183,30 @@ document.getElementById('play-again-button').addEventListener('click', function(
     // Initialize variables
     const sessionMoviesStr = sessionStorage.getItem("sessionMovies") || "[]";
     const sessionMovies = JSON.parse(sessionMoviesStr);
-    // Loop through pages 1 to 20
-    for (var i = 1; i <= 20; i++) {
-        // Call API and add page parameter
-        console.log("Added filter ", filter);
-        var response = await fetch('https://api.themoviedb.org/3/discover/'+category+'?api_key=3f2af1df74075e194bc154e7f3233e60'+filter+'&language=en-US&with_original_language=en&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate&page='+i, {
-            method: 'GET',
-            mode: 'cors',
-            cache: 'default'
-        });
-        var json = await response.json();
-        // Save movie IDs to array
-      
-        for (var j = 0; j < json.results.length; j++) {
-            console.log("Batch : "+ i + " : "+ json.results[j].id);
-            if (sessionMovies.indexOf(json.results[j].id) < 0 ) {
-                movieIds.push(json.results[j].id);
+    if (movieIds.length == 0) {
+
+        // Loop through pages 1 to 20
+        for (var i = 1; i <= 20; i++) {
+            // Call API and add page parameter
+            console.log("Added filter ", filter);
+            var response = await fetch('https://api.themoviedb.org/3/discover/'+category+'?api_key=3f2af1df74075e194bc154e7f3233e60'+filter+'&language=en-US&with_original_language=en&sort_by=vote_count.desc&include_adult=false&include_video=false&with_watch_monetization_types=flatrate&page='+i, {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'default'
+            });
+            var json = await response.json();
+            // Save movie IDs to array
+        
+            for (var j = 0; j < json.results.length; j++) {
+                console.log("Batch : "+ i + " : "+ json.results[j].id);
+                if (sessionMovies.indexOf(json.results[j].id) < 0 ) {
+                    movieIds.push(json.results[j].id);
+                }
             }
+        
         }
-       
     }
-    
+
     return movieIds;
 }
 
@@ -228,6 +232,7 @@ function revealVowels () {
 for (var i = 0; i < inputBoxes.length; i++) {
      if (movieDetails.title[i].match(/[aeiou]/)) {
                     inputBoxes[i].value=movieDetails.title[i];
+                    inputBoxes[i].setAttribute("disabled", true);
                       inputBoxes[i].setAttribute("data-correct-guess",movieDetails.title[i]);
                     if (!inputBoxes[i].classList.contains("punctuation")  ) {
                         inputBoxes[i].classList.remove("wrong");
@@ -283,7 +288,7 @@ function wrapInputBoxes() {
 }
 function startQuiz() {
     // Initialize variables
-    var movieIds = [];
+  
     var movieId;
     if (params.get("id")) {
         specificId = parseInt(params.get("id"));
@@ -335,6 +340,7 @@ function startQuiz() {
             movieDetails.title = movieDetails.title || movieDetails.name;
             movieDetails.release_date = movieDetails.release_date || movieDetails.first_air_date;
             
+            //init the game;
          
             promptUser(movieDetails, guesses);
 
@@ -408,10 +414,10 @@ function startQuiz() {
                 
                     if (event.target.nextElementSibling) {
                         var nextBox = event.target.nextElementSibling;
-                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
-                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
-                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
-                        if (nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox && nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox && nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox && nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox && nextBox.disabled) nextBox = nextBox.nextElementSibling;
     
                     }
 
@@ -427,6 +433,7 @@ function startQuiz() {
                         if (correctGuess == (event.target.value.toLowerCase()) ) {
                             event.target.classList.add("correct");
                             event.target.classList.remove("neutral");
+                            event.target.setAttribute("disabled", true);
                         }else {
                             event.target.classList.add("neutral");
                         }
@@ -472,6 +479,7 @@ function  showPlayAgain() {
     document.getElementById('play-again-button').style.display="inline-block";
     document.getElementById('submit-button').style.display="none";
     document.getElementById('reveal-vowels-button').style.display = 'none';
+    document.getElementById('hint').remove();
   
  //   document.getElementById('guess').style.display="none";
  //   document.getElementById('guess-label').style.display="none";
@@ -502,7 +510,7 @@ function enableShareLink() {
 
 }
 function showCorrectResult(movieDetails) {
-    document.getElementById('results').innerHTML += '<p class="correct">Well Done! <br />That is the right answer.  You scored '+score+'.<br /> <span><span id="webshare"></span><a class="imdblink" target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDB</a></span></p>';
+    document.getElementById('results').innerHTML += '<p class="correct">Well Done! <br />That is the right answer.  You scored '+score+'.<br /> <span><span id="webshare"></span><a class="imdblink button" target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDB</a></span></p>';
     speak("Well Done ! That is the right answer, you scored : "+ score);
     if (navigator.share) {
 
@@ -525,6 +533,7 @@ function showCorrectResult(movieDetails) {
     for (var i = 0; i < inputBoxes.length; i++) {
             inputBoxes[i].classList.remove("neutral");
             inputBoxes[i].classList.add("correct");
+            inputBoxes[i].setAttribute("disabled", true); 
     }
     resetZoom();
     revealPicture();
@@ -614,11 +623,93 @@ function resetZoom() {
    img.style.width = "100%";
 
 }
+function addHintButtonHandler() {
+    document.getElementById("hint").addEventListener("click", function (e) {
+       // e.target.remove();
+        showHint(guesses);
+        score=score-10;
+        updateScore();
+    })
+}
 function updateScore() {
 //    document.getElementById("score").style = "--value:"+score;
     document.getElementById("score").value = score;
     document.getElementById("scoreDisplay").innerText = score;
 }
+
+           // Give hint based on number of guesses
+function showHint() {
+            if (document.getElementById("hint"))  { document.getElementById("hint").remove() };
+            guesses++;
+            switch (guesses) {
+              case 1:
+                  // Display release date and list of genres
+                  var genreString = '';
+                  for (var i = 0; i < movieDetails.genres.length; i++) {
+                      genreString += movieDetails.genres[i].name + ', ';
+                  }
+                  genreString = genreString.slice(0, -2); // Remove trailing comma
+                  msg = ' 1: The '+categoryLabel+' was released on ' + formatDate(movieDetails.release_date) + '. It is a ' + genreString + ' '+category+'.';
+                  document.getElementById('results').innerHTML += '<p> ' + msg+ '<button class="hintButton" id="hint" >Next <span class="small">(-10)</span></button></p>';
+                 
+                  addHintButtonHandler();
+                  speak(msg);
+                  break;
+              case 4:
+                  // Display first two cast members
+                  msg = '4: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'
+                  msg = censorWords(movieDetails.title, msg);
+                  document.getElementById('results').innerHTML += '<p> '+msg+'<button class="hintButton" id="hint" >Next <span class="small">(-10)</span></button></p>';
+                
+                  addHintButtonHandler();
+                  speak(msg);
+                   break;
+              case 3:
+                  // Display movie tagline
+                  if (movieDetails.tagline ) {
+
+                  
+                    msg = '3: The '+categoryLabel +'\'s tagline is: ' + movieDetails.tagline;
+                  } else {
+                     msg = '3: The '+categoryLabel +'\'s overview starts: ' + movieDetails.overview.substr(0,100)+ '...';
+                  }
+                  document.getElementById('results').innerHTML += '<p> '+msg+'<button class="hintButton" id="hint" >Next <span class="small">(-10)</span></button></p>';
+                 
+                  addHintButtonHandler();
+                  speak(msg);
+                  break;
+              case 2:
+                  // Display movie director
+                  if (category == "movie") {
+                      
+                      for (var i = 0; i < movieDetails.credits.crew.length; i++) {
+                          if (movieDetails.credits.crew[i].job === 'Director') {
+                              msg='2: The '+categoryLabel +' was directed by ' + movieDetails.credits.crew[i].name + '.';
+                          
+                              break;
+                          }
+                      }
+                  
+                  } else {
+                      msg='2: There were a total of '+ movieDetails.number_of_episodes + ' episodes  across '+ movieDetails.number_of_seasons + ' seasons.';
+                  }
+                  document.getElementById('results').innerHTML += '<p> '+msg  +'<button class="hintButton" id="hint" >Next <span class="small">(-10)</span></button></p>';
+                  
+                  addHintButtonHandler();
+                  speak(msg);
+                   break;
+              case 5:
+                  // Get the first two character names
+                  msg='5: Two characters in the '+categoryLabel +' are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.';
+                  msg = censorWords(movieDetails.title, msg);
+                  document.getElementById('results').innerHTML += '<p>'+msg+'</p>';
+                  speak(msg);
+                  document.querySelector('#results p:last-child').scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                  break;
+              }
+              showLastHint();
+ }
+
 
 function showLastHint() {
     document.querySelector('#results p:last-child').scrollIntoView();
@@ -678,6 +769,7 @@ function promptUser(movieDetails, guesses) {
                     inputBoxes[i].classList.remove("neutral");            
                     if (movieDetails.title[i].toLowerCase() == inputBoxes[i].value.toLowerCase() ) {
                         inputBoxes[i].classList.add("correct");
+                        inputBoxes[i].setAttribute("disabled", true);
                         inputBoxes[i].setAttribute("data-correct-guess", inputBoxes[i].value.toLowerCase());
                     } else {
                         inputBoxes[i].classList.add("wrong");
@@ -707,6 +799,8 @@ function promptUser(movieDetails, guesses) {
                       .then(() => console.log('Successful share'))
                       .catch((error) => console.log('Error sharing', error));
                     })
+                  } else {
+                    document.getElementById("webshare").style.display="none";
                   }
 
                 for (var i = 0; i < inputBoxes.length; i++) {
@@ -724,68 +818,12 @@ function promptUser(movieDetails, guesses) {
                 showLastHint();
                 return;
              }
-            guesses++;
+      
             score=score-10;
+            showHint(guesses) 
 
-            // Give hint based on number of guesses
-            switch (guesses) {
-                case 1:
-                    // Display release date and list of genres
-                    var genreString = '';
-                    for (var i = 0; i < movieDetails.genres.length; i++) {
-                        genreString += movieDetails.genres[i].name + ', ';
-                    }
-                    genreString = genreString.slice(0, -2); // Remove trailing comma
-                    msg = ' 1: The '+categoryLabel+' was released on ' + formatDate(movieDetails.release_date) + '. It is a ' + genreString + ' '+category+'.';
-                    document.getElementById('results').innerHTML += '<p> ' + msg+ '</p>';
-                    speak(msg);
-                    break;
-                case 4:
-                    // Display first two cast members
-                    msg = '4: The '+categoryLabel +' stars ' + movieDetails.credits.cast[0].name + ' and ' + movieDetails.credits.cast[1].name + '.'
-                    msg = censorWords(movieDetails.title, msg);
-                    document.getElementById('results').innerHTML += '<p> '+msg+'</p>';
-                    speak(msg);
-                     break;
-                case 3:
-                    // Display movie tagline
-                    if (movieDetails.tagline ) {
+ 
 
-                    
-                      msg = '3: The '+categoryLabel +'\'s tagline is: ' + movieDetails.tagline;
-                    } else {
-                       msg = '3: The '+categoryLabel +'\'s overview starts: ' + movieDetails.overview.substr(0,100)+ '...';
-                    }
-                    document.getElementById('results').innerHTML += '<p> '+msg+'</p>';
-                    speak(msg);
-                    break;
-                case 2:
-                    // Display movie director
-                    if (category == "movie") {
-                        
-                        for (var i = 0; i < movieDetails.credits.crew.length; i++) {
-                            if (movieDetails.credits.crew[i].job === 'Director') {
-                                msg='2: The '+categoryLabel +' was directed by ' + movieDetails.credits.crew[i].name + '.';
-                            
-                                break;
-                            }
-                        }
-                    
-                    } else {
-                        msg='2: There were a total of '+ movieDetails.number_of_episodes + ' episodes  across '+ movieDetails.number_of_seasons + ' seasons.';
-                    }
-                    document.getElementById('results').innerHTML += '<p> '+msg  +'</p>';
-                    speak(msg);
-                     break;
-                case 5:
-                    // Get the first two character names
-                    msg='5: Two characters in the '+categoryLabel +' are :  ' + movieDetails.credits.cast[0].character + ' and ' + movieDetails.credits.cast[3].character + '.';
-                    msg = censorWords(movieDetails.title, msg);
-                    document.getElementById('results').innerHTML += '<p>'+msg+'</p>';
-                    speak(msg);
-                    document.querySelector('#results p:last-child').scrollIntoView();
-                    break;
-            }
             showLastHint();
             updateScore();
             // Prompt user again
@@ -796,6 +834,7 @@ function promptUser(movieDetails, guesses) {
 
 function speak(txt) {
     if (sound ) {
+
         var msg = new SpeechSynthesisUtterance();
         msg.text = txt;
         window.speechSynthesis.speak(msg);
@@ -841,6 +880,7 @@ function openDrawer() {
     preferences.sound = e.target.checked ? true : false;
     sound = preferences.sound;
     if (sound) {
+     
         speak(document.querySelector('#results p:last-child').innerText);
     }
     savePreferences(preferences);
