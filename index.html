@@ -103,12 +103,19 @@
         }
      
         .wrong {
+            /* */
             background-color:red;
             color:white;
+            animation-name: rotate;
+            animation-delay:0.2s;
+            animation-duration: 0.8s;
         }
         .correct {
             background-color:green;
             color:white;
+            animation-name: rotate;
+            animation-delay:0.2s;
+            animation-duration: 0.8s;
         }
         #results .correct {
             padding:20px;
@@ -669,7 +676,7 @@
 
 @keyframes animateBox {
     0% {
-        background-color: black;
+        background-color: white;
     }
     100% {
         background-color: black;
