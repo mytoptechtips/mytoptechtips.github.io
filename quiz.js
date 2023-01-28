@@ -444,7 +444,7 @@ function startQuiz() {
                         if (nextBox) {
                             nextBox.focus();
                         } else {
-                            document.querySelector("button").focus();
+                            document.querySelector("#submit-button").focus();
                         }
                     } 
                 
@@ -921,3 +921,95 @@ function setupBoxAnimation () {
 const overlay = document.getElementById("overlay");
 overlay.addEventListener("animationstart", function () {animateRandomBox(0)  });
 }
+
+
+/* Start speech stuff */
+
+
+var recognition = new webkitSpeechRecognition();
+
+document.getElementById("listen-button").addEventListener("click", function() {
+if (document.getElementById("listen-button").innerText == "Listening") {
+	recognition.stop();
+  console.log("Button clicked to stop ");
+}
+else {
+	 console.log("Button CLicked to start ");
+   recognition.grammars = 
+  recognition.start();
+
+
+ }
+});
+
+updateStatus = function (msg) {
+  console.log(msg);
+    document.getElementById("status").value=msg;
+  
+    
+}
+recognition.onend = function() {
+  var spokenText = document.getElementById("textarea").value;
+  
+  document.getElementById("listen-button").innerText="Listen";
+  
+  console.log("Heard: " + spokenText);
+}
+
+
+// JavaScript for the microphone button and pop-up
+document.getElementById("microphone-button").addEventListener("click", function() {
+  document.getElementById("popup-layer").style.display = "block";
+});
+
+document.getElementById("close-button").addEventListener("click", function() {
+  document.getElementById("popup-layer").style.display = "none";
+});
+
+// JavaScript for the listen button and Web Speech API
+
+recognition.onresult = function(event) {
+  console.log("Got results:",event);
+  var spokenText = event.results[0][0].transcript;
+  document.getElementById("textarea").value = spokenText;
+}
+
+
+recognition.onstart = function(e) {
+ document.getElementById("listen-button").innerText="Listening";
+updateStatus ("Starting the recognition");
+console.log(e);
+  }
+recognition.onspeechstart = function(e) {
+   updateStatus ("Speech Start");
+   console.log(e);
+}
+recognition.onspeechend = function(e) {
+   updateStatus ("Speech End");
+   console.log(e);
+}
+
+recognition.onsoundstart = function(e) {
+ updateStatus ("Sound Start");
+ console.log(e);
+}
+recognition.onsoundend = function(e) {
+ updateStatus ("Sound End");
+ console.log(e);
+}
+recognition.onerror = function(e) {
+ updateStatus ("Error");
+ console.log(e);
+}
+
+document.getElementById("update-guess-button").addEventListener("click", function () {
+    var text = document.getElementById("textarea").value;
+    var inputBoxes = document.getElementsByClassName("guess-letter");
+    document.getElementById("popup-layer").style.display = "none";
+    for (var i=0 ; i <= text.length && i <= inputBoxes.length; i++) {
+       if (text[i])  {inputBoxes[i].value = text[i];}
+
+    }
+
+});
+/* End speech stuff */
