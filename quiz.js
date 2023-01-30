@@ -83,8 +83,8 @@ function setPreferencesInMenu() {
 }
 /*
 function censorWords(movieTitle, message) {
-    const titleWords = movieTitle.toLowerCase().split(" ");
-    const messageWords = message.toLowerCase().split(" ");
+    const titleWords = movieTitle.toUpperCase().split(" ");
+    const messageWords = message.toUpperCase().split(" ");
     for (let i = 0; i < messageWords.length; i++) {
       if (titleWords.includes(messageWords[i])) {
         messageWords[i] = "*".repeat(messageWords[i].length);
@@ -95,10 +95,10 @@ function censorWords(movieTitle, message) {
 */
 const commonWords = ['this', 'it', 'on', 'of', 'and', 'is', 'in', 'to', 'for', 'with', 'the', 'a'];
 function censorWords(movieTitle, message) {
-  const titleWords = movieTitle.toLowerCase().split(" ");
+  const titleWords = movieTitle.toUpperCase().split(" ");
   const messageWords = message.split(" ");
   for (let i = 0; i < messageWords.length; i++) {
-    const lowerCaseWord = messageWords[i].toLowerCase();
+    const lowerCaseWord = messageWords[i].toUpperCase();
     if (titleWords.includes(lowerCaseWord) && !commonWords.includes(lowerCaseWord)) {
       messageWords[i] = "*".repeat(messageWords[i].length);
     }
@@ -384,6 +384,8 @@ function startQuiz() {
                 input.setAttribute("type", "text");
                 input.setAttribute("class", "guess-letter");
                 input.setAttribute("data-letter-index", i);
+                input.setAttribute("id", "guess-letter-"+i);
+                input.setAttribute("inputMode", "none");
                 if (answerChar.match(/[^a-zA-Z0-9]/)) {
                     input.classList.add("punctuation");
                     input.value=answerChar;
@@ -406,11 +408,13 @@ function startQuiz() {
             }
 
 
+
             // Add event listeners for input boxes
             var inputBoxes = document.querySelectorAll(".guess-letter:not(.punctuation) ");
             for (var i = 0; i < inputBoxes.length; i++) {
                 
                 inputBoxes[i].addEventListener("input", function(event) {
+                
                 
                     if (event.target.nextElementSibling) {
                         var nextBox = event.target.nextElementSibling;
@@ -425,12 +429,12 @@ function startQuiz() {
                     event.target.classList.remove("correct");
                     wrongGuesses = event.target.getAttribute("data-incorrect-guesses") || "";
                     correctGuess = event.target.getAttribute("data-correct-guess") || "";
-                    //console.log("Checking Input : " + event.target.value.toLowerCase() )
-                    if (wrongGuesses.indexOf(event.target.value.toLowerCase()) > -1 ) {
+                    //console.log("Checking Input : " + event.target.value.toUpperCase() )
+                    if (wrongGuesses.indexOf(event.target.value.toUpperCase()) > -1 ) {
                         event.target.classList.add("wrong");
                         event.target.classList.remove("neutral");
                     }else {
-                        if (correctGuess == (event.target.value.toLowerCase()) ) {
+                        if (correctGuess == (event.target.value.toUpperCase()) ) {
                             event.target.classList.add("correct");
                             event.target.classList.remove("neutral");
                             event.target.setAttribute("disabled", true);
@@ -444,6 +448,7 @@ function startQuiz() {
                         if (nextBox) {
                             nextBox.focus();
                         } else {
+                            event.target.classList.remove("active");
                             document.querySelector("#submit-button").focus();
                         }
                     } 
@@ -468,6 +473,16 @@ function startQuiz() {
                       
                 });
                 
+
+               
+                    inputBoxes[i].addEventListener("focus", onInputFocus);
+                    // Optional: Use if you want to track input changes
+                    // made without simple-keyboard
+                    //inputBoxes[i].addEventListener("input", onInputChange);
+                  
+                  
+
+                  
             }
             inputBoxes[0].focus();
 
@@ -475,6 +490,8 @@ function startQuiz() {
         });
     })
 }
+
+
 function  showPlayAgain() {
     document.getElementById('play-again-button').style.display="inline-block";
     document.getElementById('submit-button').style.display="none";
@@ -744,7 +761,7 @@ function promptUser(movieDetails, guesses) {
             guess += inputBoxes[i].value;
         }
         
-        if (guess.toLowerCase() === movieDetails.title.toLowerCase()) {
+        if (guess.toUpperCase() === movieDetails.title.toUpperCase()) {
             // Display success message
                    showCorrectResult(movieDetails);
                    guesses=0;
@@ -767,15 +784,15 @@ function promptUser(movieDetails, guesses) {
                     inputBoxes[i].classList.remove("correct");
                     inputBoxes[i].classList.remove("wrong");
                     inputBoxes[i].classList.remove("neutral");            
-                    if (movieDetails.title[i].toLowerCase() == inputBoxes[i].value.toLowerCase() ) {
+                    if (movieDetails.title[i].toUpperCase() == inputBoxes[i].value.toUpperCase() ) {
                         inputBoxes[i].classList.add("correct");
                         inputBoxes[i].setAttribute("disabled", true);
-                        inputBoxes[i].setAttribute("data-correct-guess", inputBoxes[i].value.toLowerCase());
+                        inputBoxes[i].setAttribute("data-correct-guess", inputBoxes[i].value.toUpperCase());
                     } else {
                         inputBoxes[i].classList.add("wrong");
                         var wrongGuesses=  inputBoxes[i].getAttribute("data-incorrect-guesses")|| "" ;
 
-                        inputBoxes[i].setAttribute("data-incorrect-guesses", wrongGuesses+inputBoxes[i].value.toLowerCase())
+                        inputBoxes[i].setAttribute("data-incorrect-guesses", wrongGuesses+inputBoxes[i].value.toUpperCase())
                     }
                     }
                 }
