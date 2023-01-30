@@ -8,6 +8,10 @@
 <!-- Purely for the  web speech icon -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
 
+<!-- Add virtual keyboard -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
+
+
     <meta name="viewport" content=" user-scalable=no" />
     <title>QuizWordz v0.2</title>
     <!-- inline Seedrandom.js from https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js -->
@@ -95,6 +99,11 @@
             border: 2px solid var(--foreground-color);
              border-radius: 20%;
         }
+        .guess-letter.active, 
+        input:focus{
+            border:3px solid orange;
+            background:orange;
+        }
         p {
          
     font-size: 28px;
@@ -171,7 +180,7 @@
         }
 
         .guess-letter:focus {
-            background-color: #f0f0f0;
+           /*  background-color: #f0f0f0; */
             border: 2px solid #4CAF50;
             text-shadow: 0 0 5px #4CAF50;
         }
@@ -348,8 +357,9 @@
                                  "poster poster poster"
                                  "scoreboard scoreboard scoreboard" 
                                  "results results results"
-                                "form form form";
-         grid-template-rows: 1fr 4fr 0.25fr 3fr 3fr;
+                                "form form form"
+                                "keyboard keyboard keyboard";
+         grid-template-rows: 1fr 4fr 0.25fr 3fr 3fr 3fr;
             grid-template-columns: 2fr 2fr 1fr ;
     
         }    
@@ -361,6 +371,7 @@
         #scoreboard { grid-area: scoreboard}
         #results { grid-area : results}
         #quiz-form { grid-area : form}
+        .simple-keyboard {grid-area: keyboard}
     
 
         #results {
@@ -707,7 +718,8 @@
                     "header header header header"
                     "poster poster poster results "
                     "scoreboard scoreboard scoreboard scoreboard"
-                    "form form form form";
+                    "form form form form"
+                    "keyboard keyboard keyboard keyboard";
                 height:100vh;
                 }
             #results {
@@ -777,6 +789,15 @@
 }
 
             </style>
+<!-- Virtual keyboard related -->
+            <style>
+                .simple-keyboard { }
+                .simple-keyboard .wrong {
+                    background-color:red ;
+                    color:white;
+                }
+            </style>
+
 </head>
 <body class="loading">
   
@@ -870,6 +891,7 @@
           <button type="button" id="play-again-button">Play Again</button>
           <button type="button" id="reveal-vowels-button">Vowels <span class="small">(-40)</span></button>
         </form> 
+        <div class="simple-keyboard"></div>
 
     </div>
     <button id="microphone-button" class="microphone-button">
@@ -1003,5 +1025,132 @@ document.getElementById("closeCredits").addEventListener("click", function () {
     document.getElementById("creditsDialog").classList.remove('shown');
 });
     </script>
+
+   
+
+<script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
+
+<script>
+    const Keyboard = window.SimpleKeyboard.default;
+ 
+
+let selectedInput;
+
+let keyboard = new Keyboard({
+  onChange: input => onChange(input),
+  onKeyPress: button => onKeyPress(button)
+});
+
+document.querySelectorAll(".input").forEach(input => {
+  input.addEventListener("focus", onInputFocus);
+  // Optional: Use if you want to track input changes
+  // made without simple-keyboard
+  //input.addEventListener("input", onInputChange);
+});
+
+function onInputFocus(event) {
+  selectedInput = `#${event.target.id}`;
+  if (document.querySelector(".guess-letter.active")) document.querySelector(".guess-letter.active").classList.remove("active");
+  document.querySelector(selectedInput).classList.add("active");
+
+  
+  keyboard.setOptions({
+    inputName: event.target.id
+  });
+
+  /* now need to highligh previous keys */
+  let wrongGuesses =  document.querySelector(selectedInput).getAttribute("data-incorrect-guesses");
+  if (wrongGuesses ) {
+        for (var i=0 ; i < wrongGuesses.length ; i++ ) {
+            keyboard.getButtonElement(wrongGuesses[i]).classList.add("wrong");
+        }
+    }
+}
+
+function onInputChange(event) {
+  keyboard.setInput(event.target.value, event.target.id);
+}
+
+function onChange(input) {
+  console.log("Input changed", input);
+  inputBox =  document.querySelector(selectedInput || ".input");
+  inputBox.value = input;
+  keyboard.clearInput();
+  if (inputBox.nextElementSibling) {
+                        var nextBox = inputBox.nextElementSibling;
+                        if (nextBox && nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox && nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox && nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        if (nextBox && nextBox.disabled) nextBox = nextBox.nextElementSibling;
+                        nextBox.focus();
+                        keyboard.setOptions({
+                            inputName: nextBox.getAttribute("id")
+                          });
+                    }
+                    else {
+                        inputBox.classList.remove("active");
+                        document.querySelector("#submit-button").focus();
+                    }
+      
+      
+        
+ }
+
+function onKeyPress(button) {
+  console.log("Button pressed", button);
+  // if not incorrect 
+  if (!selectedInput) {
+
+    selectedInput = `#guess-letter-0`;
+    keyboard.setOptions({
+     inputName: 'guess-letter-0'
+  });
+
+
+  }
+  var incorrectGuesses = document.querySelector(selectedInput).getAttribute("incorrect-guesses")|| "";
+
+  if (incorrectGuesses.indexOf(button).length) {
+        if (typeof keyboard.getButtonElement(button) == "object") {
+             keyboard.getButtonElement(button)[0].classList.add("neutral");
+        } else { /* this only covers case of shift where two are on the board */
+            keyboard.getButtonElement(button).classList.add("neutral");
+        }
+  }
+
+  if (button == "{bksp}") {
+        inputBox =  document.querySelector(selectedInput || ".input");
+        inputBox.value = "";
+      
+        var prevBox = inputBox.previousElementSibling;
+        if (prevBox) {
+        if (prevBox && prevBox.disabled) prevBox = prevBox.previousElementSibling;
+        if (prevBox && prevBox.disabled) prevBox = prevBox.previousElementSibling;
+        if (prevBox && prevBox.disabled) prevBox = prevBox.previousElementSibling;
+        if (prevBox && prevBox.disabled) prevBox = prevBox.previousElementSibling;
+
+    
+        prevBox.focus();
+        }
+  }
+
+  /**
+   * Shift functionality
+   */
+  if (button === "{lock}" || button === "{shift}") handleShiftButton();
+}
+
+function handleShiftButton() {
+  let currentLayout = keyboard.options.layoutName;
+  let shiftToggle = currentLayout === "default" ? "shift" : "default";
+
+  keyboard.setOptions({
+    layoutName: shiftToggle
+  });
+}
+
+    
+</script>
+
 </body>
 </html>
