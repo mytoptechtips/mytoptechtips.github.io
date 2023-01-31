@@ -101,7 +101,7 @@
         }
         .guess-letter.active, 
         input:focus{
-            border:3px solid orange;
+            outline:3px solid orange;
             background:orange;
         }
         p {
@@ -231,8 +231,8 @@
     <style>
         #movie-poster {
             position:relative;
-             width:640px;
-            height:360px; 
+             width:800px;
+            height:450px; 
       
         }
         #image {
@@ -351,6 +351,7 @@
         .pageHeading input {line-height:36px;font-size:25px; padding:0;padding-top: 3px;border-radius:10%;}
         </style>
     <style>
+        /* Mobile and Tablet */
         .wrapper {
             display:grid;
             grid-template-areas: "header header header"
@@ -359,9 +360,9 @@
                                  "results results results"
                                 "form form form"
                                 "keyboard keyboard keyboard";
-         grid-template-rows: 1fr 4fr 0.25fr 3fr 3fr 3fr;
+         grid-template-rows: 1fr 475px 50px 3fr 3fr 3fr;
             grid-template-columns: 2fr 2fr 1fr ;
-    
+            height:100vh;
         }    
         header {
             grid-area: header;
@@ -767,7 +768,7 @@
   position:absolute;
   top:50%;
   left:10%;
-  
+
     
 }
 
@@ -803,7 +804,7 @@
                     color:white;
                 }
                 .hg-theme-default .hg-button {
-                    height:75px;
+                    height:100px;
                 }
                 .hg-theme-default .hg-button span {
                     font-size:1.8rem;
@@ -1050,11 +1051,16 @@ let selectedInput;
 
 let keyboard = new Keyboard({
    layout: { 'default':[
-    '1 2 3 4 5 6 7 8 9 0',
-    'Q W E R T Y U I O P {bksp}',
+    '1 2 3 4 5 6 7 8 9 0 {bksp}',
+    'Q W E R T Y U I O P',
     'A S D F G H J K L',
-    'Z X C V B N M'
+    'Z X C V B N M {enter}'
   ]},
+  display: {
+  '{bksp}': 'DEL',
+  '{enter}': 'Guess'
+
+},
   onChange: input => onChange(input),
   onKeyPress: button => onKeyPress(button)
 });
