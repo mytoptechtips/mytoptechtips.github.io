@@ -6,7 +6,7 @@ var score=110;
 var zoomScale = 8;
 var specificId;
 var sound=false;
-var defaultImageWidth=640;
+var defaultImageWidth=800;
 var filters = {
         "60s" : "&primary_release_date.gte=1960&primary_release_date.lte=1969",
         "70s" : "&primary_release_date.gte=1970&primary_release_date.lte=1979",
@@ -93,13 +93,13 @@ function censorWords(movieTitle, message) {
     return messageWords.join(" ");
 }
 */
-const commonWords = ['this', 'it', 'on', 'of', 'and', 'is', 'in', 'to', 'for', 'with', 'the', 'a'];
+const commonWords = ['THIS', 'IT', 'ON', 'OF', 'AND', 'IS', 'IN', 'TO', 'FOR', 'WITH', 'THE', 'A'];
 function censorWords(movieTitle, message) {
   const titleWords = movieTitle.toUpperCase().split(" ");
   const messageWords = message.split(" ");
   for (let i = 0; i < messageWords.length; i++) {
-    const lowerCaseWord = messageWords[i].toUpperCase();
-    if (titleWords.includes(lowerCaseWord) && !commonWords.includes(lowerCaseWord)) {
+    const upperCaseWord = messageWords[i].toUpperCase();
+    if (titleWords.includes(upperCaseWord) && !commonWords.includes(upperCaseWord )) {
       messageWords[i] = "*".repeat(messageWords[i].length);
     }
   }
@@ -529,6 +529,7 @@ function enableShareLink() {
 function showCorrectResult(movieDetails) {
     document.getElementById('results').innerHTML += '<p class="correct">Well Done! <br />That is the right answer.  You scored '+score+'.<br /> <span><span id="webshare"></span><a class="imdblink button" target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDB</a></span></p>';
     speak("Well Done ! That is the right answer, you scored : "+ score);
+    document.querySelector(".guess-letter.active")?.classList.remove("active");
     if (navigator.share) {
 
         document.getElementById("webshare").innerText = "Share"
@@ -800,7 +801,7 @@ function promptUser(movieDetails, guesses) {
             if (guesses >= 5)   {
                 notice="Better Luck next time ! <br/> The correct answer was: ";
                 msg="Better Luck next time !  The correct answer was: "+ movieDetails.title;
-              
+                document.querySelector(".guess-letter.active")?.classList.remove("active");
                 document.getElementById('results').innerHTML += '<p class="incorrect">'+notice+' <br/><span><span id="webshare"></span><a class="imdblink" target="_blank" href="https://www.imdb.com/title/'+movieDetails.imdb_id+'">View on IMDb</a> </span></p>';
                 speak(msg);
 
