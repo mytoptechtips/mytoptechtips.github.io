@@ -154,16 +154,27 @@
 
 
         
-        .guess-letter,
+      
         .tile-letter {
+        
             width: 3ch;
     line-height: 36px;
     font-size: 32px;
     text-align: center;
     padding-top: 4px;
 
-
         }
+
+
+        .guess-letter {
+    width: 3.0ch;
+    line-height: 50px;
+    font-size: 32px;
+    text-align: center;
+    padding-top: 0px;
+    vertical-align: middle;
+}
+
 
         button {
             font-size:2rem;
@@ -743,6 +754,9 @@
   border: none;
   cursor: pointer;
 }
+.hg-button.fa-microphone {
+    font-size : 1.6rem;
+}
 
 /* CSS for the pop-up layer */
 .popup-layer {
@@ -907,9 +921,9 @@
         <div class="simple-keyboard"></div>
 
     </div>
-    <button id="microphone-button" class="microphone-button">
+    <!-- button id="microphone-button" class="microphone-button">
       <i class="fa fa-microphone"></i>
-    </button>
+    </button -->
     <div id="popup-layer" class="popup-layer">
       <div class="popup-content">
         <button id="close-button" class="close-button">X</button>
@@ -1053,14 +1067,21 @@ let keyboard = new Keyboard({
    layout: { 'default':[
     '1 2 3 4 5 6 7 8 9 0 {bksp}',
     'Q W E R T Y U I O P',
-    'A S D F G H J K L',
+    'A S D F G H J K L {mic}',
     'Z X C V B N M {enter}'
   ]},
   display: {
   '{bksp}': 'DEL',
-  '{enter}': 'Guess'
-
+  '{enter}': 'Guess',
+  '{mic}' :  ' '
 },
+buttonAttributes: [
+  {
+    attribute: "class",
+    value: "hg-button hg-standardBtn fa fa-microphone",
+    buttons: "{mic}"
+  },
+],
   onChange: input => onChange(input),
   onKeyPress: button => onKeyPress(button)
 });
@@ -1158,6 +1179,12 @@ function onKeyPress(button) {
         }
   }
 
+  if (button == "{mic}") {
+    document.getElementById("popup-layer").style.display = "block";
+  }
+  if (button == "{enter}") {
+    promptUser(movieDetails, guesses); 
+  }
   /**
    * Shift functionality
    */
