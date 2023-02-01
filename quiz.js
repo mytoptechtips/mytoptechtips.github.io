@@ -496,7 +496,7 @@ function  showPlayAgain() {
     document.getElementById('play-again-button').style.display="inline-block";
     document.getElementById('submit-button').style.display="none";
     document.getElementById('reveal-vowels-button').style.display = 'none';
-    document.getElementById('hint').remove();
+    document.getElementById('hint')?.remove();
   
  //   document.getElementById('guess').style.display="none";
  //   document.getElementById('guess-label').style.display="none";
@@ -688,6 +688,7 @@ function showHint() {
 
                   
                     msg = '3: The '+categoryLabel +'\'s tagline is: ' + movieDetails.tagline;
+                    msg = censorWords(movieDetails.title, msg);
                   } else {
                      msg = '3: The '+categoryLabel +'\'s overview starts: ' + movieDetails.overview.substr(0,100)+ '...';
                   }
@@ -976,9 +977,11 @@ recognition.onend = function() {
 
 
 // JavaScript for the microphone button and pop-up
+/*
 document.getElementById("microphone-button").addEventListener("click", function() {
   document.getElementById("popup-layer").style.display = "block";
 });
+*/
 
 document.getElementById("close-button").addEventListener("click", function() {
   document.getElementById("popup-layer").style.display = "none";
