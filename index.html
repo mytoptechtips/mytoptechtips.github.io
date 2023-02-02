@@ -32,7 +32,6 @@
             }
         }
         body {
-   height:100%;
             padding-left:30px;
             padding-right:30px;
             background-color: var(--background-color);
@@ -65,6 +64,8 @@
             fill:darkgray;
             margin:15px;
             transform:scale(1.8);
+            padding-top: 7.5px;
+            padding-right: 5px;
         }
 
         .close-menu  {
@@ -372,9 +373,9 @@
                                  "results results results"
                                 "form form form"
                                 "keyboard keyboard keyboard";
-         grid-template-rows: 1fr 475px 50px 3fr 3fr 3fr;
+         grid-template-rows: 1fr 475px 50px 3fr 3fr 448px;
             grid-template-columns: 2fr 2fr 1fr ;
-            height:100%;
+            height:95vh;
         }    
         header {
             grid-area: header;
@@ -569,16 +570,15 @@
   margin-bottom: 10px;
 
 }
-.close-menu {
-    float:right;
-    padding-top: 10px;
-  padding-right:35px;
-  height: 30px;
-    width: 30px;
 
+.close-menu {
+    float: right;
+    padding-top: 42px;
+    padding-right: 20px;
+    height: 27px;
+    width: 27px;
     stroke-width: 2;
     stroke: darkgray;
-  
 }
 
 
@@ -725,23 +725,7 @@
         </style>
 
         <style>
-            @media screen and (min-width: 1200px) {
-            .wrapper {
-                grid-template-areas:
-                    "header header header header"
-                    "poster poster poster results "
-                    "scoreboard scoreboard scoreboard scoreboard"
-                    "form form form form"
-                    "keyboard keyboard keyboard keyboard";
-                height:100vh;
-                }
-            #results {
-                width : 48vw;
-            }
-            #quiz-form : {
-                display:flex;
-            }
-        }
+
             </style>
 
 
@@ -811,9 +795,107 @@
 }
 
             </style>
+
+<style>
+/* Mobile portrait */
+@media only screen and (max-width: 767px) and (orientation: portrait) {
+  /* CSS styles here */
+}
+
+/* Mobile landscape */
+@media only screen and (min-width: 768px) and (max-width: 1023px) and (orientation: landscape) {
+  /* CSS styles here */
+
+
+  .wrapper {
+                /* hide the keyboard on desktop - not sure about ipad pro high res */
+                grid-template-areas:
+                    "header header header header"
+                    "poster poster form keyboard"
+                    "scoreboard scoreboard form keyboard ";
+                height: 100vh;
+                grid-template-rows: 1fr 4fr 1fr;
+                width: 200vw;
+                }
+                .hg-theme-default .hg-row .hg-button {
+                         height: 80px;
+                }
+
+            #results {
+                width : 45vw;
+                min-height:100%;
+                padding-left:10px;
+            }
+            #results p {
+                padding: 25px;
+            }
+            #quiz-form  {
+                display:block;
+                width: 48vw;
+                height: 100%;
+            }
+            .simple-keyboard {
+
+              width: 50vw;
+            }
+            .guess-letter {
+                width:2ch;
+                line-height:40px;
+            }
+            
+
+button {
+    font-size: 1rem;
+    margin-right: 5px;
+}
+      
+
+}
+
+/* Tablet portrait */
+@media only screen and (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+  /* CSS styles here */
+}
+
+/* Tablet landscape */
+@media only screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+  /* CSS styles here */
+}
+
+/* Desktop landscape */
+@media only screen and (min-width: 1367px) {
+  /* CSS styles here */
+
+            .wrapper {
+                /* hide the keyboard on desktop - not sure about ipad pro high res */
+                grid-template-areas:
+                    "header header header header"
+                    "poster poster poster results "
+                    "scoreboard scoreboard scoreboard scoreboard"
+                    "form form form form"
+                    "keyboard keyboard keyboard keyboard";
+                height:100vh;
+                grid-template-rows: 1fr 475px 50px 3fr 400px;
+                }
+            #results {
+                width : 48vw;
+                min-height:100%;
+                padding-left:10px;
+            }
+            #results p {
+                padding: 25px;
+            }
+            #quiz-form  {
+                display:flex;
+            }
+        
+
+}    
+</style>
+
 <!-- Virtual keyboard related -->
             <style>
-                .simple-keyboard { }
+               
                 .simple-keyboard .wrong {
                     background-color:red ;
                     color:white;
