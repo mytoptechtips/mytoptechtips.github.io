@@ -809,14 +809,18 @@
 
   .wrapper {
                 /* hide the keyboard on desktop - not sure about ipad pro high res */
+
+
                 grid-template-areas:
-                    "header header header header"
-                    "poster poster form keyboard"
-                    "scoreboard scoreboard form keyboard ";
-                height: 100vh;
-                grid-template-rows: 1fr 4fr 1fr;
-                width: 200vw;
-                }
+        "header header header header"
+        "poster poster results keyboard"
+        "poster poster form keyboard ";
+    height: 100vh;
+    grid-template-rows: 1fr 1fr 1fr;
+    width: 200vw;
+}
+
+      
                 .hg-theme-default .hg-row .hg-button {
                          height: 80px;
                 }
@@ -828,6 +832,7 @@
             }
             #results p {
                 padding: 25px;
+                font-size:20px;
             }
             #quiz-form  {
                 display:block;
@@ -840,7 +845,8 @@
             }
             .guess-letter {
                 width:2ch;
-                line-height:40px;
+                line-height:30px;
+                font-size:26px;
             }
             
 
