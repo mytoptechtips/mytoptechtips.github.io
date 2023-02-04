@@ -901,6 +901,8 @@ function openDrawer() {
     if (sound) {
      
         speak(document.querySelector('#results p:last-child').innerText);
+    } else {
+        window.speechSynthesis.cancel();
     }
     savePreferences(preferences);
   })
