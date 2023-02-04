@@ -812,7 +812,7 @@ function promptUser(movieDetails, guesses) {
                     document.getElementById("webshare").addEventListener("click", function () {
                     navigator.share({
                       title: 'QuizWordz',
-                      text: 'I got '+score+' today , what can you get ?',
+                      text: 'I got '+score+' today , what can you get ? #QuizWordz',
                       url: document.location.href,
                     })
                       .then(() => console.log('Successful share'))
