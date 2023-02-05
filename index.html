@@ -385,7 +385,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
             display:none;
         }
         .titleHeading input {line-height:100px; height:100px;font-size:90px;padding:0;padding-top: 13px;border-radius:10px}
-        .pageHeading input {line-height:36px;font-size:25px; padding:0;padding-top: 3px;border-radius:10%;}
+        .pageHeading input {line-height:2rem;font-size:25px; padding:0;padding-top: 3px;border-radius:10%;}
         </style>
     <style>
         /* Mobile and Tablet */
@@ -540,7 +540,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   position: fixed;
   top: 0;
   right: 0;
-  width: 300px;
+  width: 30rem;
   height: 100%;
 
   background-color: var(--background-color);
@@ -577,11 +577,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
 #drawer-content label span,
 #drawer-content h2
  {
- font-size:1.6rem;
+ font-size:2.5rem;
 }
 #drawer-content h3
  {
- font-size:1.4rem;
+ font-size:1.8rem;
+}
+#drawer-content a {
+    font-size:2.4rem;
 }
 #drawer-content hr {
     margin-top : 30px;
@@ -624,8 +627,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   display: inline-block;
   background: #ccc;
   border-radius: 16px;
-  width: 58px;
-  height: 32px;
+  width: 4rem;
+  height: 2rem;
   position: relative;
   vertical-align: middle;
   transition: background 0.25s;
@@ -638,11 +641,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   background: linear-gradient(to bottom, #fff 0%, #eee 100%);
   border-radius: 50%;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   position: absolute;
-  top: 4px;
-  left: 4px;
+  top: 0.25rem;
+  left: 0.25rem;
   transition: left 0.25s;
 }
 .toggle:hover .toggle-switch:before {
@@ -653,7 +656,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   background: #56c080;
 }
 .toggle-checkbox:checked + .toggle-switch:before {
-  left: 30px;
+  left: 2.4rem;
 }
 
 .toggle-checkbox {
@@ -668,7 +671,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
 }    
 
 .link-container a {
-    font-size:22px;
+    font-size:1.5rem;
 }
 
 #drawer-content {
@@ -676,7 +679,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
     padding-top: 90px;
 }
 #drawer-content h2 {
-    font-size:40px;
+
     margin-bottom:20px;
 }
 .dialog {
@@ -763,7 +766,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   border: none;
   cursor: pointer;
 }
-.hg-button.fa-microphone {
+.hg-theme-default .hg-button.fa-microphone {
     font-size : 1.6rem;
 }
 
@@ -836,11 +839,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
 
 
                 grid-template-areas:
-        "header header header header"
-        "poster poster results keyboard"
-        "poster poster form keyboard ";
-    height: 95svh;
-    grid-template-rows: 1fr 1fr 1fr;
+        "scoreboard header header header header"
+        "scoreboard poster poster results keyboard"
+        "scoreboard poster poster form keyboard "
+      ;
+    height: 75svh;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 0.2fr 1fr 1fr 1fr 1fr;
     width: 200vw;
 }
 
@@ -857,6 +862,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
             #results p {
                 padding: 25px;
                 font-size:20px;
+                overflow:scroll;
+                line-height:1.5rem;
             }
             #quiz-form  {
                 display:block;
@@ -872,7 +879,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
                 line-height:30px;
                 font-size:26px;
             }
-            
+            #scoreHeader {
+                
+                height:50vh;
+            }
+           
+     
+            #score {
+                width:8rem;
+                height:16rem;
+                padding-top:12rem;
+            }
 
 button {
     font-size: 1rem;
@@ -938,17 +955,21 @@ button {
     .large-text  .hg-theme-default .hg-button {
                 height: 250px;
             }
-     .large-text   .hg-theme-default .hg-button span {
+     .large-text   .hg-theme-default .hg-button span
+ {
                 font-size: 5rem;
             }
+            .large-text   .hg-theme-default .hg-button.fa-microphone
+            { font-size:3.75rem;}
     .large-text button {
         font-size : 2.8rem;
     }
+    /* Keyboard */
     .large-text .hg-theme-default {
         overflow: scroll;
         width:100%;
-        height:60dvh;
-        padding-top:40px;
+        height:66dvh;
+        padding-top:50px;
     }
     .large-text .hg-rows {
         width: 200%;
@@ -975,6 +996,9 @@ button {
         margin-top:75px;
     }
   
+    html:has(body.large-text) {
+    font-size: 2rem;
+}
     </style>
 <!-- Virtual keyboard related -->
             <style>
@@ -1095,7 +1119,7 @@ button {
       <div class="popup-content">
         <button id="close-button" class="close-button">X</button>
         <button id="listen-button" class="listen-button">Listen</button>
-        <p>Status:<input id="status" type="text" /> </p>
+        <p class="hint">Status:<input id="status" type="text" /> </p>
         <textarea id="textarea"></textarea>
         <button id="update-guess-button" class="button" > Update Guess</button>
       </div>
