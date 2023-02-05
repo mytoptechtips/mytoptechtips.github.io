@@ -320,7 +320,9 @@ function startQuiz() {
         // Step 2: Choose a random movie ID
 
         let movieIdx = Math.floor(randomNumber() * movieIds.length);
+        /* need to exclude current session ones */
 
+        
         movieId = specificId ? specificId : movieIds[movieIdx];
        
         console.log("Found movieId ["+movieId+"] at position "+ movieIdx +"from ["+movieIds.join(" ") +"]" )

@@ -1045,6 +1045,11 @@ button {
                 <input size="1" maxlength="1" type="text" class="tile-letter correct category tv" value="V">
             <br/>     
             </div>
+   
+           
+            <div id="welcome" class="hidden">
+                <p class="intro">Use picture and text hints to guess the name of the show. Click on the picture tiles to zoom</p>
+          </div>
             <p>Getting started ... please wait </p>
     </div>
 
@@ -1204,28 +1209,7 @@ button {
     </script>
 
     <script src="quiz.js"></script>
-    <div class="dialog" id="welcome">
-       
-        <h2>
-                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Q">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="I">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Z">
-                            <!-- input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="" -->
-                <br/>
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="W">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="O">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="R"> 
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="D">
-                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Z">
-                <br />
-                
-            </h2>
-        <p class="intro">Use picture and text hints to guess the name of the show</p>
-
-        <button>Play</button>
-        <button>Instructions</button>
-    </div>
+  
 <div class="dialog" id="howToPlayDialog">
     
     <div>
@@ -1262,7 +1246,10 @@ button {
     </div>
 </div>
 <script>
-
+if (localStorage.getItem("lastDatePlayed")) {
+    document.getElementById("welcome").classList.add('shown');
+    document.getElementById("welcome").classList.remove('hidden')
+}
 
 document.getElementById("closeHowToPlay").addEventListener("click", function () {
     document.getElementById("howToPlayDialog").classList.remove('shown');
