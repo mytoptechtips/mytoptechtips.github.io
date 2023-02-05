@@ -1246,7 +1246,7 @@ button {
     </div>
 </div>
 <script>
-if (localStorage.getItem("lastDatePlayed")) {
+if (!localStorage.getItem("lastDatePlayed")) {
     document.getElementById("welcome").classList.add('shown');
     document.getElementById("welcome").classList.remove('hidden')
 }
@@ -1274,9 +1274,9 @@ let selectedInput;
 
 let keyboard = new Keyboard({
    layout: { 'default':[
-    '1 2 3 4 5 6 7 8 9 0 {bksp}',
+    '1 2 3 4 5 6 7 8 9 0 {mic}',
     'Q W E R T Y U I O P',
-    'A S D F G H J K L {mic}',
+    'A S D F G H J K L {bksp}',
     'Z X C V B N M {enter}'
   ]},
   display: {
