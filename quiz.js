@@ -5,6 +5,7 @@ var categoryLabel="movie";
 var score=110;
 var zoomScale = 8;
 var specificId;
+var dailyPlay=true;
 var sound=false;
 var defaultImageWidth=800;
 var filters = {
