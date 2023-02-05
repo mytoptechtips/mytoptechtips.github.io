@@ -34,8 +34,8 @@ var preferences = getPreferences();
 function setTheme(preferences) {
     document.body.classList.remove("light");
     document.body.classList.remove("dark");
-    document.body.classList.add(  preferences.theme );
-    document.body.classList.add(  preferences.largeText ? "large-text" : "" );
+    if (preferences.theme )    document.body.classList.add(  preferences.theme );
+    if (preferences.largeText) document.body.classList.add(  preferences.largeText ? "large-text" : "" );
     
 
 }
