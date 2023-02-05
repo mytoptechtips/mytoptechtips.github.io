@@ -35,6 +35,8 @@ function setTheme(preferences) {
     document.body.classList.remove("light");
     document.body.classList.remove("dark");
     document.body.classList.add(  preferences.theme );
+    document.body.classList.add(  preferences.largeText ? "large-text" : "" );
+    
 
 }
 setTheme(preferences);
@@ -80,6 +82,8 @@ function setPreferencesInMenu() {
     document.getElementById("modeSetting").checked= (preferences.mode == "hard") ;
     document.getElementById("themeSetting").checked = (preferences.theme == "dark") ;
     document.getElementById("soundSetting").checked= (preferences.sound) ;
+    document.getElementById("largeTextSetting").checked= (preferences.largeText) ;
+     
 }
 /*
 function censorWords(movieTitle, message) {
@@ -907,6 +911,19 @@ function openDrawer() {
     savePreferences(preferences);
   })
 
+  document.getElementById("largeTextSetting").addEventListener("click", function (e) {
+    preferences = getPreferences();
+    preferences.largeText = e.target.checked ? true : false;
+    largeText = preferences.largeText;
+    if (largeText) {
+     
+        document.body.classList.add("large-text");
+
+    } else {
+          document.body.classList.remove("large-text");
+    }
+    savePreferences(preferences);
+  })
 
 
 

@@ -201,7 +201,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
             margin-left:30px;
             padding:20px;
             border-radius:20px ; 
-
+            border: 4px solid green;
+            outline: 2px solid white;
         }
         button:focus {
             border: 4px solid white;
@@ -921,7 +922,60 @@ button {
 
 }    
 </style>
-
+<style>
+    .large-text .wrapper {
+        display:block;
+    }
+    .large-text .guess-letter{
+                width: 2ch;
+                line-height: 2ch;
+                font-size:100px;
+    }
+    .large-text .wrapper {
+        grid-template-rows: 1fr 475px 50px 50vh 50vh 50vh;
+                grid-template-columns: 2fr 2fr 1fr;
+    }
+    .large-text  .hg-theme-default .hg-button {
+                height: 250px;
+            }
+     .large-text   .hg-theme-default .hg-button span {
+                font-size: 5rem;
+            }
+    .large-text button {
+        font-size : 2.8rem;
+    }
+    .large-text .hg-theme-default {
+        overflow: scroll;
+        width:100%;
+        height:60dvh;
+        padding-top:40px;
+    }
+    .large-text .hg-rows {
+        width: 200%;
+    }
+    .large-text #results {
+        min-height:55dvh;
+    }
+    .large-text #results p{
+       font-size:40px;
+       line-height:40px;
+       font-size:120px;
+       line-height:92px;
+       overflow-y: scroll;
+       display:block;
+    }
+    .large-text .box:before {
+        font-size:40px;
+    }
+    .large-text #movie-poster p.hint {
+        font-size:30px;
+        line-height:40px;
+    }
+    .large-text #scoreboard {
+        margin-top:75px;
+    }
+  
+    </style>
 <!-- Virtual keyboard related -->
             <style>
                
@@ -1086,6 +1140,14 @@ button {
              <span class="toggle-label">On</span>
         </label>
         <hr />
+        <h3> Large Text:</h3>
+        <label class="toggle">
+            <span class="">Off</span>
+            <input class="toggle-checkbox" type="checkbox" id="largeTextSetting">
+             <div class="toggle-switch"></div>
+             <span class="toggle-label">On</span>
+        </label>     
+         <hr />
       
         <div class="link-container">
             <a href="javascript:document.getElementById('howToPlayDialog').classList.add('shown'); openDrawer()  " class="link">How to Play</a>
@@ -1117,6 +1179,28 @@ button {
     </script>
 
     <script src="quiz.js"></script>
+    <div class="dialog" id="welcome">
+       
+        <h2>
+                 <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Q">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="U">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="I">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Z">
+                            <!-- input size="1" maxlength="1" type="text" class="tile-letter punctuation" value="" -->
+                <br/>
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="W">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="O">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="R"> 
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="D">
+                <input size="1" maxlength="1" type="text" class="tile-letter correct" value="Z">
+                <br />
+                
+            </h2>
+        <p class="intro">Use picture and text hints to guess the name of the show</p>
+
+        <button>Play</button>
+        <button>Instructions</button>
+    </div>
 <div class="dialog" id="howToPlayDialog">
     
     <div>
