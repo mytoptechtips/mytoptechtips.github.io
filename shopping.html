@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Shopping List</title>
+
+
+
+
+
+
+	<style>
+ @media  (min-width:480px){
+
+        * {
+            font-family:Arial, Helvetica, sans-serif
+        }
+		/* Style for areas */
+
+
+
+
+
+#shopping-list {
+    width:1240px;
+    height:1800px;
+}
+.area {
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 0.6em;
+  border:2px solid lightslategray;
+
+}
+
+/* Style for aisles */
+.aisle {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 0.4em;
+  outline:1px solid silver;
+}
+
+/* Style for the shopping list table */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table td {
+  border: 1px solid black;
+  padding: 5px;
+  font-size:1rem;
+  font-weight:normal;
+}
+
+/* Style for the item quantity input field */
+input[type="number"] {
+  width: 20px;
+  border:0;
+}
+.area {
+  display: inline-block;
+  float: left;
+  column-count:6;
+  border:1px solid orange;
+  margin-top : 0;
+  margin-bottom : 10px;
+}
+
+.item {
+    display:flex;
+}
+.item :nth-child(1) {
+    width:80%;
+    font-size:1rem;
+    font-weight: normal;
+    padding-left:3px;
+     line-height:1.25rem;
+    
+}
+
+.item :nth-child(2) {
+    width:20%;
+    border-left:1px solid silver;
+}
+
+.aisleTitle {
+    font-size: 1.25rem;
+    background-color: black;
+    color: white;
+    padding-left:3px;
+}
+
+.item {}
+
+.item {
+    border-bottom: 1px solid silver;
+}
+
+.highlighted {
+    background-color: yellow;
+}
+
+ 
+
+    .shoppingListIndex {
+    font-size: 9px;
+    column-count : 4;
+    width : 100%;
+    page-break-before:always
+
+}
+
+.indexEntry {
+    border: 1px solid silver;
+    display: flex;
+
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+}
+.indexEntry > * {
+    flex:1;
+}
+
+
+
+div#ShoppingListIndex {
+    /* width: 100%; */
+}
+}
+
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
+</style>
+</head>
+<body>
+
+    <div id="buttons .no-print">
+        <p>Click Search and speak what you want to search for</p>
+        <button id="search-button">Search</button></div>
+
+	<div id="shopping-list"></div>
+    <div id="ShoppingListIndex"></div>
+<script>
+    const items = [
+    {"Item Name":"Flowers","Tesco Area":"Entry","Tesco Aisle":"Entry ","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Kitchen","Home Sub Section":"Island",},
+    {"Item Name":"Toothpaste / E45","Tesco Area":"Entry","Tesco Aisle":"Entry Walled Area","Tesco Section":"3","Tesco Aisle Seq Num":"2","Home Location":"Bathroom","Home Sub Section":"Cabinet",},
+    {"Item Name":"Hand Soap","Tesco Area":"Entry","Tesco Aisle":"Entry Aisles Area","Tesco Section":"4","Tesco Aisle Seq Num":"1","Home Location":"Bathroom","Home Sub Section":"Utility Cupboard",},
+    {"Item Name":"Cotton Wool / Razors","Tesco Area":"Entry","Tesco Aisle":"Entry Walled Area","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Bedroom","Home Sub Section":"Dressing Table",},
+    {"Item Name":"Shampoo / Conditioner","Tesco Area":"Entry","Tesco Aisle":"Entry Aisles Area","Tesco Section":"5","Tesco Aisle Seq Num":"1","Home Location":"Bathroom","Home Sub Section":"Shower",},
+    {"Item Name":"Shower gel","Tesco Area":"Entry","Tesco Aisle":"Entry Aisles Area","Tesco Section":"4","Tesco Aisle Seq Num":"1","Home Location":"Bathroom","Home Sub Section":"Shower",},
+    {"Item Name":"Deodorant spray / roll on","Tesco Area":"Entry","Tesco Aisle":"Entry Aisles Area","Tesco Section":"4","Tesco Aisle Seq Num":"2","Home Location":"Bedroom","Home Sub Section":"Dressing Table",},
+    {"Item Name":"Paracetamol / ibuprofen","Tesco Area":"Entry","Tesco Aisle":"Entry Aisles Area","Tesco Section":"3","Tesco Aisle Seq Num":"1","Home Location":"Office","Home Sub Section":"Medicine Cupboard",},
+    {"Item Name":"Moisturiser","Tesco Area":"Entry","Tesco Aisle":"Entry Aisles Area","Tesco Section":"6","Tesco Aisle Seq Num":"1","Home Location":"Bedroom","Home Sub Section":"Dressing Table",},
+    {"Item Name":"Feminine Products","Tesco Area":"Entry","Tesco Aisle":"Entry Walled Area","Tesco Section":"4","Tesco Aisle Seq Num":"3","Home Location":"Bedroom","Home Sub Section":"Dressing Table",},
+    {"Item Name":"Ferrus Sulphate","Tesco Area":"Entry","Tesco Aisle":"Entry Walled Area","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"kitchen","Home Sub Section":"dining table",},
+    {"Item Name":"Ginger / Garlic","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 1","Home Sub Section":"Door Top",},
+    {"Item Name":"Fresh Herbs: Oregano / Rosemary / Other","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Potatoes: New / Jacket","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Tins Cupboard","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Sweet Potato","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Tins Cupboard","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Carrots / Parsnips","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Packet Salad / Iceberg","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Cucumber","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Peppers","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Spring Onions","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Radishes / Celery","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Avocados","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Kitchen Counter","Home Sub Section":"Fruit Bowl 1",},
+    {"Item Name":"Beetroot","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"7","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Bananas","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Kitchen Counter","Home Sub Section":"Fruit Bowl 1",},
+    {"Item Name":"Satsumas","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"1","Tesco Aisle Seq Num":"6","Home Location":"Fridge Freezer 2","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Limes","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 2","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Tomatoes / cherry","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Pears","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"1","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 2","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Apples: Grannies / Red","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"1","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 2","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Onions : Red / White","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Tins Cupboard","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Aubergine / Squash","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Courgette","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"2","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Mushrooms","Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Cauliflower","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Kitchen Counter","Home Sub Section":"Counter Top",},
+    {"Item Name":"Cabbage / Leeks","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Green Beans","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Fresh broccoli /Corn on cob","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"mangetout / baby sweetcorn","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Pak Choi","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"6","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Asparagus","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Carrots","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"6","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Spinach / Kale","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"6","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Strawberries","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Raspberries","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Blueberries / Blackberries","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Nectarines / Peaches","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 2","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Melons","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Fridge Freezer 2","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Plums / Apricots","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"7","Home Location":"Fridge Freezer 2","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Cherries","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Pineapples","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"8","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Grapes: Red / Green / Black","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"9","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Kiwi / Passion Fruit","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"10","Home Location":"Fridge Freezer 2","Home Sub Section":"Crisper Drawer",},
+    {"Item Name":"Pomegranate / Mango","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"11","Home Location":"Kitchen Counter","Home Sub Section":"Fruit Bowl 1",},
+    {"Item Name":"Fruit Pots (melon / mango)","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"12","Home Location":"Kitchen Counter","Home Sub Section":"Fruit Bowl 1",},
+    {"Item Name":"Fresh Dates Box / Medjool","Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"13","Home Location":"Larder","Home Sub Section":"Shelf 3",},
+    {"Item Name":"Kitchen Roll","Tesco Area":"Main-Aisles","Tesco Aisle":"4","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Under Sink","Home Sub Section":"Shelf",},
+    {"Item Name":"Toilet Roll","Tesco Area":"Main-Aisles","Tesco Aisle":"4","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Bathroom","Home Sub Section":"Utility Cupboard",},
+    {"Item Name":"WM Liq Persil Non Bio","Tesco Area":"Main-Aisles","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Bathroom","Home Sub Section":"Utility Cupboard",},
+    {"Item Name":"Toilet Bleach / CIF","Tesco Area":"Main-Aisles","Tesco Aisle":"2","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Bathroom","Home Sub Section":"Utility Cupboard",},
+    {"Item Name":"Dishwasher Tablets / Salt","Tesco Area":"Main-Aisles","Tesco Aisle":"2","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Under Sink","Home Sub Section":"Shelf",},
+    {"Item Name":"Fabric Conditioner","Tesco Area":"Main-Aisles","Tesco Aisle":"3","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Bathroom","Home Sub Section":"Utility Cupboard",},
+    {"Item Name":"Dettox Spray","Tesco Area":"Main-Aisles","Tesco Aisle":"2","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Under Sink","Home Sub Section":"Shelf",},
+    {"Item Name":"Washing Up Liq","Tesco Area":"Main-Aisles","Tesco Aisle":"2","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Under Sink","Home Sub Section":"Shelf",},
+    {"Item Name":"Bin Bags / Foil / Cling Film","Tesco Area":"Main-Aisles","Tesco Aisle":"3","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Under Hob","Home Sub Section":"Drawer",},
+    {"Item Name":"Eggs","Tesco Area":"Main-Aisles","Tesco Aisle":"25","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 2","Home Sub Section":"Door Top",},
+    {"Item Name":"Soreen","Tesco Area":"Main-Aisles","Tesco Aisle":"25","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Cake Cupboard","Home Sub Section":"Top",},
+    {"Item Name":"Cake Slices","Tesco Area":"Main-Aisles","Tesco Aisle":"25","Tesco Section":"2","Tesco Aisle Seq Num":"3","Home Location":"Cake Cupboard","Home Sub Section":"Top",},
+    {"Item Name":"CakeBox (RV, C&W, Ca, Ch)","Tesco Area":"Main-Aisles","Tesco Aisle":"25","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Cake Cupboard","Home Sub Section":"Top",},
+    {"Item Name":"Jelly","Tesco Area":"Main-Aisles","Tesco Aisle":"25","Tesco Section":"2","Tesco Aisle Seq Num":"5","Home Location":"Tins Cupboard","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"RicePudding / Tapioca / Semol","Tesco Area":"Main-Aisles","Tesco Aisle":"25","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Tins Cupboard","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Tortillas / wraps","Tesco Area":"Main-Aisles","Tesco Aisle":"25","Tesco Section":"2","Tesco Aisle Seq Num":"7","Home Location":"Fridge Freezer 2","Home Sub Section":"Drawer",},
+    {"Item Name":"Flat Bread / Mini Garlic Nan","Tesco Area":"Main-Aisles","Tesco Aisle":"25","Tesco Section":"2","Tesco Aisle Seq Num":"8","Home Location":"Fridge Freezer 2","Home Sub Section":"Drawer",},
+    {"Item Name":"Bagels / Warburtons Thins","Tesco Area":"Main-Aisles","Tesco Aisle":"24","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 1","Home Sub Section":"Top",},
+    {"Item Name":"Brioche / Pain Au Choc","Tesco Area":"Main-Aisles","Tesco Aisle":"24","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Bread : Hovis / Dark Rye","Tesco Area":"Main-Aisles","Tesco Aisle":"24","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 2","Home Sub Section":"Drawer",},
+    {"Item Name":"Teacakes / Fruit Loaf","Tesco Area":"Main-Aisles","Tesco Aisle":"24","Tesco Section":"1","Tesco Aisle Seq Num":"4","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Crumpets / Muffins","Tesco Area":"Main-Aisles","Tesco Aisle":"24","Tesco Section":"1","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 1","Home Sub Section":"Top",},
+    {"Item Name":"Sugar / Icing / Caster / Brown / Demerera / Dark","Tesco Area":"Main-Aisles","Tesco Aisle":"24","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Baking Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Tinned Peaches / Pineapple","Tesco Area":"Main-Aisles","Tesco Aisle":"24","Tesco Section":"2","Tesco Aisle Seq Num":"7","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Tinned Tropical","Tesco Area":"Main-Aisles","Tesco Aisle":"24","Tesco Section":"2","Tesco Aisle Seq Num":"8","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Cereal: Shred Wheat / Muesli / Cheerios","Tesco Area":"Main-Aisles","Tesco Aisle":"6","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Cereal Cupboard","Home Sub Section":"Top Shelf",},
+    {"Item Name":"Oats","Tesco Area":"Main-Aisles","Tesco Aisle":"6","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Oats Drawer","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Water Biscuits / Breadsticks","Tesco Area":"Main-Aisles","Tesco Aisle":"7","Tesco Section":"3","Tesco Aisle Seq Num":"3","Home Location":"Cake Cupboard","Home Sub Section":"Botom Shelf",},
+    {"Item Name":"Biscuits: Cust Cream / Bourbon / Ginger / Oth","Tesco Area":"Main-Aisles","Tesco Aisle":"7","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Chocolates / Slab / Box","Tesco Area":"Main-Aisles","Tesco Aisle":"7","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Cake Cupboard","Home Sub Section":"Botom Shelf",},
+    {"Item Name":"Baking Chocolate /Chips","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Baking Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Vanilla Ess / Baking Powder","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Baking Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Baking Soda","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Baking Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Cases / sprinkles","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"1","Tesco Aisle Seq Num":"4","Home Location":"Baking Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Flour : Plain / Self Rasiing","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"1","Tesco Aisle Seq Num":"5","Home Location":"Baking Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Pickled Things","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Cake Cupboard","Home Sub Section":"Botom Shelf",},
+    {"Item Name":"Lemon Juice","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"2","Tesco Aisle Seq Num":"7","Home Location":"Fridge Freezer 1","Home Sub Section":"Top",},
+    {"Item Name":"Nuts","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"2","Tesco Aisle Seq Num":"8","Home Location":"Baking Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Raisins / Sultanas","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"2","Tesco Aisle Seq Num":"9","Home Location":"Cake Cupboard","Home Sub Section":"Botom Shelf",},
+    {"Item Name":"Dates / Prunes / Apricots","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"2","Tesco Aisle Seq Num":"10","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Instant Noodles","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"2","Tesco Aisle Seq Num":"11","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Peanut But / Marmite / Jam","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"2","Tesco Aisle Seq Num":"12","Home Location":"Cereal Cupboard","Home Sub Section":"Bottom Shelf",},
+    {"Item Name":"Almond Butter","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"2","Tesco Aisle Seq Num":"13","Home Location":"Cereal Cupboard","Home Sub Section":"Bottom Shelf",},
+    {"Item Name":"Honey / Jam / Nutella","Tesco Area":"Main-Aisles","Tesco Aisle":"23","Tesco Section":"2","Tesco Aisle Seq Num":"14","Home Location":"Cereal Cupboard","Home Sub Section":"Bottom Shelf",},
+    {"Item Name":"Powder: Gravy / Stuffing","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Tinned Soup","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Dried: Spices / Herbs","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Spice Drawer","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Butter Beans","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Tinned Plum tomatoes","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"2","Tesco Aisle Seq Num":"5","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Beans: Chickpeas / Kidney Beans","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Green Lentils","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"2","Tesco Aisle Seq Num":"7","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Tinned Mackerel: Tomato / Spicy / Katsu ","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"2","Tesco Aisle Seq Num":"8","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Fish: Tuna / Salmon","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"2","Tesco Aisle Seq Num":"9","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Vinegar","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"3","Tesco Aisle Seq Num":"10","Home Location":"Tins Cupboard","Home Sub Section":"Bottom",},
+    {"Item Name":"Oil:  Rapeseed / E. Virgin","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"3","Tesco Aisle Seq Num":"11","Home Location":"Spice Drawer","Home Sub Section":"Drawer",},
+    {"Item Name":"Tinned Beans (w sausages)","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"3","Tesco Aisle Seq Num":"12","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Tnned Spag (w beans) / Ravioli","Tesco Area":"Main-Aisles","Tesco Aisle":"22","Tesco Section":"3","Tesco Aisle Seq Num":"13","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Rice : Basmati / Brown","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Packet Rice","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Mexican Kits","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Packet Rice / Cous Cous","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"1","Tesco Aisle Seq Num":"4","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Sauce : Mayo / Ketchup / mustard","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"2","Tesco Aisle Seq Num":"5","Home Location":"Cake Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Soy Sauce ","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Spice Drawer","Home Sub Section":"Drawer",},
+    {"Item Name":"Sauce: Siracha / Tabasco","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"2","Tesco Aisle Seq Num":"7","Home Location":"Cake Cupboard","Home Sub Section":"Bottom Shelf",},
+    {"Item Name":"Table Sauce: Branston / HP / Hot Sauce","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"2","Tesco Aisle Seq Num":"8","Home Location":"Tins Cupboard","Home Sub Section":"Bottom",},
+    {"Item Name":"Ketchup","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"2","Tesco Aisle Seq Num":"9","Home Location":"Tins Cupboard","Home Sub Section":"Bottom",},
+    {"Item Name":"Whole-wheat Noodles","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"3","Tesco Aisle Seq Num":"10","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Coconut Milk","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"3","Tesco Aisle Seq Num":"11","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Cooking Sauce / Stir Fry","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"3","Tesco Aisle Seq Num":"12","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Indian Pickle","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"3","Tesco Aisle Seq Num":"13","Home Location":"Tins Cupboard","Home Sub Section":"Drawer 2",},
+    {"Item Name":"Sundried Tomatoes","Tesco Area":"Main-Aisles","Tesco Aisle":"21","Tesco Section":"3","Tesco Aisle Seq Num":"14","Home Location":"Cake Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Lychees","Tesco Area":"Main-Aisles","Tesco Aisle":"20","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Tins Cupboard","Home Sub Section":"Bottom",},
+    {"Item Name":"Pasta Sauce Chilli / Veg","Tesco Area":"Main-Aisles","Tesco Aisle":"20","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Tins Cupboard","Home Sub Section":"Bottom",},
+    {"Item Name":"Pasta Sauce Homepride Pasta Bake","Tesco Area":"Main-Aisles","Tesco Aisle":"20","Tesco Section":"2","Tesco Aisle Seq Num":"3","Home Location":"Tins Cupboard","Home Sub Section":"Bottom",},
+    {"Item Name":"Indian Spices","Tesco Area":"Main-Aisles","Tesco Aisle":"20","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Spice Drawer","Home Sub Section":"Drawer",},
+    {"Item Name":"Pasta : Spag / Macaroni / Bows / Spirals","Tesco Area":"Main-Aisles","Tesco Aisle":"20","Tesco Section":"2","Tesco Aisle Seq Num":"5","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Gnoochi","Tesco Area":"Main-Aisles","Tesco Aisle":"20","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Larder","Home Sub Section":"Shelf",},
+    {"Item Name":"Milk","Tesco Area":"Fridges","Tesco Aisle":"19","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 1","Home Sub Section":"Door",},
+    {"Item Name":"Cream:Squirty / Sgl / Dbl /Whp","Tesco Area":"Fridges","Tesco Aisle":"19","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Natural Yog Large","Tesco Area":"Fridges","Tesco Aisle":"19","Tesco Section":"2","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 1","Home Sub Section":"Top",},
+    {"Item Name":"Small Yog","Tesco Area":"Fridges","Tesco Aisle":"19","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Middle",},
+    {"Item Name":"Butter (salt / unsalted)","Tesco Area":"Fridges","Tesco Aisle":"19","Tesco Section":"3","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 1","Home Sub Section":"Butter Drawer",},
+    {"Item Name":"Soft Cheese: BabyBell / Dairylea","Tesco Area":"Fridges","Tesco Aisle":"18","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 1","Home Sub Section":"Butter Drawer",},
+    {"Item Name":"Tub: Hummus / Coleslaw","Tesco Area":"Fridges","Tesco Aisle":"18","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Cheese Block cheddar","Tesco Area":"Fridges","Tesco Aisle":"18","Tesco Section":"2","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Soft cheese tub","Tesco Area":"Fridges","Tesco Aisle":"18","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Mozarella / Brie / Parmesan","Tesco Area":"Fridges","Tesco Aisle":"18","Tesco Section":"3","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Plant-based Snacks","Tesco Area":"Fridges","Tesco Aisle":"17","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Plant based soup","Tesco Area":"Fridges","Tesco Aisle":"17","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Tofu (large block)","Tesco Area":"Fridges","Tesco Aisle":"17","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 2","Home Sub Section":"Shelf",},
+    {"Item Name":"Kefir","Tesco Area":"Fridges","Tesco Aisle":"17","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Sliced Meat : Cooked Ham / Chicken Slices","Tesco Area":"Fridges","Tesco Aisle":"17","Tesco Section":"3","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Pasta Parcels","Tesco Area":"Fridges","Tesco Aisle":"17","Tesco Section":"3","Tesco Aisle Seq Num":"6","Home Location":"Fridge Freezer 2","Home Sub Section":"Bottom Shelf",},
+    {"Item Name":"Meat Sausages","Tesco Area":"Fridges","Tesco Aisle":"16","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Bacon","Tesco Area":"Fridges","Tesco Aisle":"16","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Prawns / Fish Pie Mix","Tesco Area":"Fridges","Tesco Aisle":"16","Tesco Section":"2","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 1","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Fresh Mackerel","Tesco Area":"Fridges","Tesco Aisle":"16","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Chicken Thighs / Breasts","Tesco Area":"Fridges","Tesco Aisle":"16","Tesco Section":"2","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 1","Home Sub Section":"Meat Drawer",},
+    {"Item Name":"Chicken in a bag","Tesco Area":"Fridges","Tesco Aisle":"16","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
+    {"Item Name":"Lamb Mince / Joint","Tesco Area":"Fridges","Tesco Aisle":"16","Tesco Section":"3","Tesco Aisle Seq Num":"7","Home Location":"Fridge Freezer 1","Home Sub Section":"Meat Drawer",},
+    {"Item Name":"Pork Mince / Joint","Tesco Area":"Fridges","Tesco Aisle":"16","Tesco Section":"3","Tesco Aisle Seq Num":"8","Home Location":"Fridge Freezer 1","Home Sub Section":"Meat Drawer",},
+    {"Item Name":"Venison","Tesco Area":"Fridges","Tesco Aisle":"16","Tesco Section":"3","Tesco Aisle Seq Num":"9","Home Location":"Fridge Freezer 1","Home Sub Section":"Meat Drawer",},
+    {"Item Name":"Healthy Indiv Crisps","Tesco Area":"Main-Aisles","Tesco Aisle":"13","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Cake Cupboard","Home Sub Section":"Top Shelf",},
+    {"Item Name":"Large Crisps (Kettle)","Tesco Area":"Main-Aisles","Tesco Aisle":"13","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Cake Cupboard","Home Sub Section":"Top Shelf",},
+    {"Item Name":"Tea /Ceylon / Eng Breakfast / Coffee","Tesco Area":"Main-Aisles","Tesco Aisle":"8","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Cake Cupboard","Home Sub Section":"Top Shelf",},
+    {"Item Name":"Hot Chocolate","Tesco Area":"Main-Aisles","Tesco Aisle":"8","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Cake Cupboard","Home Sub Section":"Top Shelf",},
+    {"Item Name":"Juice : Apple / Orange / Trop","Tesco Area":"Main-Aisles","Tesco Aisle":"9","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Mop Cupboard","Home Sub Section":"Shelf",},
+    {"Item Name":"Frozen Pizza: Meat / Veg","Tesco Area":"Freezers","Tesco Aisle":"12","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 2","Home Sub Section":"Drawer 3",},
+    {"Item Name":"Veggie Burgers","Tesco Area":"Freezers","Tesco Aisle":"12","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 1","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Ice Cream Tub: Van / Choc / Straw / Oth","Tesco Area":"Freezers","Tesco Aisle":"12","Tesco Section":"2","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 1","Home Sub Section":"Ice. Cream Drawer",},
+    {"Item Name":"Ice Lollies","Tesco Area":"Freezers","Tesco Aisle":"12","Tesco Section":"3","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Ice. Cream Drawer",},
+    {"Item Name":"Quorn Nuggets / Mince","Tesco Area":"Freezers","Tesco Aisle":"12","Tesco Section":"3","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 1","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Yorkshire Puddings","Tesco Area":"Freezers","Tesco Aisle":"12","Tesco Section":"3","Tesco Aisle Seq Num":"6","Home Location":"Fridge Freezer 1","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Frozen Berries","Tesco Area":"Freezers","Tesco Aisle":"12","Tesco Section":"3","Tesco Aisle Seq Num":"7","Home Location":"Fridge Freezer 2","Home Sub Section":"Bottom",},
+    {"Item Name":"Broccoli / Kale ","Tesco Area":"Freezers","Tesco Aisle":"11","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 2","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Peas","Tesco Area":"Freezers","Tesco Aisle":"11","Tesco Section":"2","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 2","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Carrots /Green Beans","Tesco Area":"Freezers","Tesco Aisle":"11","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 2","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Sweetcorns / Soya Beans","Tesco Area":"Freezers","Tesco Aisle":"11","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 2","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Frozen Chicken Pieces","Tesco Area":"Freezers","Tesco Aisle":"11","Tesco Section":"2","Tesco Aisle Seq Num":"5","Home Location":"Fridge Freezer 1","Home Sub Section":"Meat Drawer",},
+    {"Item Name":"Fish Fingers / Large Pieces","Tesco Area":"Freezers","Tesco Aisle":"11","Tesco Section":"2","Tesco Aisle Seq Num":"6","Home Location":"Fridge Freezer 1","Home Sub Section":"Drawer 1",},
+    {"Item Name":"Frozen Salmon","Tesco Area":"Freezers","Tesco Aisle":"11","Tesco Section":"3","Tesco Aisle Seq Num":"7","Home Location":"Fridge Freezer 1","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Frozen Chips","Tesco Area":"Freezers","Tesco Aisle":"11","Tesco Section":"3","Tesco Aisle Seq Num":"8","Home Location":"Fridge Freezer 1","Home Sub Section":"Bottom Drawer",},
+    ];
+    
+    const aisleDataArray = [
+    {"Tesco Area":"Entry","Tesco Aisle":"Entry ","Aisle Order":"1","Aisle Name":"Entry Area"},
+    {"Tesco Area":"Entry","Tesco Aisle":"Entry Aisles Area","Aisle Order":"2","Aisle Name":"Entry Area Aisles"},
+    {"Tesco Area":"Entry","Tesco Aisle":"Entry Walled Area","Aisle Order":"3","Aisle Name":"Entry Area Wall"},
+    {"Tesco Area":"Pharmacy","Tesco Aisle":"Counter","Aisle Order":"4","Aisle Name":"Pharmacy Counter"},
+    {"Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Aisle Order":"5","Aisle Name":"Fruit and Veg Aisle 1"},
+    {"Tesco Area":"Fruit and Veg","Tesco Aisle":"2","Aisle Order":"6","Aisle Name":"Fruit and Veg Aisle 2"},
+    {"Tesco Area":"Fruit and Veg","Tesco Aisle":"3","Aisle Order":"7","Aisle Name":"Fruit and Veg Aisle 3"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"1","Aisle Order":"8","Aisle Name":"Pet Food"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"2","Aisle Order":"9","Aisle Name":"Household Cleaning"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"3","Aisle Order":"10","Aisle Name":"Laundry Essentials"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"4","Aisle Order":"11","Aisle Name":"Toilet Rolls"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"5","Aisle Order":"34","Aisle Name":"Seasonal"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"6","Aisle Order":"15","Aisle Name":"Cereal"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"7","Aisle Order":"30","Aisle Name":"Confectionery / Biscuits"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"8","Aisle Order":"29","Aisle Name":"Tea / Coffee"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"9","Aisle Order":"28","Aisle Name":"Water / Juice"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"10","Aisle Order":"27","Aisle Name":"Fizzy Drinks / Soft Drinks"},
+    {"Tesco Area":"Freezers","Tesco Aisle":"11","Aisle Order":"33","Aisle Name":"Frozen Meat / Veg/ Chips"},
+    {"Tesco Area":"Freezers","Tesco Aisle":"12","Aisle Order":"32","Aisle Name":"Ice Cream / Frozen Pizza"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"13","Aisle Order":"26","Aisle Name":"Crisps"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"14","Aisle Order":"25","Aisle Name":"Beer and Spirits"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"15","Aisle Order":"24","Aisle Name":"Wine"},
+    {"Tesco Area":"Fridges","Tesco Aisle":"16","Aisle Order":"23","Aisle Name":"Meat / Fish / Poultry"},
+    {"Tesco Area":"Fridges","Tesco Aisle":"17","Aisle Order":"22","Aisle Name":"Ready Meals"},
+    {"Tesco Area":"Fridges","Tesco Aisle":"18","Aisle Order":"21","Aisle Name":"Dairy"},
+    {"Tesco Area":"Fridges","Tesco Aisle":"19","Aisle Order":"20","Aisle Name":"Milk / Yoghurts"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"20","Aisle Order":"19","Aisle Name":"World Foods  / Pasta"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"21","Aisle Order":"18","Aisle Name":"Rice and Sauces"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"22","Aisle Order":"17","Aisle Name":"Oils and Ingredients"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"23","Aisle Order":"16","Aisle Name":"Baking / Canned Veg"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"24","Aisle Order":"14","Aisle Name":"Bread"},
+    {"Tesco Area":"Main-Aisles","Tesco Aisle":"25","Aisle Order":"12","Aisle Name":"Cakes"},
+    ]
+    </script>
+    <script>
+    // Create map of aisle data by Tesco Area and Tesco Aisle
+    const aisleDataMap = {};
+    for (const aisleData of aisleDataArray) {
+      const area = aisleData['Tesco Area'];
+      const aisle = aisleData['Tesco Aisle'];
+      aisleDataMap[`${area}-${aisle}`] = {
+        name: aisleData['Aisle Name'],
+        order: aisleData['Aisle Order']
+      };
+    }
+    
+    // Group items by Tesco Area and Tesco Aisle
+    const groupedItems = {};
+    for (const item of items) {
+      const area = item['Tesco Area'];
+      const aisle = item['Tesco Aisle'];
+      if (!groupedItems[area]) {
+        groupedItems[area] = {};
+      }
+      if (!groupedItems[area][aisle]) {
+        groupedItems[area][aisle] = [];
+      }
+      groupedItems[area][aisle].push(item);
+    }
+    
+    // Generate shopping list HTML
+    const shoppingList = document.getElementById('shopping-list');
+    for (const area in groupedItems) {
+      const areaDiv = document.createElement('div');
+      areaDiv.className = 'area';
+      areaDiv.innerHTML = area;
+      shoppingList.appendChild(areaDiv);
+    
+      const aisles = Object.keys(groupedItems[area]).sort((a, b) => {
+      console.log(area,a);
+        const aOrder = aisleDataMap[`${area}-${a}`].order;
+        const bOrder = aisleDataMap[`${area}-${b}`].order;
+        return aOrder - bOrder;
+      });
+    
+      for (const aisle of aisles) {
+        const aisleDiv = document.createElement('div');
+        aisleDiv.className = 'aisle';
+        const aisleTitle = document.createElement('div');
+        aisleTitle.className = "aisleTitle";
+        aisleTitle.innerHTML = aisle +":"+ aisleDataMap[`${area}-${aisle}`].name;
+        aisleDiv.appendChild(aisleTitle);
+        areaDiv.appendChild(aisleDiv);
+    
+        const itemsInAisle = groupedItems[area][aisle];
+        itemsInAisle.sort((a, b) => a['Seq Num'] - b['Seq Num']);
+    
+        const table = document.createElement('div');
+        aisleDiv.appendChild(table);
+    
+        for (const item of itemsInAisle) {
+          const tr = document.createElement('div');
+          tr.classList.add("item");
+          table.appendChild(tr);
+    
+          const tdName = document.createElement('div');
+          tdName.style.display="inline-block";
+          tdName.innerHTML = item['Item Name'];
+          tdName.setAttribute("data-title", item['Item Name'].toLowerCase() );
+
+          tr.appendChild(tdName);
+    
+          const tdQty = document.createElement('div');
+          tdQty.style.display="inline-block";
+          tdQty.innerHTML = '<input type="number" min="0">';
+          tr.appendChild(tdQty);
+        }
+      }
+    }
+    
+
+</script>
+<script>
+    // Create a new object to store the index
+const shoppingListIndex = {};
+
+// Iterate over the items array
+items.forEach(item => {
+  // Split the item name by '/'
+  const itemNameArray = item["Item Name"].split("/");
+  
+  // Iterate over each part of the item name
+  itemNameArray.forEach(name => {
+    // Check if the name contains ':'
+    if (name.includes(":")) {
+      // Split the name by ':'
+      const nameArray = name.split(":");
+      // Iterate over each part of the name
+      nameArray.forEach((namePart, index) => {
+        // Construct the new name
+        const newName = index === 0 ? `${namePart.trim()} ${item["Item Name"].split(":")[0].trim()}` : `${namePart.trim()} ${nameArray[0].trim()}`;
+        // Add the item to the index
+        addToIndex(newName, item);
+      });
+    } else {
+      // Construct the new name
+      const newName = name.trim();
+      // Add the item to the index
+      addToIndex(newName, item);
+    }
+  });
+});
+
+// Helper function to add an item to the index
+function addToIndex(name, item) {
+  const tescoArea = item["Tesco Area"];
+
+  const tescoAisleNum = item["Tesco Aisle"];
+  const tescoAisleName = (aisleDataMap[tescoArea+"-"+tescoAisleNum]?.name);
+  
+  if (!shoppingListIndex[name]) {
+    shoppingListIndex[name] = [];
+  }
+  
+  shoppingListIndex[name].push({
+    tescoArea,
+
+    tescoAisle: `${tescoAisleNum} : ${tescoAisleName}`
+  });
+}
+
+// Sort the index alphabetically
+const sortedIndex = Object.keys(shoppingListIndex).sort();
+
+// Create the table HTML
+let indexHTML = "<div class='shoppingListIndex'>";
+sortedIndex.forEach(item => {
+  const locations = shoppingListIndex[item];
+  locations.forEach(location => {
+    indexHTML += `<div class='indexEntry'><div class="indexItem">${item}</div><div class="indexLocation">${location.tescoArea}</div><div>${location.tescoAisle}</div></div>`;
+  });
+});
+indexHTML += "</div>";
+
+// Output the table to the ShoppingListIndex element
+document.getElementById("ShoppingListIndex").innerHTML = indexHTML;
+
+
+</script>
+<script>
+    const searchButton = document.getElementById('search-button');
+
+searchButton.addEventListener('click', () => {
+  const speechRecognition = new webkitSpeechRecognition();
+  speechRecognition.continuous = false;
+  speechRecognition.interimResults = false;
+  speechRecognition.lang = 'en-US';
+
+  speechRecognition.start();
+
+  speechRecognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.trim();
+    const searchResults = [];
+    
+    for (const item of items) {
+      const name = item['Item Name'];
+      if (name.toLowerCase().includes(transcript.toLowerCase())) {
+        const area = item['Tesco Area'];
+        const section = item['Tesco Section'];
+        const aisle = item['Tesco Aisle'];
+        const aisleName = getAisleName(area, aisle);
+        searchResults.push({ name, area, section, aisle, aisleName });
+      }
+    }
+    document.querySelectorAll('.highlighted').forEach( (x) => x.classList.remove("highlighted"));
+    document.querySelectorAll('[data-title*="'+transcript.toLowerCase()+'"]').forEach( (x) => x.classList.add("highlighted"));
+
+    if (searchResults.length === 0) {
+      speak('Sorry, I could not find that item on your shopping list.');
+    } else if (searchResults.length === 1) {
+      const result = searchResults[0];
+      speak(`${result.name} is in ${result.area},  aisle ${result.aisle} (${result.aisleName}).`);
+    } else {
+      speak(`I found ${searchResults.length} matches. Please choose one by saying the number.`);
+      
+      let i = 1;
+      for (const result of searchResults) {
+        speak(`${i}. ${result.name} .`);
+        i++;
+      }
+
+      speechRecognition.onresult = (event) => {
+        const choice = event.results[0][0].transcript.trim();
+        const index = parseInt(choice, 10);
+        if (index > 0 && index <= searchResults.length) {
+          const result = searchResults[index - 1];
+          speak(`${result.name} is in ${result.area},  aisle ${result.aisle} (${result.aisleName}).`);
+        } else {
+          speak('Sorry, I did not understand your choice. Please try again.');
+        }
+      };
+    }
+  };
+});
+
+function speak(message) {
+  const speech = new SpeechSynthesisUtterance();
+  speech.text = message;
+  speech.volume = 1;
+  speech.rate = 1;
+  speech.pitch = 1;
+  window.speechSynthesis.speak(speech);
+}
+
+function getAisleName(area, aisle) {
+  const aisleData = aisleDataArray.find(data => data['Tesco Area'] === area && data['Tesco Aisle'] === aisle);
+  return aisleData ? aisleData['Aisle Name'] : '';
+}
+
+</script>
+<style>
+
+
+    @media  (max-width:480px){
+           body{ background-color: #0096d6;}
+            button {font-size:40px;}
+        }
+    
+    </style>
+</body>
+</html>
