@@ -145,6 +145,7 @@ div#ShoppingListIndex {
 
     <div id="search-buttons" class="no-print">
         <p>Click Search and speak what you want to search for</p>
+        <p id="search-text"></p>
         <button id="search-button">Search</button></div>
 
 	<div id="shopping-list"></div>
@@ -165,7 +166,7 @@ div#ShoppingListIndex {
     {"Item Name":"Ginger / Garlic","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 1","Home Sub Section":"Door Top",},
     {"Item Name":"Fresh Herbs: Oregano / Rosemary / Other","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"1","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
     {"Item Name":"Potatoes: New / Jacket","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"2","Home Location":"Tins Cupboard","Home Sub Section":"Bottom Drawer",},
-    {"Item Name":"Sweet Potato","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Tins Cupboard","Home Sub Section":"Bottom Drawer",},
+    {"Item Name":"Sweet Potatoes","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"1","Home Location":"Tins Cupboard","Home Sub Section":"Bottom Drawer",},
     {"Item Name":"Carrots / Parsnips","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"3","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
     {"Item Name":"Packet Salad / Iceberg","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"1","Tesco Aisle Seq Num":"4","Home Location":"Fridge Freezer 1","Home Sub Section":"Crisper Drawer",},
     {"Item Name":"Cucumber","Tesco Area":"Fruit and Veg","Tesco Aisle":"1","Tesco Section":"2","Tesco Aisle Seq Num":"2","Home Location":"Fridge Freezer 1","Home Sub Section":"Shelf",},
@@ -523,6 +524,7 @@ searchButton.addEventListener('click', () => {
 
   speechRecognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript.trim();
+    document.getElementById("search-text").innerHTML = transcript;
     const searchResults = [];
     
     for (const item of items) {
@@ -587,6 +589,10 @@ function getAisleName(area, aisle) {
     @media  (max-device-width:480px){
            #search-buttons p {font-size:40px}
             button {font-size:50px;}
+            #shopping-list {
+                transform:scale(0.75);
+                transform-origin : 0 0;
+            }
         }
     
     </style>
