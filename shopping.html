@@ -145,8 +145,8 @@ div#ShoppingListIndex {
 
     <div id="search-buttons" class="no-print">
         <p>Click Search and speak what you want to search for</p>
-        <p id="search-text"></p>
-        <button id="search-button">Search</button></div>
+        <input type="text" id="search-text"></p>
+        <button id="search-button">Voice Search</button></div>
 
 	<div id="shopping-list"></div>
     <div id="ShoppingListIndex"></div>
@@ -524,7 +524,8 @@ searchButton.addEventListener('click', () => {
 
   speechRecognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript.trim();
-    document.getElementById("search-text").innerHTML = transcript;
+
+    document.getElementById("search-text").value = transcript;
     const searchResults = [];
     
     for (const item of items) {
@@ -546,7 +547,7 @@ searchButton.addEventListener('click', () => {
       const result = searchResults[0];
       speak(`${result.name} is in ${result.area},  aisle ${result.aisle} (${result.aisleName}).`);
     } else {
-      speak(`I found ${searchResults.length} matches. Please choose one by saying the number.`);
+      speak(`I found ${searchResults.length} matches.`);
       
       let i = 1;
       for (const result of searchResults) {
@@ -581,6 +582,15 @@ function getAisleName(area, aisle) {
   const aisleData = aisleDataArray.find(data => data['Tesco Area'] === area && data['Tesco Aisle'] === aisle);
   return aisleData ? aisleData['Aisle Name'] : '';
 }
+
+document.getElementById("search-text").addEventListener("keyup", function () {
+
+    keyword=document.getElementById("search-text").value;
+    document.querySelectorAll('.highlighted').forEach( (x) => x.classList.remove("highlighted"));
+    document.querySelectorAll('[data-title*="'+keyword.toLowerCase()+'"]').forEach( (x) => x.classList.add("highlighted"));
+
+
+});
 
 </script>
 <style>
